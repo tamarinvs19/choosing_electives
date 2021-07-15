@@ -17,26 +17,11 @@ class Students(Group):
     pass
 
 
-class TheThirdYear(Group):
-    """The third year students"""
+class YearOfEducation(Group):
+    """One year students"""
     pass
 
 
-class TheFourthYear(Group):
-    """The fourth year students"""
-    pass
-
-
-class Mathematics(Group):
-    """Students on Mathematics program"""
-    pass
-
-
-class DataScience(Group):
-    """Students on DataScience program"""
-    pass
-
-
-class ModernProgramming(Group):
-    """Students on ModernProgramming (SP) program"""
+class Curriculum(Group):
+    """Students on same educational program"""
     pass
