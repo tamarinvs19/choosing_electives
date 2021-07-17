@@ -1,10 +1,16 @@
 from django.contrib import admin
-from .models import Administrations, Teachers, Students, YearOfEducation, Curriculum
+from .models import StudentGroup, YearOfEducation, Curriculum
 
 
-admin.site.register(Administrations)
-admin.site.register(Teachers)
-admin.site.register(Students)
+class StudentGroupAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['curriculum', 'course_value']}),
+        ('Authumn', {'fields': ['min_credit_unit_authumn', 'max_credit_unit_authumn', 'min_number_of_exams_authumn']}),
+        ('Spring', {'fields': ['min_credit_unit_spring', 'max_credit_unit_spring', 'min_number_of_exams_spring']}),
+    ]
+    list_display = ('curriculum', 'course_value')
+
+admin.site.register(StudentGroup, StudentGroupAdmin)
 admin.site.register(YearOfEducation)
 admin.site.register(Curriculum)
 

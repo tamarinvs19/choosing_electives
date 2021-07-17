@@ -10,13 +10,17 @@ class Elective(models.Model):
     :name:        str           |  The name of this elective
     :credit_unit: int           |  The credit_unit of this elective
     :description: str           |  The description of this elective
+    :max_number_students: int   |  Maximum of number of students on this elective
+    :min_number_students: int   |  Minimum of number of students on this elective
     :students:    list[Pesron]  |  The list of students on this elective
     :teachers:    list[Pesron]  |  The list of teachers on this elective
     """
 
     name: str = models.CharField(max_length=200)
-    credit_unit: int = models.IntegerField(default=0)
+    credit_unit: int = models.PositiveSmallIntegerField(default=0)
     description: str = models.TextField(default='')
+    max_number_students: int = models.PositiveIntegerField(default=10)
+    min_number_students: int = models.PositiveIntegerField(default=3)
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
 
@@ -67,6 +71,8 @@ class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
     is_necessary = models.BooleanField(default=False)
+    with_examenation = models.BooleanField(default=True)
+    priority = models.PositiveIntegerField(default=1)
 
 
 class TeacherOnElective(models.Model):
