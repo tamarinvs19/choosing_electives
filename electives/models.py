@@ -66,6 +66,7 @@ class Seminar(Elective):
 class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    is_necessary = models.BooleanField(default=False)
 
 
 class TeacherOnElective(models.Model):
