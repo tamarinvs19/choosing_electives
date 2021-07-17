@@ -1,17 +1,23 @@
 """Elective models"""
 from django.db import models
+from users.models import Person
 
 
 class Elective(models.Model):
     """
     Elective model
 
-    str :: name  |  The name of this elective
-    int :: credit_unit  |  The credit_unit of this elective
+    :name:        str           |  The name of this elective
+    :credit_unit: int           |  The credit_unit of this elective
+    :students:    list[Pesron]  |  The list of students on this elective
+    :teachers:    list[Pesron]  |  The list of teachers on this elective
     """
 
     name: str = models.CharField(max_length=200)
     credit_unit: int = models.IntegerField(default=0)
+    description: str = models.TextField(default='')
+    students: list[Person] = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
+    teachers: list[Person] = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
 
 
 class BigElective(Elective):
@@ -20,7 +26,7 @@ class BigElective(Elective):
 
     credit_unit = 4
 
-    str :: name  |  The name of this elective
+    :name: str  |  The name of this elective
     """
 
     def __init__(self, name: str, *args, **kwargs):
@@ -34,7 +40,7 @@ class SmallElective(Elective):
 
     credit_unit = 3
 
-    str :: name  |  The name of this elective
+    :name: str  |  The name of this elective
     """
 
     def __init__(self, name: str, *args, **kwargs):
@@ -48,9 +54,20 @@ class Seminar(Elective):
 
     credit_unit = 2
 
-    str :: name  |  The name of this elective
+    :name: str  |  The name of this elective
     """
 
     def __init__(self, name: str, *args, **kwargs):
         credit_unit: int = 2
         super().__init__(name, credit_unit, args, kwargs)
+
+
+class StudentOnElective(models.Model):
+    student = models.ForeignKey(Person, on_delete=models.CASCADE)
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+
+
+class TeacherOnElective(models.Model):
+    teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+
