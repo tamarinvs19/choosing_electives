@@ -9,6 +9,7 @@ class Elective(models.Model):
 
     :name:        str           |  The name of this elective
     :credit_unit: int           |  The credit_unit of this elective
+    :description: str           |  The description of this elective
     :students:    list[Pesron]  |  The list of students on this elective
     :teachers:    list[Pesron]  |  The list of teachers on this elective
     """
