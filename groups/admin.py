@@ -1,3 +1,10 @@
 from django.contrib import admin
+from .models import Administrations, Teachers, Students, YearOfEducation, Curriculum
 
-# Register your models here.
+
+admin.site.register(Administrations)
+admin.site.register(Teachers)
+admin.site.register(Students)
+admin.site.register(YearOfEducation)
+admin.site.register(Curriculum)
+
