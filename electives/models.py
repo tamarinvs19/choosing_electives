@@ -16,8 +16,8 @@ class Elective(models.Model):
     name: str = models.CharField(max_length=200)
     credit_unit: int = models.IntegerField(default=0)
     description: str = models.TextField(default='')
-    students: list[Person] = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
-    teachers: list[Person] = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
+    students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
+    teachers = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
 
 
 class BigElective(Elective):
