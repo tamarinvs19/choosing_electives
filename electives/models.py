@@ -24,6 +24,13 @@ class Elective(models.Model):
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
 
+    @property
+    def text_teacher(self):
+        if len(self.teachers.all()) > 0:
+            return self.teachers.all()[0]
+        else:
+            return 'Не назначен'
+
 
 class BigElective(Elective):
     """

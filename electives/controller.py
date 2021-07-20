@@ -9,21 +9,21 @@ class Controller(object):
         return Elective.objects.all()
 
     @staticmethod
-    def add_elective(fields: list[str]):
+    def add_elective(fields):
         model: Elective
-        if line['type'] == 'seminar':
+        if fields['type'] == 'seminar':
             model = Seminar
-        elif line['type'] == 'small':
+        elif fields['type'] == 'small':
             model = SmallElective
-        elif line['type'] == 'big':
+        elif fields['type'] == 'big':
             model = BigElective
 
         elective: Elective = model.object.create(
-            name=line['name'],
-            credit_unit=int(line['credit_unit']),
-            description=line['description'],
-            max_number_students=int(line['max students']),
-            min_number_students=int(line['min students'])
+            name=fields['name'],
+            credit_unit=int(fields['credit_unit']),
+            description=fields['description'],
+            max_number_students=int(fields['max students']),
+            min_number_students=int(fields['min students'])
         )
         elective.save()
 
