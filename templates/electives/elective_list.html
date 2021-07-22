@@ -5,23 +5,21 @@
 
 {% block body %}
 <div class="row">
-    <div id="div-electives" class="col-md-8 offset-md-2">
+    <div id="div-electives" class="env-page col-md-8 offset-md-2">
         <div class="row title-row">
             <div class="col-4">Название</div>
             <div class="col-4">Преподаватели</div>
             <div class="col-1">Тип</div>
             <div class="col-3">Статистика</div>
         </div>
-        <div class="accordion" id="accordionElectives">
-            {% for elective in electives %}
-            <div class="row table-row">
-                <div class="col-4">{{ elective.name }}</div>
-                <div class="col-4">{{ elective.text_teacher }}</div>
-                <div class="col-1">{{ elective.credit_unit }}</div>
-                <div class="col-3">пока ничего</div>
-            </div>
-            {% endfor %}
+        {% for elective in electives %}
+        <div class="row table-row">
+            <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
+            <div class="col-4">{{ elective.text_teacher }}</div>
+            <div class="col-1">{{ elective.credit_unit }}</div>
+            <div class="col-3">пока ничего</div>
         </div>
+        {% endfor %}
 {#        <table class="electives">#}
 {#            <thead>#}
 {#            <tr>#}
