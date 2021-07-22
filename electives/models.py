@@ -28,7 +28,7 @@ class Elective(models.Model):
     @property
     def text_teacher(self):
         if len(self.teachers.all()) > 0:
-            return ', '.join(self.teachers.all())
+            return ', '.join(map(lambda t: str(t), self.teachers.all()))
         else:
             return 'Не назначен'
 
