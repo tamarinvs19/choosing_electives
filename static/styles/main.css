@@ -1,0 +1,51 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 12pt;
+    color: #333;
+    background-color: #fff;
+}
+
+#div-electives {
+    margin-top: 10px;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+#div-electives > div.title-row {
+    padding: 8px 0;
+    font-weight: bold;
+}
+
+#div-electives > div > div.table-row {
+    padding: 8px 0;
+    border-top: 1px solid #e5e5e5;
+}
+
+
+
+
+table.electives {
+    width: 100%;
+    max-width: 100%;
+    background-color: #0000;
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: 12pt;
+}
+
+table.electives > tbody > tr > td {
+    padding: 8px;
+    vertical-align: top;
+    border-top: 1px solid #e5e5e5;
+}
+
+table.electives > thead > tr > th {
+    padding: 8px;
+    vertical-align: top;
+}
+
+table.electives > tbody > tr.elective-description > td {
+    border: none;
+    color: #444;
+    font-size: 11pt;
+}

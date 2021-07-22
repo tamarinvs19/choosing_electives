@@ -1,25 +1,52 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Elective_list</title>
-		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-		{% load static %}
-	</head>
-	<body>
-		<div class="container-md">
-			<div id="div-electives" class="col">
-			<ul class="elective-list list-group">
-				{% for elective in electives %}
-					<li class="list-group-item">
-						<span style="width:40%;margin:12px 3px">{{elective.name}}        </span>
-						<span style="width:40%;margin:12px 3px">{{elective.text_teacher}}</span>
-						<span style="width:20%;margin:12px 3px">{{elective.credit_unit}} </span>
-					</li>
-				{% endfor %}
-			</ul>		
-			</div>
-		</div>
-	</body>
-</html>
+{% extends "base.html" %}
+{% block head_title %}
+    Elective list
+{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div id="div-electives" class="col-md-8 offset-md-2">
+        <div class="row title-row">
+            <div class="col-4">Название</div>
+            <div class="col-4">Преподаватели</div>
+            <div class="col-1">Тип</div>
+            <div class="col-3">Статистика</div>
+        </div>
+        <div class="accordion" id="accordionElectives">
+            {% for elective in electives %}
+            <div class="row table-row">
+                <div class="col-4">{{ elective.name }}</div>
+                <div class="col-4">{{ elective.text_teacher }}</div>
+                <div class="col-1">{{ elective.credit_unit }}</div>
+                <div class="col-3">пока ничего</div>
+            </div>
+            {% endfor %}
+        </div>
+{#        <table class="electives">#}
+{#            <thead>#}
+{#            <tr>#}
+{#                <th>Название</th>#}
+{#                <th>Преподаватели</th>#}
+{#                <th>Тип</th>#}
+{#                <th>Статистика</th>#}
+{#            </tr>#}
+{#            </thead>#}
+{#            <tbody>#}
+{#                {% for elective in electives %}#}
+{#                    <tr>#}
+{#                        <td>{{elective.name}}</td>#}
+{#                        <td>{{elective.text_teacher}}</td>#}
+{#                        <td>{{elective.credit_unit}} </td>#}
+{#                        <td>пока ничего</td>#}
+{#                    </tr>#}
+{#                    <tr class="elective-description">#}
+{#                    <td>#}
+{#                        {{ elective.description }}#}
+{#                    </td>#}
+{#                    </tr>#}
+{#                {% endfor %}#}
+{#            </tbody>#}
+{#        </table>#}
+    </div>
+</div>
+{% endblock %}
