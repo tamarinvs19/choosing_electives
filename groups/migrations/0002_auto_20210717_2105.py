@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name='studentgroup',
-            name='min_number_of_exams_authumn',
+            name='min_number_of_exams_autumn',
             field=models.SmallIntegerField(default=1),
         ),
         migrations.AddField(

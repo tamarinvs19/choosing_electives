@@ -19,10 +19,9 @@ class StudentGroup(models.Model):
 
     curriculum: Curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
     course_value: YearOfEducation = models.ForeignKey(YearOfEducation, on_delete=models.CASCADE)
-    min_credit_unit_authumn = models.PositiveSmallIntegerField()
-    max_credit_unit_authumn = models.PositiveSmallIntegerField()
+    min_credit_unit_autumn = models.PositiveSmallIntegerField()
+    max_credit_unit_autumn = models.PositiveSmallIntegerField()
     min_credit_unit_spring = models.PositiveSmallIntegerField()
     max_credit_unit_spring = models.PositiveSmallIntegerField()
-    min_number_of_exams_authumn = models.SmallIntegerField(default=1)
+    min_number_of_exams_autumn = models.SmallIntegerField(default=1)
     min_number_of_exams_spring = models.SmallIntegerField(default=1)
-

@@ -30,8 +30,8 @@ class Migration(migrations.Migration):
             name='StudentGroup',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('min_credit_unit_authumn', models.PositiveSmallIntegerField()),
-                ('max_credit_unit_authumn', models.PositiveSmallIntegerField()),
+                ('min_credit_unit_autumn', models.PositiveSmallIntegerField()),
+                ('max_credit_unit_autumn', models.PositiveSmallIntegerField()),
                 ('min_credit_unit_spring', models.PositiveSmallIntegerField()),
                 ('max_credit_unit_spring', models.PositiveSmallIntegerField()),
                 ('course_value', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='groups.yearofeducation')),
