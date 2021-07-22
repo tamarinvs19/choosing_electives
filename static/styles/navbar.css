@@ -5,3 +5,8 @@
 .nav-link {
     color: white;
 }
+
+#account-icon:hover {
+    fill: white;
+    cursor: pointer;
+}
