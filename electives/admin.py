@@ -14,7 +14,7 @@ class TeacherOnElectiveInline(admin.TabularInline):
 
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'credit_unit', 'description']}),
+        (None, {'fields': ['name', 'codename', 'credit_unit', 'description']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
     inlines = [StudentOnElectiveInline, TeacherOnElectiveInline]

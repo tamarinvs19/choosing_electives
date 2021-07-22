@@ -12,22 +12,23 @@ class Elective(models.Model):
     :description: str           |  The description of this elective
     :max_number_students: int   |  Maximum of number of students on this elective
     :min_number_students: int   |  Minimum of number of students on this elective
-    :students:    list[Pesron]  |  The list of students on this elective
-    :teachers:    list[Pesron]  |  The list of teachers on this elective
+    :students:    list[Person]  |  The list of students on this elective
+    :teachers:    list[Person]  |  The list of teachers on this elective
     """
 
     name: str = models.CharField(max_length=200)
+    codename: str = models.CharField(max_length=100, unique=True)
     credit_unit: int = models.PositiveSmallIntegerField(default=0)
     description: str = models.TextField(default='')
     max_number_students: int = models.PositiveIntegerField(default=10)
     min_number_students: int = models.PositiveIntegerField(default=3)
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
-    teachers = models.ManyToManyField(Person, related_name='teaher_list', through='TeacherOnElective')
+    teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
 
     @property
     def text_teacher(self):
         if len(self.teachers.all()) > 0:
-            return self.teachers.all()[0]
+            return ', '.join(self.teachers.all())
         else:
             return 'Не назначен'
 
@@ -38,12 +39,13 @@ class BigElective(Elective):
 
     credit_unit = 4
 
-    :name: str  |  The name of this elective
+    :name: str       |  The name of this elective
+    :codename: str  |  The codename of this elective
     """
 
-    def __init__(self, name: str, *args, **kwargs):
+    def __init__(self, name: str, codename: str, *args, **kwargs):
         credit_unit: int = 4
-        super().__init__(name, credit_unit, args, kwargs)
+        super().__init__(name, codename, credit_unit, args, kwargs)
 
 
 class SmallElective(Elective):
@@ -52,12 +54,13 @@ class SmallElective(Elective):
 
     credit_unit = 3
 
-    :name: str  |  The name of this elective
+    :name: str      |  The name of this elective
+    :codename: str  |  The codename of this elective
     """
 
-    def __init__(self, name: str, *args, **kwargs):
+    def __init__(self, name: str, codename: str, *args, **kwargs):
         credit_unit: int = 3
-        super().__init__(name, credit_unit, args, kwargs)
+        super().__init__(name, codename, credit_unit, args, kwargs)
 
 
 class Seminar(Elective):
@@ -66,19 +69,20 @@ class Seminar(Elective):
 
     credit_unit = 2
 
-    :name: str  |  The name of this elective
+    :name: str      |  The name of this elective
+    :codename: str  |  The codename of this elective
     """
 
-    def __init__(self, name: str, *args, **kwargs):
+    def __init__(self, name: str, codename:str, *args, **kwargs):
         credit_unit: int = 2
-        super().__init__(name, credit_unit, args, kwargs)
+        super().__init__(name, codename, credit_unit, args, kwargs)
 
 
 class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
     is_necessary = models.BooleanField(default=False)
-    with_examenation = models.BooleanField(default=True)
+    with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
 
 
