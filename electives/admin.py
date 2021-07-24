@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Elective, StudentOnElective, TeacherOnElective
+from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -12,16 +12,28 @@ class TeacherOnElectiveInline(admin.TabularInline):
     extra = 1
 
 
+class KindOfElectiveInline(admin.TabularInline):
+    model = KindOfElective
+    extra = 1
+
+
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'codename', 'credit_unit', 'description']}),
+        (None, {'fields': ['name', 'codename', 'description']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
-    inlines = [StudentOnElectiveInline, TeacherOnElectiveInline]
-    list_display = ('name', 'credit_unit')
-    list_filter = ['credit_unit']
+    inlines = [KindOfElectiveInline, TeacherOnElectiveInline, StudentOnElectiveInline]
+    list_display = ('name',)
     search_fields = ['name']
 
 
+class ElectiveKindAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['credit_units', 'language']}),
+    ]
+    list_display = ('show_name',)
+
+
 admin.site.register(Elective, ElectiveAdmin)
+admin.site.register(ElectiveKind, ElectiveKindAdmin)
 

@@ -1,6 +1,43 @@
 """Elective models"""
+from django.contrib import admin
+from django.core.exceptions import ValidationError
 from django.db import models
 from users.models import Person
+
+
+KIND_NAMES: dict[int, str] = {
+    2: 'SEMINAR',
+    3: 'SMALL COURSE',
+    4: 'BIG COURSE',
+}
+
+LANG_NAMES: dict[str, str] = {
+    'ru': 'russian',
+    'en': 'english',
+}
+
+
+class ElectiveKind(models.Model):
+    """Kind of elective: big/small/seminar + language"""
+
+    credit_units: int = models.PositiveSmallIntegerField(choices=KIND_NAMES.items())
+    language: str = models.CharField(max_length=2, choices=LANG_NAMES.items())
+
+    def save(self, *args, **kwargs) -> None:
+        """Save the current instance only if there are not the same."""
+        if ElectiveKind.objects.filter(credit_units=self.credit_units, language=self.language).exists():
+            raise ValidationError('There is can be only one ElectiveKind instance with the same fields')
+        return super(ElectiveKind, self).save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return '{kind}: {lang}'.format(
+                kind=KIND_NAMES[self.credit_units],
+                lang=LANG_NAMES[self.language],
+        )
+
+    @admin.display(description='Title')
+    def show_name(self):
+        return str(self)
 
 
 class Elective(models.Model):
@@ -18,64 +55,25 @@ class Elective(models.Model):
 
     name: str = models.CharField(max_length=200)
     codename: str = models.CharField(max_length=100, unique=True)
-    credit_unit: int = models.PositiveSmallIntegerField(default=0)
     description: str = models.TextField(default='')
     max_number_students: int = models.PositiveIntegerField(default=10)
     min_number_students: int = models.PositiveIntegerField(default=3)
+    kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
 
     @property
     def text_teacher(self):
+        """Generate the teacher`s list in the text format."""
         if len(self.teachers.all()) > 0:
             return ', '.join(map(lambda t: str(t), self.teachers.all()))
         else:
             return 'Не назначен'
 
 
-class BigElective(Elective):
-    """
-    Course with both of theory and practice
-
-    credit_unit = 4
-
-    :name: str       |  The name of this elective
-    :codename: str  |  The codename of this elective
-    """
-
-    def __init__(self, name: str, codename: str, *args, **kwargs):
-        credit_unit: int = 4
-        super().__init__(name, codename, credit_unit, args, kwargs)
-
-
-class SmallElective(Elective):
-    """
-    Course with only theory
-
-    credit_unit = 3
-
-    :name: str      |  The name of this elective
-    :codename: str  |  The codename of this elective
-    """
-
-    def __init__(self, name: str, codename: str, *args, **kwargs):
-        credit_unit: int = 3
-        super().__init__(name, codename, credit_unit, args, kwargs)
-
-
-class Seminar(Elective):
-    """
-    Course with only practice
-
-    credit_unit = 2
-
-    :name: str      |  The name of this elective
-    :codename: str  |  The codename of this elective
-    """
-
-    def __init__(self, name: str, codename:str, *args, **kwargs):
-        credit_unit: int = 2
-        super().__init__(name, codename, credit_unit, args, kwargs)
+class KindOfElective(models.Model):
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE)
 
 
 class StudentOnElective(models.Model):
