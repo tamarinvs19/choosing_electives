@@ -6,9 +6,9 @@ from users.models import Person
 
 
 KIND_NAMES: dict[int, str] = {
-    2: 'SEMINAR',
-    3: 'SMALL COURSE',
-    4: 'BIG COURSE',
+    2: 'Семинар',
+    3: 'Малый',
+    4: 'Большой',
 }
 
 LANG_NAMES: dict[str, str] = {
@@ -36,8 +36,19 @@ class ElectiveKind(models.Model):
         )
 
     @admin.display(description='Title')
-    def show_name(self):
+    def show_name(self) -> str:
+        """Generate the string form for admin site"""
         return str(self)
+
+    @property
+    def short_name(self) -> str:
+        """Generate the short string form"""
+        if self.credit_units == 2:
+            return '{lang}s'.format(lang=self.language)
+        elif self.credit_units == 3:
+            return '{lang}1'.format(lang=self.language)
+        elif self.credit_units == 4:
+            return '{lang}2'.format(lang=self.language)
 
 
 class Elective(models.Model):
@@ -63,12 +74,17 @@ class Elective(models.Model):
     teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
 
     @property
-    def text_teacher(self):
+    def text_teacher(self) -> str:
         """Generate the teacher`s list in the text format."""
         if len(self.teachers.all()) > 0:
             return ', '.join(map(lambda t: str(t), self.teachers.all()))
         else:
-            return 'Не назначен'
+            return 'Не определен'
+
+    @property
+    def text_kinds(self) -> str:
+        """Generate the list of kinds in the short form."""
+        return ', '.join(map(lambda kind: kind.short_name, self.kinds.all()))
 
 
 class KindOfElective(models.Model):

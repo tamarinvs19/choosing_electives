@@ -1,50 +1,50 @@
 {% extends "base.html" %}
 {% block head_title %}
-    Elective list
+  Elective list
 {% endblock %}
 
 {% block body %}
-<div class="row">
+  <div class="row">
     <div id="div-electives" class="env-page col-md-8 offset-md-2">
-        <div class="row title-row">
-            <div class="col-4">Название</div>
-            <div class="col-4">Преподаватели</div>
-            <div class="col-1">Тип</div>
-            <div class="col-3">Статистика</div>
-        </div>
-        {% for elective in electives %}
+      <div class="row title-row">
+        <div class="col-4">Название</div>
+        <div class="col-4">Преподаватели</div>
+        <div class="col-2">Тип</div>
+        <div class="col-2">Статистика</div>
+      </div>
+      {% for elective in electives %}
         <div class="row table-row">
-            <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
-            <div class="col-4">{{ elective.text_teacher }}</div>
-            <div class="col-1">{{ elective.credit_unit }}</div>
-            <div class="col-3">пока ничего</div>
+          <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
+          <div class="col-4">{{ elective.text_teacher }}</div>
+          <div class="col-2">{{ elective.text_kinds }}</div>
+          <div class="col-2">пока ничего</div>
         </div>
-        {% endfor %}
-{#        <table class="electives">#}
-{#            <thead>#}
-{#            <tr>#}
-{#                <th>Название</th>#}
-{#                <th>Преподаватели</th>#}
-{#                <th>Тип</th>#}
-{#                <th>Статистика</th>#}
-{#            </tr>#}
-{#            </thead>#}
-{#            <tbody>#}
-{#                {% for elective in electives %}#}
-{#                    <tr>#}
-{#                        <td>{{elective.name}}</td>#}
-{#                        <td>{{elective.text_teacher}}</td>#}
-{#                        <td>{{elective.credit_unit}} </td>#}
-{#                        <td>пока ничего</td>#}
-{#                    </tr>#}
-{#                    <tr class="elective-description">#}
-{#                    <td>#}
-{#                        {{ elective.description }}#}
-{#                    </td>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-{#            </tbody>#}
-{#        </table>#}
+      {% endfor %}
+      {#        <table class="electives">#}
+      {#            <thead>#}
+      {#            <tr>#}
+      {#                <th>Название</th>#}
+      {#                <th>Преподаватели</th>#}
+      {#                <th>Тип</th>#}
+      {#                <th>Статистика</th>#}
+      {#            </tr>#}
+      {#            </thead>#}
+      {#            <tbody>#}
+      {#                {% for elective in electives %}#}
+      {#                    <tr>#}
+      {#                        <td>{{elective.name}}</td>#}
+      {#                        <td>{{elective.text_teacher}}</td>#}
+      {#                        <td>{{elective.credit_unit}} </td>#}
+      {#                        <td>пока ничего</td>#}
+      {#                    </tr>#}
+      {#                    <tr class="elective-description">#}
+      {#                    <td>#}
+      {#                        {{ elective.description }}#}
+      {#                    </td>#}
+      {#                    </tr>#}
+      {#                {% endfor %}#}
+      {#            </tbody>#}
+      {#        </table>#}
     </div>
-</div>
+  </div>
 {% endblock %}
