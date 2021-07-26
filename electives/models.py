@@ -12,8 +12,8 @@ KIND_NAMES: dict[int, str] = {
 }
 
 LANG_NAMES: dict[str, str] = {
-    'ru': 'по-русски',
-    'en': 'по-английски',
+    'ru': 'на русском',
+    'en': 'на английском',
 }
 
 

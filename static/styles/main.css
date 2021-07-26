@@ -12,8 +12,11 @@ body {
 }
 
 ul.description-table {
-    width: 100%;
     font-size: 11pt;
+}
+
+ul.description-table li:first-child {
+    font-weight: bold;
 }
 
 span.info-counter {
