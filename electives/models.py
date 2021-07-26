@@ -12,8 +12,8 @@ KIND_NAMES: dict[int, str] = {
 }
 
 LANG_NAMES: dict[str, str] = {
-    'ru': 'russian',
-    'en': 'english',
+    'ru': 'по-русски',
+    'en': 'по-английски',
 }
 
 
@@ -30,7 +30,7 @@ class ElectiveKind(models.Model):
         return super(ElectiveKind, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return '{kind}: {lang}'.format(
+        return '{kind} {lang}'.format(
                 kind=KIND_NAMES[self.credit_units],
                 lang=LANG_NAMES[self.language],
         )
@@ -82,9 +82,9 @@ class Elective(models.Model):
             return 'Не определен'
 
     @property
-    def text_kinds(self) -> str:
-        """Generate the list of kinds in the short form."""
-        return ', '.join(map(lambda kind: kind.short_name, self.kinds.all()))
+    def text_kinds(self) -> list[(str, str)]:
+        """Generate the list of kinds as pairs (short_form, long_form)."""
+        return [(kind.short_name, kind.show_name) for kind in self.kinds.all()]
 
 
 class KindOfElective(models.Model):
