@@ -11,35 +11,44 @@ body {
     padding-right: 30px;
 }
 
-#div-electives > div.title-row {
-    padding: 8px 0;
-    font-weight: bold;
+ul.description-table {
+    width: 100%;
+    font-size: 11pt;
 }
 
-#div-electives > div.table-row {
-    padding: 8px 0;
-    border-top: 1px solid #e5e5e5;
+span.info-counter {
+    position: absolute;
+    right: 50px;
 }
+
+#accordionElectivePage {
+    padding-bottom: 20px;
+}
+
 
 table.description-table {
     width: 100%;
     max-width: 100%;
     background-color: #0000;
-    font-size: 10pt;
+    font-size: 11pt;
     border-collapse: collapse;
     border-spacing: 0;
-}
-
-table.description-table tbody tr:nth-child(even) {
-    background-color: #eee;
+    border: 4px solid #e5e5e5;
+    border-radius: 15px;
 }
 
 table.description-table > tbody > tr > td,
 table.description-table > tbody > tr > th {
     padding: 5px;
-    border: 1px solid #e5e5e5;
 }
 
+div.elective-kinds {
+    font-size: 11pt;
+}
+
+div.save-button {
+    padding: 10px 0;
+}
 
 /*table.electives {*/
 /*    width: 100%;*/

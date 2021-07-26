@@ -16,7 +16,13 @@
         <div class="row table-row">
           <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
           <div class="col-4">{{ elective.text_teacher }}</div>
-          <div class="col-2">{{ elective.text_kinds }}</div>
+          <div class="col-2">
+            {% for short_form, long_form in elective.text_kinds %}
+              <span title="{{ long_form }}">
+                <u>{{ short_form }}</u>
+              </span>
+            {% endfor %}
+          </div>
           <div class="col-2">пока ничего</div>
         </div>
       {% endfor %}
