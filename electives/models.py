@@ -60,8 +60,9 @@ class Elective(models.Model):
     :description: str           |  The description of this elective
     :max_number_students: int   |  Maximum of number of students on this elective
     :min_number_students: int   |  Minimum of number of students on this elective
-    :students:    list[Person]  |  The list of students on this elective
-    :teachers:    list[Person]  |  The list of teachers on this elective
+    :kinds:                     /  ManyToManyField with possible kinds of this elective
+    :students:                  |  ManyToManyField with students on this elective
+    :teachers:                  |  ManyToManyField with teachers on this elective
     """
 
     name: str = models.CharField(max_length=200)
