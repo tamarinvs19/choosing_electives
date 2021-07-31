@@ -33,7 +33,7 @@ def read_secret_key() -> str:
         return key_file.readline().strip()
 
 
-SECRET_KEY = os.getenv('SECRET_KEY') or read_secret_key()
+SECRET_KEY = os.environ.get('SECRET_KEY') or read_secret_key()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
