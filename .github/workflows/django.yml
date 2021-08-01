@@ -28,7 +28,6 @@ jobs:
     - name: Run Tests
       shell: bash
       env: 
-        TEST_KEY: ${{ secrets.TEST_SECRET }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
-        echo "$TEST_KEY ::: $TEST_SECRET"
         python manage.py test
