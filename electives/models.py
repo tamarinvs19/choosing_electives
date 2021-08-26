@@ -79,7 +79,7 @@ class Elective(models.Model):
     name: str = models.CharField(max_length=200)
     codename: str = models.CharField(max_length=100, unique=True)
     description: str = models.TextField(default='')
-    max_number_students: int = models.PositiveIntegerField(default=10)
+    max_number_students: int = models.PositiveIntegerField(default=100)
     min_number_students: int = models.PositiveIntegerField(default=3)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
