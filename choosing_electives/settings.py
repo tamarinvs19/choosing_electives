@@ -1,17 +1,15 @@
-"""
-Django settings for choosing_electives project.
-"""
-
-from my_environ import Env
+"""Django settings for choosing_electives project."""
 
 import os
 from pathlib import Path
+
+from my_environ import Env
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(
-    DEBUG=(False, bool)
+    DEBUG=(True, bool),
 )
 env.read_env()
 
