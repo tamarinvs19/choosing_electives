@@ -1,0 +1,19 @@
+# DB
+*.sqlite3
+
+staticfiles
+*.log
+.cache_ggshield
+
+__pycache__/
+*compressed_static/
+
+# Environments
+.env
+.venv
+env/
+venv/
+
+# config
+.env_variables
+choosing_electives.ini
