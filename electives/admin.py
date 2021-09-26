@@ -29,7 +29,7 @@ class ElectiveAdmin(admin.ModelAdmin):
 
 class ElectiveKindAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['credit_units', 'language']}),
+        (None, {'fields': ['credit_units', 'language', 'semester']}),
     ]
     list_display = ('show_name',)
 

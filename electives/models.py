@@ -16,23 +16,34 @@ LANG_NAMES: dict[str, str] = {
     'en': 'на английском',
 }
 
+SEMESTERS: dict[int: str] = {
+    1: 'осенний',
+    2: 'весенний',
+}
+
 
 class ElectiveKind(models.Model):
     """Kind of elective: big/small/seminar + language"""
 
-    credit_units: int = models.PositiveSmallIntegerField(choices=KIND_NAMES.items())
-    language: str = models.CharField(max_length=2, choices=LANG_NAMES.items())
+    credit_units: int = models.PositiveSmallIntegerField(choices=KIND_NAMES.items(), default=4)
+    language: str = models.CharField(max_length=2, choices=LANG_NAMES.items(), default='ru')
+    semester: int = models.PositiveSmallIntegerField(choices=SEMESTERS.items(), default=1)
 
     def save(self, *args, **kwargs) -> None:
         """Save the current instance only if there are not the same."""
-        if ElectiveKind.objects.filter(credit_units=self.credit_units, language=self.language).exists():
+        if ElectiveKind.objects.filter(
+                credit_units=self.credit_units,
+                language=self.language,
+                semester=self.semester
+                ).exists():
             raise ValidationError('There is can be only one ElectiveKind instance with the same fields')
         return super(ElectiveKind, self).save(*args, **kwargs)
 
     def __str__(self) -> str:
-        return '{kind} {lang}'.format(
+        return '{kind} {lang} {semester}'.format(
                 kind=KIND_NAMES[self.credit_units],
                 lang=LANG_NAMES[self.language],
+                semester=SEMESTERS[self.semester],
         )
 
     @admin.display(description='Title')
@@ -60,7 +71,7 @@ class Elective(models.Model):
     :description: str           |  The description of this elective
     :max_number_students: int   |  Maximum of number of students on this elective
     :min_number_students: int   |  Minimum of number of students on this elective
-    :kinds:                     /  ManyToManyField with possible kinds of this elective
+    :kinds:                     |  ManyToManyField with possible kinds of this elective
     :students:                  |  ManyToManyField with students on this elective
     :teachers:                  |  ManyToManyField with teachers on this elective
     """
@@ -68,7 +79,7 @@ class Elective(models.Model):
     name: str = models.CharField(max_length=200)
     codename: str = models.CharField(max_length=100, unique=True)
     description: str = models.TextField(default='')
-    max_number_students: int = models.PositiveIntegerField(default=10)
+    max_number_students: int = models.PositiveIntegerField(default=100)
     min_number_students: int = models.PositiveIntegerField(default=3)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
