@@ -7,11 +7,17 @@ class Curriculum(models.Model):
     
     name: str = models.CharField(max_length=100, default='')
 
+    def __str__(self):
+        return self.name
+
 
 class YearOfEducation(models.Model):
     """One year education"""
 
     year: int = models.PositiveSmallIntegerField(default=1)
+
+    def __str__(self):
+        return '{}st year'.format(self.year)
 
 
 class StudentGroup(models.Model):
@@ -24,4 +30,9 @@ class StudentGroup(models.Model):
     min_credit_unit_spring = models.PositiveSmallIntegerField()
     max_credit_unit_spring = models.PositiveSmallIntegerField()
     min_number_of_exams_autumn = models.SmallIntegerField(default=1)
+    max_number_of_exams_autumn = models.SmallIntegerField(default=1)
     min_number_of_exams_spring = models.SmallIntegerField(default=1)
+    max_number_of_exams_spring = models.SmallIntegerField(default=1)
+
+    def __str__(self):
+        return '{0}: {1}'.format(str(self.curriculum), str(self.course_value))
