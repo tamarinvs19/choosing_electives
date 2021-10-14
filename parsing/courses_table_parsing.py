@@ -1,4 +1,5 @@
 """Model for parsing HTML page with the list of courses"""
+import math
 
 from bs4 import BeautifulSoup
 import requests
@@ -31,15 +32,52 @@ class Parser(object):
             for td, column in zip(tr.find_all('td'), columns):
                 line[column] = td.text
             table.append(line)
-            print(line)
         return table
 
     def generate_student_groups(self):
         self.load_page()
         table = self.parse_limitations()
-        print(table)
+        parsed_table = []
+        for line in table:
+            parsed_table.append({
+                'name': self._parse_student_group(line['student_group']),
+                'credits': self._parse_interval(line['credits']),
+                'exams': self._parse_interval(line['exams']),
+                'light_credits': self._parse_interval(line['light_credits']),
+                'cs_courses': self._parse_interval(line['cs_courses']),
+            })
+        return parsed_table
+
+    @staticmethod
+    def _parse_student_group(str_student_group: str) -> tuple[str, int, str]:
+        pattern = r'^(.+), \w+ (\d+) \((\w+\d+)\)$'
+        match = re.search(pattern, str_student_group)
+        if match is not None:
+            return match[1], int(match[2]), match[3]
+        raise ValueError('{0} is not a student group string form'.format(str_student_group))
+
+    @staticmethod
+    def _parse_interval(str_interval: str) -> tuple[int, int] | tuple[int, float]:
+        pattern1 = r'^от (\d+) до (\d+)$'
+        pattern2 = r'^(\d+)$'
+        pattern3 = r'^без ограничений$'
+        pattern4 = r'^не более (\d+)$'
+
+        match1 = re.search(pattern1, str_interval)
+        match2 = re.search(pattern2, str_interval)
+        match3 = re.search(pattern3, str_interval)
+        match4 = re.search(pattern4, str_interval)
+        if match1 is not None:
+            return int(match1[1]), int(match1[2])
+        if match2 is not None:
+            return int(match2[1]), int(match2[1])
+        if match3 is not None:
+            return 0, math.inf
+        if match4 is not None:
+            return 0, int(match4[1])
+        raise ValueError('{0} is not a interval form'.format(str_interval))
 
 
 if __name__ == '__main__':
     parser = Parser('https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html')
-    parser.generate_student_groups()
+    print(parser.generate_student_groups())
