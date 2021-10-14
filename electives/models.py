@@ -62,25 +62,49 @@ class ElectiveKind(models.Model):
             return '{lang}2'.format(lang=self.language)
 
 
+class ElectiveThematic(models.Model):
+    """
+    Elective thematic model
+    """
+
+    name = models.CharField(max_length=200)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+    @admin.display(description='Name')
+    def show_name(self) -> str:
+        """Generate the string form for admin site"""
+        return str(self)
+
+    def save(self, *args, **kwargs) -> None:
+        """Save the current instance only if there are not the same."""
+        if ElectiveThematic.objects.filter(name=self.name).exists():
+            raise ValidationError('There is can be only one ElectiveThematic instance with the same fields')
+        return super(ElectiveThematic, self).save(*args, **kwargs)
+
+
 class Elective(models.Model):
     """
     Elective model
 
-    :name:        str           |  The name of this elective
-    :credit_unit: int           |  The credit_unit of this elective
-    :description: str           |  The description of this elective
-    :max_number_students: int   |  Maximum of number of students on this elective
-    :min_number_students: int   |  Minimum of number of students on this elective
-    :kinds:                     |  ManyToManyField with possible kinds of this elective
-    :students:                  |  ManyToManyField with students on this elective
-    :teachers:                  |  ManyToManyField with teachers on this elective
+    :name:                 |  The name of this elective
+    :credit_unit:          |  The credit_unit of this elective
+    :description:          |  The description of this elective
+    :max_number_students:  |  Maximum of number of students on this elective
+    :min_number_students:  |  Minimum of number of students on this elective
+    :thematic:             |  ForeignKey with thematic of this elective
+    :kinds:                |  ManyToManyField with possible kinds of this elective
+    :students:             |  ManyToManyField with students on this elective
+    :teachers:             |  ManyToManyField with teachers on this elective
     """
 
-    name: str = models.CharField(max_length=200)
-    codename: str = models.CharField(max_length=100, unique=True)
-    description: str = models.TextField(default='')
-    max_number_students: int = models.PositiveIntegerField(default=100)
-    min_number_students: int = models.PositiveIntegerField(default=3)
+    name = models.CharField(max_length=200)
+    codename = models.CharField(max_length=100, unique=True)
+    description = models.TextField(default='')
+    max_number_students = models.PositiveIntegerField(default=100)
+    min_number_students = models.PositiveIntegerField(default=3)
+    thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')

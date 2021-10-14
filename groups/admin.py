@@ -10,13 +10,17 @@ class StudentGroupAdmin(admin.ModelAdmin):
             'max_credit_unit_autumn',
             'min_number_of_exams_autumn',
             'max_number_of_exams_autumn',
+            'max_light_credit_unit_autumn',
+            'max_cs_courses_autumn',
         ]}),
         ('Spring', {'fields': [
             'min_credit_unit_spring',
             'max_credit_unit_spring',
             'min_number_of_exams_spring',
             'max_number_of_exams_spring',
-        ]}),
+            'max_light_credit_unit_spring',
+            'max_cs_courses_spring',
+    ]}),
     ]
     list_display = ('curriculum', 'course_value')
 
