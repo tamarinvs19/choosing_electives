@@ -1,4 +1,5 @@
 """Group models"""
+from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -10,6 +11,12 @@ class Curriculum(models.Model):
     def __str__(self):
         return self.name
 
+    def save(self, *args, **kwargs) -> None:
+        """Save the current instance only if there are not the same."""
+        if Curriculum.objects.filter(credit_units=self.name).exists():
+            raise ValidationError('There is can be only one Curriculum instance with the same fields')
+        return super(Curriculum, self).save(*args, **kwargs)
+
 
 class YearOfEducation(models.Model):
     """One year education"""
@@ -18,6 +25,12 @@ class YearOfEducation(models.Model):
 
     def __str__(self):
         return '{}st year'.format(self.year)
+
+    def save(self, *args, **kwargs) -> None:
+        """Save the current instance only if there are not the same."""
+        if YearOfEducation.objects.filter(credit_units=self.year).exists():
+            raise ValidationError('There is can be only one YearOfEducation instance with the same fields')
+        return super(YearOfEducation, self).save(*args, **kwargs)
 
 
 class StudentGroup(models.Model):
@@ -44,3 +57,12 @@ class StudentGroup(models.Model):
 
     def __str__(self):
         return '{0}: {1}'.format(str(self.curriculum), str(self.course_value))
+
+    def save(self, *args, **kwargs) -> None:
+        """Save the current instance only if there are not the same."""
+        if StudentGroup.objects.filter(
+                curriculum=self.curriculum,
+                course_value=self.course_value,
+        ).exists():
+            raise ValidationError('There is can be only one StudentGroup instance with the same fields')
+        return super(StudentGroup, self).save(*args, **kwargs)
