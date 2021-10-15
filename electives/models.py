@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import models
+
+from groups.models import StudentGroup
 from users.models import Person
 
 
@@ -67,7 +69,7 @@ class ElectiveThematic(models.Model):
     Elective thematic model
     """
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
 
     def __str__(self) -> str:
         return str(self.name)
@@ -76,12 +78,6 @@ class ElectiveThematic(models.Model):
     def show_name(self) -> str:
         """Generate the string form for admin site"""
         return str(self)
-
-    def save(self, *args, **kwargs) -> None:
-        """Save the current instance only if there are not the same."""
-        if ElectiveThematic.objects.filter(name=self.name).exists():
-            raise ValidationError('There is can be only one ElectiveThematic instance with the same fields')
-        return super(ElectiveThematic, self).save(*args, **kwargs)
 
 
 class Elective(models.Model):
@@ -131,7 +127,6 @@ class KindOfElective(models.Model):
 class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
-    is_necessary = models.BooleanField(default=False)
     with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
 
@@ -140,3 +135,7 @@ class TeacherOnElective(models.Model):
     teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
 
+
+class MandatoryElectiveForStudentGroup(models.Model):
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE)

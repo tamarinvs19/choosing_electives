@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from ..models import ElectiveKind
-from ..models import KIND_NAMES, LANG_NAMES
 
 
 class TestElectiveKinds(TestCase):
