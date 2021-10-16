@@ -98,18 +98,21 @@ class Elective(models.Model):
     name = models.CharField(max_length=200)
     codename = models.CharField(max_length=100, unique=True)
     description = models.TextField(default='')
-    max_number_students = models.PositiveIntegerField(default=100)
+    max_number_students = models.PositiveIntegerField(default=255)
     min_number_students = models.PositiveIntegerField(default=3)
     thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
+    text_teachers = models.CharField(max_length=100, default='', null=True)
 
     @property
     def text_teacher(self) -> str:
-        """Generate the teacher`s list in the text format."""
+        """Generate the teacher's list in the text format."""
         if len(self.teachers.all()) > 0:
             return ', '.join(map(lambda t: str(t), self.teachers.all()))
+        elif self.text_teachers is not None:
+            return self.text_teachers
         else:
             return 'Не определен'
 
@@ -136,6 +139,6 @@ class TeacherOnElective(models.Model):
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
 
 
-class MandatoryElectiveForStudentGroup(models.Model):
+class MandatoryElectiveInStudentGroup(models.Model):
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
     student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE)
