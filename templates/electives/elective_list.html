@@ -12,19 +12,24 @@
         <div class="col-2">Тип</div>
         <div class="col-2">Статистика</div>
       </div>
+      {% for thematic in thematics %}
+        <h3>{{ thematic.name }}</h3>
       {% for elective in electives %}
+          {% if elective.thematic == thematic %}
         <div class="row table-row">
           <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
           <div class="col-4">{{ elective.text_teacher }}</div>
           <div class="col-2">
-            {% for short_form, long_form in elective.text_kinds %}
-              <span title="{{ long_form }}">
+            {% for short_form, long_form, semester in elective.text_kinds %}
+              <span title="{{ long_form }}" class="semester-{{ semester }}">
                 <u>{{ short_form }}</u>
               </span>
             {% endfor %}
           </div>
           <div class="col-2">пока ничего</div>
         </div>
+          {% endif %}
+      {% endfor %}
       {% endfor %}
       {#        <table class="electives">#}
       {#            <thead>#}

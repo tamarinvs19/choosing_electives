@@ -118,8 +118,8 @@ class Elective(models.Model):
 
     @property
     def text_kinds(self) -> list[(str, str)]:
-        """Generate the list of kinds as pairs (short_form, long_form)."""
-        return [(kind.short_name, kind.show_name) for kind in self.kinds.all()]
+        """Generate the list of kinds as pairs (short_form, long_form, semester)."""
+        return [(kind.short_name, kind.show_name, kind.semester) for kind in self.kinds.all()]
 
 
 class KindOfElective(models.Model):

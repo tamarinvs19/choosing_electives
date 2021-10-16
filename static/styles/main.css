@@ -38,23 +38,6 @@ span.info-counter {
     padding-bottom: 20px;
 }
 
-
-table.description-table {
-    width: 100%;
-    max-width: 100%;
-    background-color: #0000;
-    font-size: 11pt;
-    border-collapse: collapse;
-    border-spacing: 0;
-    border: 4px solid #e5e5e5;
-    border-radius: 15px;
-}
-
-table.description-table > tbody > tr > td,
-table.description-table > tbody > tr > th {
-    padding: 5px;
-}
-
 div.elective-kinds {
     font-size: 11pt;
 }
@@ -63,28 +46,10 @@ div.save-button {
     padding: 10px 0;
 }
 
-/*table.electives {*/
-/*    width: 100%;*/
-/*    max-width: 100%;*/
-/*    background-color: #0000;*/
-/*    border-collapse: collapse;*/
-/*    border-spacing: 0;*/
-/*    font-size: 12pt;*/
-/*}*/
+.semester-1 {
+    background-color: gold;
+}
 
-/*table.electives > tbody > tr > td {*/
-/*    padding: 8px;*/
-/*    vertical-align: top;*/
-/*    border-top: 1px solid #e5e5e5;*/
-/*}*/
-
-/*table.electives > thead > tr > th {*/
-/*    padding: 8px;*/
-/*    vertical-align: top;*/
-/*}*/
-
-/*table.electives > tbody > tr.elective-description > td {*/
-/*    border: none;*/
-/*    color: #444;*/
-/*    font-size: 11pt;*/
-/*}*/
+.semester-2 {
+    background-color: yellowgreen;
+}
