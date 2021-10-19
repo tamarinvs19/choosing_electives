@@ -2,60 +2,10 @@
 {% block head_title %}
   Elective list
 {% endblock %}
-
 {% block body %}
-  <div class="row">
-    <div id="div-electives" class="env-page col-md-8 offset-md-2">
-      <div class="row title-row">
-        <div class="col-4">Название</div>
-        <div class="col-4">Преподаватели</div>
-        <div class="col-2">Тип</div>
-        <div class="col-2">Статистика</div>
-      </div>
-      {% for thematic in thematics %}
-        <h3>{{ thematic.name }}</h3>
-      {% for elective in electives %}
-          {% if elective.thematic == thematic %}
-        <div class="row table-row">
-          <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
-          <div class="col-4">{{ elective.text_teacher }}</div>
-          <div class="col-2">
-            {% for short_form, long_form, semester in elective.text_kinds %}
-              <span title="{{ long_form }}" class="semester-{{ semester }}">
-                <u>{{ short_form }}</u>
-              </span>
-            {% endfor %}
-          </div>
-          <div class="col-2">пока ничего</div>
-        </div>
-          {% endif %}
-      {% endfor %}
-      {% endfor %}
-      {#        <table class="electives">#}
-      {#            <thead>#}
-      {#            <tr>#}
-      {#                <th>Название</th>#}
-      {#                <th>Преподаватели</th>#}
-      {#                <th>Тип</th>#}
-      {#                <th>Статистика</th>#}
-      {#            </tr>#}
-      {#            </thead>#}
-      {#            <tbody>#}
-      {#                {% for elective in electives %}#}
-      {#                    <tr>#}
-      {#                        <td>{{elective.name}}</td>#}
-      {#                        <td>{{elective.text_teacher}}</td>#}
-      {#                        <td>{{elective.credit_unit}} </td>#}
-      {#                        <td>пока ничего</td>#}
-      {#                    </tr>#}
-      {#                    <tr class="elective-description">#}
-      {#                    <td>#}
-      {#                        {{ elective.description }}#}
-      {#                    </td>#}
-      {#                    </tr>#}
-      {#                {% endfor %}#}
-      {#            </tbody>#}
-      {#        </table>#}
+    <div class="accordion" id="accordionPanelsElective">
+    {% for thematic in thematics %}
+        {% include "electives/themetic_list.html" with thematic=thematic electives=electives %}
+    {% endfor %}
     </div>
-  </div>
 {% endblock %}

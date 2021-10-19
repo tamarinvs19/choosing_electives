@@ -45,7 +45,7 @@
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
                  data-bs-parent="#accordionElectivePage">
-              <div class="accordion-body">
+              <div class="elective-description accordion-body">
                 {{ elective.description }}
               </div>
             </div>
@@ -112,7 +112,7 @@
           <h5>Выбор курса</h5>
           <div class="elective-kinds">
             <ul class="list-group">
-              {% for short_form, long_form in elective.text_kinds %}
+              {% for short_form, long_form, semester in elective.text_kinds %}
                 <li class="list-group-item">
                   <input class="form-check-input me-1" type="checkbox" value="{{ short_form }}" aria-label="...">
                   {{ long_form }}

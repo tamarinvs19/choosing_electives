@@ -57,11 +57,17 @@ class ElectiveKind(models.Model):
     def short_name(self) -> str:
         """Generate the short string form"""
         if self.credit_units == 2:
-            return '{lang}s'.format(lang=self.language)
+            return '{lang}s-{semester}'.format(
+                lang=self.language, semester=self.semester,
+            )
         elif self.credit_units == 3:
-            return '{lang}1'.format(lang=self.language)
+            return '{lang}1-{semester}'.format(
+                lang=self.language, semester=self.semester,
+            )
         elif self.credit_units == 4:
-            return '{lang}2'.format(lang=self.language)
+            return '{lang}2-{semester}'.format(
+                lang=self.language, semester=self.semester,
+            )
 
 
 class ElectiveThematic(models.Model):
@@ -117,7 +123,7 @@ class Elective(models.Model):
             return 'Не определен'
 
     @property
-    def text_kinds(self) -> list[(str, str)]:
+    def text_kinds(self) -> list[(str, str, str)]:
         """Generate the list of kinds as pairs (short_form, long_form, semester)."""
         return [(kind.short_name, kind.show_name, kind.semester) for kind in self.kinds.all()]
 

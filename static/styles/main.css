@@ -11,12 +11,12 @@ body {
     padding-right: 30px;
 }
 
-#div-electives > div.title-row {
+.title-row {
     padding: 8px 0;
     font-weight: bold;
 }
 
-#div-electives > div.table-row {
+.table-row {
     padding: 8px 0;
     border-top: 1px solid #e5e5e5;
 }
@@ -29,7 +29,7 @@ ul.description-table li:first-child {
     font-weight: bold;
 }
 
-span.info-counter {
+.info-counter {
     position: absolute;
     right: 50px;
 }
@@ -38,11 +38,11 @@ span.info-counter {
     padding-bottom: 20px;
 }
 
-div.elective-kinds {
+.elective-kinds {
     font-size: 11pt;
 }
 
-div.save-button {
+.save-button {
     padding: 10px 0;
 }
 
@@ -52,4 +52,12 @@ div.save-button {
 
 .semester-2 {
     background-color: yellowgreen;
+}
+
+.elective-row:hover {
+    background-color: #f3f3f3;
+}
+
+.elective-description {
+    word-break: break-all;
 }
