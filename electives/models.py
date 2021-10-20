@@ -56,17 +56,18 @@ class ElectiveKind(models.Model):
     @property
     def short_name(self) -> str:
         """Generate the short string form"""
+        semester = {1: 'H', 2: 'S'}[self.semester]
         if self.credit_units == 2:
-            return '{lang}s-{semester}'.format(
-                lang=self.language, semester=self.semester,
+            return '{lang}s{semester}'.format(
+                lang=self.language, semester=semester,
             )
         elif self.credit_units == 3:
-            return '{lang}1-{semester}'.format(
-                lang=self.language, semester=self.semester,
+            return '{lang}1{semester}'.format(
+                lang=self.language, semester=semester,
             )
         elif self.credit_units == 4:
-            return '{lang}2-{semester}'.format(
-                lang=self.language, semester=self.semester,
+            return '{lang}2{semester}'.format(
+                lang=self.language, semester=semester,
             )
 
 

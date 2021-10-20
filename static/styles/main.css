@@ -6,7 +6,7 @@ body {
 }
 
 .env-page {
-    margin-top: 10px;
+    padding-top: 10px;
     padding-left: 30px;
     padding-right: 30px;
 }
@@ -60,4 +60,9 @@ ul.description-table li:first-child {
 
 .elective-description {
     word-break: break-all;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #E0F2F1;
+    color: #01579B;
 }
