@@ -47,11 +47,11 @@ ul.description-table li:first-child {
 }
 
 .semester-1 {
-    background-color: gold;
+    /*background-color: gold;*/
 }
 
 .semester-2 {
-    background-color: yellowgreen;
+    /*background-color: yellowgreen;*/
 }
 
 .elective-row:hover {
@@ -65,4 +65,50 @@ ul.description-table li:first-child {
 .accordion-button:not(.collapsed) {
     background-color: #E0F2F1;
     color: #01579B;
+}
+
+.kind-button {
+    display: inline-flex;
+    border: 1px solid gray;
+    border-radius: 2px;
+    transition: .2s ease-in-out;
+    color: #333333;
+    padding: 3px 5px;
+    margin: 2px;
+    font-family: "Iosevka Medium", monospace;
+}
+
+.semester-1 {
+    --color-1-f: rgba(255, 220, 51, 0.5);
+    --color-2-f: rgba(225, 180, 30, 0.1);
+    background: linear-gradient(var(--color-1-f), var(--color-2-f)) var(--color-2-f);
+}
+.semester-1:hover {
+    background: linear-gradient(var(--color-2-f), var(--color-1-f)) var(--color-2-f);
+    cursor: pointer;
+}
+.checkbox-kind:checked + .semester-1 {
+    background: linear-gradient(rgb(225, 180, 30), rgb(255, 220, 51)) rgb(225, 180, 30);
+    box-shadow: 0 0 0 1px #bbb inset, 0 1px 3px rgba(0,0,0,.5) inset, 0 1px 2px #fff;
+}
+.semester-2 {
+    --color-1-s: rgba(194, 227, 132, 0.5);
+    --color-2-s: rgba(154, 205, 50, 0.1);
+    background: linear-gradient(var(--color-1-s), var(--color-2-s)) var(--color-2-s);
+}
+.semester-2:hover {
+    background: linear-gradient(var(--color-2-s), var(--color-1-s)) var(--color-2-s);
+    cursor: pointer;
+}
+.checkbox-kind:checked + .semester-2 {
+    background: linear-gradient(rgb(154, 205, 50), rgb(194, 227, 132)) rgb(154, 205, 50);
+    box-shadow: 0 0 0 1px #bbb inset, 0 1px 3px rgba(0,0,0,.5) inset, 0 1px 2px #fff;
+}
+
+.checkbox-kind {
+    display: none;
+}
+
+.statistic {
+    margin-left: 4px;
 }
