@@ -5,7 +5,7 @@ from .models import StudentGroup, YearOfEducation, Curriculum
 class StudentGroupAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['curriculum', 'course_value']}),
-        ('Autumn', {'fields': [
+        ('Fall', {'fields': [
             'min_credit_unit_autumn',
             'max_credit_unit_autumn',
             'min_number_of_exams_autumn',
