@@ -54,9 +54,14 @@ class ElectiveKind(models.Model):
         return str(self)
 
     @property
+    def long_name(self) -> str:
+        """Generate the full string form"""
+        return str(self)
+
+    @property
     def short_name(self) -> str:
         """Generate the short string form"""
-        semester = {1: 'H', 2: 'S'}[self.semester]
+        semester = {1: 'F', 2: 'S'}[self.semester]
         if self.credit_units == 2:
             return '{lang}s{semester}'.format(
                 lang=self.language, semester=semester,
@@ -126,7 +131,7 @@ class Elective(models.Model):
     @property
     def text_kinds(self) -> list[(str, str, str)]:
         """Generate the list of kinds as pairs (short_form, long_form, semester)."""
-        return [(kind.short_name, kind.show_name, kind.semester) for kind in self.kinds.all()]
+        return [(kind.short_name, kind.long_name, kind.semester) for kind in self.kinds.all()]
 
 
 class KindOfElective(models.Model):
@@ -137,6 +142,7 @@ class KindOfElective(models.Model):
 class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
 
