@@ -7,6 +7,6 @@
 }
 
 #account-icon:hover {
-  fill: white;
   cursor: pointer;
+  fill: white;
 }
