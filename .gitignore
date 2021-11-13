@@ -1,12 +1,12 @@
 # DB
 *.sqlite3
 
+# Django
 staticfiles
-*.log
-.cache_ggshield
-
-__pycache__/
 *compressed_static/
+
+# Python
+__pycache__/
 
 # Environments
 .env
@@ -17,3 +17,11 @@ venv/
 # config
 .env_variables
 choosing_electives.ini
+
+# Dependencies
+/node_modules/
+package-lock.json
+
+*.log
+.cache_ggshield
+
