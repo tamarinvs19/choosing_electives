@@ -1,4 +1,5 @@
 import json
+from typing import cast
 
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
@@ -43,7 +44,7 @@ def open_elective_page(request, elective_id, **kwargs):
 @require_POST
 def save_elective_kinds(request, elective_id, **kwargs):
     elective = Elective.objects.get(id=elective_id)
-    user = request.user
+    user = cast(request.user, Person)
     kinds = request.POST.getlist('kinds', [])
     controller.save_kinds(user, elective, kinds)
 
@@ -53,7 +54,7 @@ def save_elective_kinds(request, elective_id, **kwargs):
 @login_required
 @require_POST
 def change_elective_kind(request, **kwargs):
-    user = request.user
+    user = cast(request.user, Person)
     kind_id = request.POST.get('kind_id', None)
     elective_id = request.POST.get('elective_id', None)
     if kind_id is not None and elective_id is not None:
