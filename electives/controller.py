@@ -8,7 +8,8 @@ from users.models import Person
 
 
 KindWithSelectStatus = namedtuple('KindWithSelectStatus', ['kind', 'selected'])
-KindWithSelectStatusAndStatistic = namedtuple('KindWithSelectStatusAndStatistic', ['kind', 'selected', 'statistic'])
+KindWithSelectStatusAndStatistic = namedtuple('KindWithSelectStatusAndStatistic',
+                                              ['kind', 'selected', 'statistic'])
 ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 
 
@@ -61,7 +62,6 @@ def get_student_elective_kinds(student: Person, elective: Elective) -> List[Kind
 
 def save_kinds(student: Person, elective: Elective, kind_short_names: List[str]):
     selected_kinds = [kind for kind in ElectiveKind.objects.all() if kind.short_name in kind_short_names]
-    logger.debug([selected_kinds, kind_short_names])
     student_on_electives = StudentOnElective.objects.filter(student=student, elective=elective).all()
     student_kinds = [
         student_on_elective.kind

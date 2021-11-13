@@ -15,7 +15,7 @@ from .models import Elective, ElectiveThematic, StudentOnElective, ElectiveKind
 
 @login_required
 def open_elective_list(request, **kwargs):
-    user = request.user
+    user = cast(Person, request.user)
     groups = controller.get_electives_by_thematics(user)
     context = {
         'elective_groups': groups,
@@ -25,7 +25,7 @@ def open_elective_list(request, **kwargs):
 
 @login_required
 def open_elective_page(request, elective_id, **kwargs):
-    user = request.user
+    user = cast(Person, request.user)
     elective = Elective.objects.get(id=elective_id)
     students = {
         soe.student for soe in
@@ -44,7 +44,7 @@ def open_elective_page(request, elective_id, **kwargs):
 @require_POST
 def save_elective_kinds(request, elective_id, **kwargs):
     elective = Elective.objects.get(id=elective_id)
-    user = cast(request.user, Person)
+    user = cast(Person, request.user)
     kinds = request.POST.getlist('kinds', [])
     controller.save_kinds(user, elective, kinds)
 
@@ -54,12 +54,16 @@ def save_elective_kinds(request, elective_id, **kwargs):
 @login_required
 @require_POST
 def change_elective_kind(request, **kwargs):
-    user = cast(request.user, Person)
+    user = cast(Person, request.user)
     kind_id = request.POST.get('kind_id', None)
     elective_id = request.POST.get('elective_id', None)
     if kind_id is not None and elective_id is not None:
-        controller.change_kinds(user, int(elective_id), int(kind_id))
+        elective_id, kind_id = int(elective_id), int(kind_id)
+        logger.debug(user)
+        controller.change_kinds(user, elective_id, kind_id)
+        logger.debug([elective_id, kind_id])
         elective = Elective.objects.get(id=elective_id)
+        logger.debug([elective_id, kind_id])
         kind = ElectiveKind.objects.get(id=kind_id)
         students_counts = {kind.id: count for kind, count in controller.get_statistics(elective).items()}
         if kind.id in students_counts:
