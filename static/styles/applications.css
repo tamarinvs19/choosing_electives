@@ -1,8 +1,9 @@
 .application {
   position: relative;
-  margin-bottom: 5px;
 
   width: 260px;
+
+  margin-bottom: 5px;
 
   cursor: move;
 }
@@ -16,7 +17,6 @@
 }
 
 .elective-kind {
-
   border: #747474 solid 1px;
   border-radius: 0.2rem;
 
