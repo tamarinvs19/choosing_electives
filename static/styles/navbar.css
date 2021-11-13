@@ -1,12 +1,12 @@
 .navbar-div {
-    background: #1A535C;
+  background: #1a535c;
 }
 
 .nav-link {
-    color: white;
+  color: white;
 }
 
 #account-icon:hover {
-    fill: white;
-    cursor: pointer;
+  fill: white;
+  cursor: pointer;
 }
