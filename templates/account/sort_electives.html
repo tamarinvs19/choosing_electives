@@ -36,17 +36,25 @@
         <div class="card-subtitle text-muted">
           <div class="card-element btn-group elective-kind">
             <button type="button" class="btn dropdown-toggle small-font"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false"
+                    id="kind-{{ application.elective_id }}-{{ application.kind_id }}">
               {{ application.kind.long_name }}
             </button>
             <ul class="dropdown-menu small-font">
               {% for short_kind, full_kind, _ in application.elective.text_kinds %}
-                 <li><a class="dropdown-item" href="#">{{ full_kind }}</a></li>
+                 <li>
+                   <a class="dropdown-item" href="#"
+                      onclick="changeKind({{ application.elective_id }}, {{ application.kind_id }})">
+                     {{ full_kind }}
+                   </a>
+                 </li>
               {% endfor %}
             </ul>
           </div>
           <div class="card-element credit-units">
-            {{ application.kind.credit_units }} з.е.
+            <span id="credits-{{ application.elective_id }}-{{ application.kind_id }}">
+              {{ application.credit_units }}
+            </span> з.е.
           </div>
         </div>
         <div class="exam" role="group">
@@ -54,7 +62,8 @@
                  class="exam-container small-font">
             Экзамен
             <input type="checkbox"
-                   {% if application.kind.credit_units == 2 %}
+                   onclick="changeExam({{ application.elective_id }}, {{ application.kind_id }})"
+                   {% if application.is_seminar %}
                      disabled
                    {% else %}
                      {% if application.with_examination %} checked {% endif %}
@@ -80,14 +89,49 @@
   </div>
 </div>
 <script>
-new Sortable(main, {
-  group: 'electives',
-});
-new Sortable(fall, {
-  group: 'electives',
-});
-new Sortable(spring, {
-  group: 'electives',
-});
+
+let mainSortable = new Sortable(main, {
+    group: 'electives',
+  });
+  let fallSortable = new Sortable(fall, {
+    group: 'electives',
+  });
+  let springSortable = new Sortable(spring, {
+    group: 'electives',
+  });
+
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+  const csrftoken = getCookie('csrftoken');
+
+  function changeExam(electiveId, kindId) {
+    $.post("{% url 'electives:change_exam' %}",
+      {'elective_id': electiveId, 'kind_id': kindId, 'csrfmiddlewaretoken': csrftoken},
+      function(data) {
+        if (data['OK'] === true) {
+          $(`#credits-${electiveId}-${kindId}`)[0].innerHTML = data['credit_units'];
+        }
+        if (data['message']) {
+          // show message
+        }
+      });
+  }
+  function changeKind() {
+    // TODO: not implemented
+  }
+
 </script>
 {% endblock %}

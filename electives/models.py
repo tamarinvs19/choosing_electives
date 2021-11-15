@@ -146,6 +146,19 @@ class StudentOnElective(models.Model):
     with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
 
+    @property
+    def credit_units(self) -> int:
+        if self.kind.credit_units == 2:
+            return 2
+        elif self.with_examination:
+            return self.kind.credit_units
+        else:
+            return self.kind.credit_units - 1
+
+    @property
+    def is_seminar(self) -> bool:
+        return self.kind.credit_units == 2
+
 
 class TeacherOnElective(models.Model):
     teacher = models.ForeignKey(Person, on_delete=models.CASCADE)

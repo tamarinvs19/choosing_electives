@@ -59,11 +59,8 @@ def change_elective_kind(request, **kwargs):
     elective_id = request.POST.get('elective_id', None)
     if kind_id is not None and elective_id is not None:
         elective_id, kind_id = int(elective_id), int(kind_id)
-        logger.debug(user)
         controller.change_kinds(user, elective_id, kind_id)
-        logger.debug([elective_id, kind_id])
         elective = Elective.objects.get(id=elective_id)
-        logger.debug([elective_id, kind_id])
         kind = ElectiveKind.objects.get(id=kind_id)
         students_counts = {kind.id: count for kind, count in controller.get_statistics(elective).items()}
         if kind.id in students_counts:
@@ -71,4 +68,30 @@ def change_elective_kind(request, **kwargs):
         else:
             students_count = 0
         return JsonResponse({'students_count': students_count})
+    return HttpResponseBadRequest
+
+
+@login_required
+@require_POST
+def change_exam(request, **kwargs):
+    user = cast(Person, request.user)
+    kind_id = request.POST.get('kind_id', None)
+    elective_id = request.POST.get('elective_id', None)
+    if kind_id is not None and elective_id is not None:
+        elective_id, kind_id = int(elective_id), int(kind_id)
+        with_exam = controller.change_exam(user, elective_id, kind_id)
+        if with_exam is not None:
+            return JsonResponse({
+                'with_exam': with_exam,
+                'credit_units':
+                    StudentOnElective.objects.get(
+                        student=user, elective_id=elective_id, kind_id=kind_id
+                    ).credit_units,
+                'OK': True,
+            })
+        else:
+            return JsonResponse({
+                'message': 'There are not any applications with received elective and kind',
+                'OK': False,
+            })
     return HttpResponseBadRequest

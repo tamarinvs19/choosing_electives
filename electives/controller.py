@@ -1,5 +1,5 @@
 from collections import namedtuple, Counter
-from typing import Tuple, List, Dict
+from typing import Tuple, List, Dict, Optional
 
 from loguru import logger
 
@@ -112,3 +112,26 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
                 elective=elective,
                 kind=kind,
             )
+
+
+def change_exam(student: Person, elective_id: int, kind_id: int) -> Optional[bool]:
+    kind = ElectiveKind.objects.filter(id=kind_id).all()
+    elective = Elective.objects.filter(id=elective_id).all()
+    if len(kind) == 1 and len(elective) == 1:
+        kind = kind[0]
+        elective = elective[0]
+        if kind.credit_units == 2:
+            return None
+
+        try:
+            student_on_elective = StudentOnElective.objects.get(
+                student=student,
+                elective=elective,
+                kind=kind,
+            )
+        except Elective.DoesNotExist as _:
+            return None
+
+        student_on_elective.with_examination = not student_on_elective.with_examination
+        student_on_elective.save()
+        return student_on_elective.with_examination
