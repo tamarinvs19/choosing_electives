@@ -33,7 +33,8 @@ def get_electives_by_thematics(student: Person) -> Dict[ElectiveThematic, List[E
 
 
 def get_statistics(elective: Elective) -> Dict[ElectiveKind, int]:
-    students_on_elective = StudentOnElective.objects.filter(elective=elective)\
+    students_on_elective = StudentOnElective.objects\
+        .filter(elective=elective)\
         .select_related('kind')
     kinds = Counter([soe.kind for soe in students_on_elective])
     return dict(kinds)
