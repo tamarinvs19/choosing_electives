@@ -1,0 +1,50 @@
+<div class="application card small-font" id="application-{{ application.id }}">
+  <div class="elective-name card-header">
+    <a href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
+      {{ application.elective.name }}
+    </a>
+  </div>
+
+  <div class="application-body card-body">
+    <div class="card-subtitle text-muted">
+      <div class="card-element btn-group elective-kind">
+        <button type="button" class="btn dropdown-toggle small-font"
+                data-bs-toggle="dropdown" aria-expanded="false"
+                id="kind-{{ application.id }}">
+          {{ application.kind.long_name }}
+        </button>
+        <ul class="dropdown-menu small-font">
+          {% for full_kind, kind_id in application.elective.text_kinds_with_ids %}
+            <li>
+              <a class="dropdown-item" href="#"
+                 onclick="changeKind({{ application.id }}, {{ kind_id }})">
+                {{ full_kind }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="card-element credit-units">
+            <span id="credits-{{ application.id }}">
+              {{ application.credit_units }}
+            </span> з.е.
+      </div>
+    </div>
+    <div class="exam" role="group">
+      <label for="exam-{{ application.id }}"
+             class="exam-container small-font">
+        Экзамен
+        <input type="checkbox"
+               onclick="changeExam({{ application.id }})"
+                {% if application.is_seminar %}
+               disabled
+                {% else %}
+                  {% if application.with_examination %} checked {% endif %}
+                {% endif %}
+               id="exam-{{ application.id }}"
+               class="exam-input">
+        <span class="checkmark"></span>
+      </label>
+    </div>
+  </div>
+</div>

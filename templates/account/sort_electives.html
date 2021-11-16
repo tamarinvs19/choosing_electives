@@ -19,118 +19,110 @@
         <h5>Осень</h5>
       </div>
       <div class="inner-column" id="fall">
-
+        {% for application in applications_fall_attached %}
+          {% include "account/application_card.html" with application=application %}
+        {% endfor %}
       </div>
     </div>
-  <div class="col-md-6 main-column" id="main">
-    {% for application in applications %}
-
-    <div class="application card small-font">
-      <div class="elective-name card-header">
-        <a href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
-            {{ application.elective.name }}
-        </a>
-      </div>
-
-      <div class="application-body card-body">
-        <div class="card-subtitle text-muted">
-          <div class="card-element btn-group elective-kind">
-            <button type="button" class="btn dropdown-toggle small-font"
-                    data-bs-toggle="dropdown" aria-expanded="false"
-                    id="kind-{{ application.elective_id }}-{{ application.kind_id }}">
-              {{ application.kind.long_name }}
-            </button>
-            <ul class="dropdown-menu small-font">
-              {% for short_kind, full_kind, _ in application.elective.text_kinds %}
-                 <li>
-                   <a class="dropdown-item" href="#"
-                      onclick="changeKind({{ application.elective_id }}, {{ application.kind_id }})">
-                     {{ full_kind }}
-                   </a>
-                 </li>
-              {% endfor %}
-            </ul>
-          </div>
-          <div class="card-element credit-units">
-            <span id="credits-{{ application.elective_id }}-{{ application.kind_id }}">
-              {{ application.credit_units }}
-            </span> з.е.
-          </div>
-        </div>
-        <div class="exam" role="group">
-          <label for="exam-{{ application.elective_id }}-{{ application.kind_id }}"
-                 class="exam-container small-font">
-            Экзамен
-            <input type="checkbox"
-                   onclick="changeExam({{ application.elective_id }}, {{ application.kind_id }})"
-                   {% if application.is_seminar %}
-                     disabled
-                   {% else %}
-                     {% if application.with_examination %} checked {% endif %}
-                   {% endif %}
-                   id="exam-{{ application.elective_id }}-{{ application.kind_id }}"
-                   class="exam-input">
-            <span class="checkmark"></span>
-          </label>
-        </div>
-      </div>
-
-    </div>
+  <div class="col-md-3 main-column" id="mainLeft">
+    {% for application in applications_fall %}
+      {% include "account/application_card.html" with application=application %}
     {% endfor %}
   </div>
+    <div class="col-md-3 main-column" id="mainRight">
+      {% for application in applications_spring %}
+        {% include "account/application_card.html" with application=application %}
+      {% endfor %}
+    </div>
   <div class="col-md-3 spring-column column">
     <div class="title">
       <h5>Весна</h5>
     </div>
     <div class="inner-column" id="spring">
-
+      {% for application in applications_spring_attached %}
+        {% include "account/application_card.html" with application=application %}
+      {% endfor %}
     </div>
   </div>
   </div>
 </div>
 <script>
-
-let mainSortable = new Sortable(main, {
-    group: 'electives',
+  let mainLeftSortable = new Sortable(mainLeft, {
+      group: 'electives-fall',
   });
   let fallSortable = new Sortable(fall, {
-    group: 'electives',
+      group: 'electives-fall',
+      onAdd: function (evt) {
+          let application = evt.item;
+          attachApplication(application);
+      }
+  });
+  let mainRightSortable = new Sortable(mainRight, {
+      group: 'electives-spring',
   });
   let springSortable = new Sortable(spring, {
-    group: 'electives',
+      group: 'electives-spring',
   });
 
   function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // Does this cookie string begin with the name we want?
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+          const cookies = document.cookie.split(';');
+          for (let i = 0; i < cookies.length; i++) {
+              const cookie = cookies[i].trim();
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
       }
-    }
-    return cookieValue;
+      return cookieValue;
   }
   const csrftoken = getCookie('csrftoken');
 
-  function changeExam(electiveId, kindId) {
-    $.post("{% url 'electives:change_exam' %}",
-      {'elective_id': electiveId, 'kind_id': kindId, 'csrfmiddlewaretoken': csrftoken},
-      function(data) {
-        if (data['OK'] === true) {
-          $(`#credits-${electiveId}-${kindId}`)[0].innerHTML = data['credit_units'];
-        }
-        if (data['message']) {
-          // show message
-        }
-      });
+
+  function changeExam(applicationId) {
+      $.post("{% url 'electives:change_application_exam' %}",
+          {'student_on_elective_id': applicationId, 'csrfmiddlewaretoken': csrftoken},
+          function(data) {
+              if (data['OK'] === true) {
+                  $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
+              }
+              if (data['message']) {
+                  // show message
+              }
+          }
+      );
   }
-  function changeKind() {
-    // TODO: not implemented
+
+  function changeKind(applicationId, kindId) {
+      $.post("{% url 'electives:change_application_kind' %}",
+          {'student_on_elective_id': applicationId, 'kind_id': kindId, 'csrfmiddlewaretoken': csrftoken},
+          function(data) {
+              if (data['OK'] === true) {
+                  let examTag = $(`#exam-${applicationId}`)[0];
+                  $(`#kind-${applicationId}`)[0].innerHTML = data['full_kind'];
+                  $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
+                  examTag.innerHTML = data['with_exam'];
+                  examTag.disabled = data['is_seminar'] === true;
+                  if (data['is_seminar']) {
+                      examTag.checked = false;
+                  }
+              }
+              if (data['message']) {
+                  // show message
+              }
+          }
+      );
+  }
+
+  function attachApplication(application) {
+      const applicationId = application.id.split('-')[1];
+      $.post("{% url 'electives:attach_application' %}",
+          {'student_on_elective_id': applicationId, 'csrfmiddlewaretoken': csrftoken},
+          function(data) {}
+      );
   }
 
 </script>

@@ -54,6 +54,11 @@ class ElectiveKind(models.Model):
         return str(self)
 
     @property
+    def is_seminar(self) -> bool:
+        """Return True if it is a seminar"""
+        return self.credit_units == 2
+
+    @property
     def long_name(self) -> str:
         """Generate the full string form"""
         return str(self)
@@ -130,8 +135,13 @@ class Elective(models.Model):
 
     @property
     def text_kinds(self) -> list[(str, str, str)]:
-        """Generate the list of kinds as pairs (short_form, long_form, semester)."""
+        """Generate the list of kinds as tuple (short_form, long_form, semester)."""
         return [(kind.short_name, kind.long_name, kind.semester) for kind in self.kinds.all()]
+
+    @property
+    def text_kinds_with_ids(self) -> list[(str, int)]:
+        """Generate the list of kinds as tuple (long_form, id)."""
+        return [(kind.long_name, kind.id) for kind in self.kinds.all()]
 
 
 class KindOfElective(models.Model):
@@ -145,6 +155,7 @@ class StudentOnElective(models.Model):
     kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
+    attached = models.BooleanField(default=False)
 
     @property
     def credit_units(self) -> int:
@@ -157,7 +168,7 @@ class StudentOnElective(models.Model):
 
     @property
     def is_seminar(self) -> bool:
-        return self.kind.credit_units == 2
+        return self.kind.is_seminar
 
 
 class TeacherOnElective(models.Model):

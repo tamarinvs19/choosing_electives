@@ -115,24 +115,48 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
             )
 
 
-def change_exam(student: Person, elective_id: int, kind_id: int) -> Optional[bool]:
-    kind = ElectiveKind.objects.filter(id=kind_id).all()
-    elective = Elective.objects.filter(id=elective_id).all()
-    if len(kind) == 1 and len(elective) == 1:
-        kind = kind[0]
-        elective = elective[0]
-        if kind.credit_units == 2:
-            return None
+def change_exam(student_on_elective_id: int) -> Optional[StudentOnElective]:
+    try:
+        student_on_elective = StudentOnElective.objects.get(
+            id=student_on_elective_id,
+        )
+    except StudentOnElective.DoesNotExist as _:
+        return None
 
-        try:
-            student_on_elective = StudentOnElective.objects.get(
-                student=student,
-                elective=elective,
-                kind=kind,
-            )
-        except Elective.DoesNotExist as _:
-            return None
+    student_on_elective.with_examination = not student_on_elective.with_examination
+    student_on_elective.save()
+    return student_on_elective
 
-        student_on_elective.with_examination = not student_on_elective.with_examination
-        student_on_elective.save()
-        return student_on_elective.with_examination
+
+def change_kind(student_on_elective_id: int, kind_id: int) -> Optional[StudentOnElective]:
+    try:
+        student_on_elective = StudentOnElective.objects.get(
+            id=student_on_elective_id,
+        )
+    except StudentOnElective.DoesNotExist as _:
+        return None
+    try:
+        kind = ElectiveKind.objects.get(
+            id=kind_id,
+        )
+    except ElectiveKind.DoesNotExist as _:
+        return None
+
+    student_on_elective.kind = kind
+    if kind.is_seminar:
+        student_on_elective.with_examination = False
+    student_on_elective.save()
+    return student_on_elective
+
+
+def attach_application(student_on_elective_id: int) -> Optional[StudentOnElective]:
+    try:
+        student_on_elective = StudentOnElective.objects.get(
+            id=student_on_elective_id,
+        )
+    except StudentOnElective.DoesNotExist as _:
+        return None
+
+    student_on_elective.attached = True
+    student_on_elective.save()
+    return student_on_elective

@@ -73,25 +73,57 @@ def change_elective_kind(request, **kwargs):
 
 @login_required
 @require_POST
-def change_exam(request, **kwargs):
-    user = cast(Person, request.user)
-    kind_id = request.POST.get('kind_id', None)
-    elective_id = request.POST.get('elective_id', None)
-    if kind_id is not None and elective_id is not None:
-        elective_id, kind_id = int(elective_id), int(kind_id)
-        with_exam = controller.change_exam(user, elective_id, kind_id)
-        if with_exam is not None:
+def change_application_exam(request, **kwargs):
+    student_on_elective_id = request.POST.get('student_on_elective_id', None)
+    if student_on_elective_id is not None:
+        student_on_elective_id = int(student_on_elective_id)
+        student_on_elective = controller.change_exam(student_on_elective_id)
+        if student_on_elective is not None:
             return JsonResponse({
-                'with_exam': with_exam,
-                'credit_units':
-                    StudentOnElective.objects.get(
-                        student=user, elective_id=elective_id, kind_id=kind_id
-                    ).credit_units,
+                'with_exam': student_on_elective.with_examination,
+                'credit_units': student_on_elective.credit_units,
                 'OK': True,
             })
         else:
             return JsonResponse({
-                'message': 'There are not any applications with received elective and kind',
+                'message': 'There are not any applications with received id.',
                 'OK': False,
             })
+    return HttpResponseBadRequest
+
+
+@login_required
+@require_POST
+def change_application_kind(request, **kwargs):
+    student_on_elective_id = request.POST.get('student_on_elective_id', None)
+    kind_id = request.POST.get('kind_id', None)
+    if student_on_elective_id is not None and kind_id is not None:
+        student_on_elective_id, kind_id = int(student_on_elective_id), int(kind_id)
+        student_on_elective = controller.change_kind(student_on_elective_id, kind_id)
+        if student_on_elective is not None:
+            return JsonResponse({
+                'full_kind': student_on_elective.kind.long_name,
+                'credit_units': student_on_elective.credit_units,
+                'with_exam': student_on_elective.with_examination,
+                'is_seminar': student_on_elective.is_seminar,
+                'semester': student_on_elective.kind.semester,
+                'OK': True,
+            })
+        else:
+            return JsonResponse({
+                'message': 'There are not any applications or kind with received ids.',
+                'OK': False,
+            })
+    return HttpResponseBadRequest
+
+
+@login_required
+@require_POST
+def attach_application(request, **kwargs):
+    student_on_elective_id = request.POST.get('student_on_elective_id', None)
+    if student_on_elective_id is not None:
+        controller.attach_application(int(student_on_elective_id))
+        return JsonResponse({
+            'OK': True
+        })
     return HttpResponseBadRequest
