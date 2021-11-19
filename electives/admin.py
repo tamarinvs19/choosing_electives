@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind
+from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
+    MandatoryElectiveInStudentGroup
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -17,12 +18,18 @@ class KindOfElectiveInline(admin.TabularInline):
     extra = 1
 
 
+class MandatoryElectiveForStudentGroupInline(admin.TabularInline):
+    model = MandatoryElectiveInStudentGroup
+    extra = 1
+
+
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'codename', 'description']}),
+        (None, {'fields': ['name', 'codename', 'description', 'thematic', 'text_teachers']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
-    inlines = [KindOfElectiveInline, TeacherOnElectiveInline, StudentOnElectiveInline]
+    inlines = [KindOfElectiveInline, TeacherOnElectiveInline,
+               StudentOnElectiveInline, MandatoryElectiveForStudentGroupInline]
     list_display = ('name',)
     search_fields = ['name']
 
@@ -34,6 +41,14 @@ class ElectiveKindAdmin(admin.ModelAdmin):
     list_display = ('show_name',)
 
 
+class ElectiveThematicAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['name']}),
+    ]
+    list_display = ('name',)
+
+
 admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
+admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
 

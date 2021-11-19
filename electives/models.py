@@ -2,6 +2,8 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import models
+
+from groups.models import StudentGroup
 from users.models import Person
 
 
@@ -62,41 +64,62 @@ class ElectiveKind(models.Model):
             return '{lang}2'.format(lang=self.language)
 
 
+class ElectiveThematic(models.Model):
+    """
+    Elective thematic model
+    """
+
+    name = models.CharField(max_length=200, unique=True)
+
+    def __str__(self) -> str:
+        return str(self.name)
+
+    @admin.display(description='Name')
+    def show_name(self) -> str:
+        """Generate the string form for admin site"""
+        return str(self)
+
+
 class Elective(models.Model):
     """
     Elective model
 
-    :name:        str           |  The name of this elective
-    :credit_unit: int           |  The credit_unit of this elective
-    :description: str           |  The description of this elective
-    :max_number_students: int   |  Maximum of number of students on this elective
-    :min_number_students: int   |  Minimum of number of students on this elective
-    :kinds:                     |  ManyToManyField with possible kinds of this elective
-    :students:                  |  ManyToManyField with students on this elective
-    :teachers:                  |  ManyToManyField with teachers on this elective
+    :name:                 |  The name of this elective
+    :credit_unit:          |  The credit_unit of this elective
+    :description:          |  The description of this elective
+    :max_number_students:  |  Maximum of number of students on this elective
+    :min_number_students:  |  Minimum of number of students on this elective
+    :thematic:             |  ForeignKey with thematic of this elective
+    :kinds:                |  ManyToManyField with possible kinds of this elective
+    :students:             |  ManyToManyField with students on this elective
+    :teachers:             |  ManyToManyField with teachers on this elective
     """
 
-    name: str = models.CharField(max_length=200)
-    codename: str = models.CharField(max_length=100, unique=True)
-    description: str = models.TextField(default='')
-    max_number_students: int = models.PositiveIntegerField(default=100)
-    min_number_students: int = models.PositiveIntegerField(default=3)
+    name = models.CharField(max_length=200)
+    codename = models.CharField(max_length=100, unique=True)
+    description = models.TextField(default='')
+    max_number_students = models.PositiveIntegerField(default=255)
+    min_number_students = models.PositiveIntegerField(default=3)
+    thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
+    text_teachers = models.CharField(max_length=100, default='', null=True)
 
     @property
     def text_teacher(self) -> str:
-        """Generate the teacher`s list in the text format."""
+        """Generate the teacher's list in the text format."""
         if len(self.teachers.all()) > 0:
             return ', '.join(map(lambda t: str(t), self.teachers.all()))
+        elif self.text_teachers is not None:
+            return self.text_teachers
         else:
             return 'Не определен'
 
     @property
     def text_kinds(self) -> list[(str, str)]:
-        """Generate the list of kinds as pairs (short_form, long_form)."""
-        return [(kind.short_name, kind.show_name) for kind in self.kinds.all()]
+        """Generate the list of kinds as pairs (short_form, long_form, semester)."""
+        return [(kind.short_name, kind.show_name, kind.semester) for kind in self.kinds.all()]
 
 
 class KindOfElective(models.Model):
@@ -107,7 +130,6 @@ class KindOfElective(models.Model):
 class StudentOnElective(models.Model):
     student = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
-    is_necessary = models.BooleanField(default=False)
     with_examination = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=1)
 
@@ -116,3 +138,7 @@ class TeacherOnElective(models.Model):
     teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
 
+
+class MandatoryElectiveInStudentGroup(models.Model):
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE)
