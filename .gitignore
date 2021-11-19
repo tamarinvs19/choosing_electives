@@ -15,7 +15,6 @@ env/
 venv/
 
 # config
-.env_variables
 choosing_electives.ini
 
 # Dependencies

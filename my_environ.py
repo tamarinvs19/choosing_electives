@@ -12,7 +12,7 @@ class Env(object):
         self.VARS = {key: value[0] for key, value in kwargs.items()}
         self.TYPES = {key: value[1] for key, value in kwargs.items()}
 
-    def read_env(self, file_name='.env_variables'):
+    def read_env(self, file_name='.env'):
         if os.path.exists(file_name):
             with open(file_name, 'r') as env_file:
                 for line in env_file.readlines():
@@ -27,4 +27,4 @@ class Env(object):
     def __getitem__(self, key):
         if key in self.VARS:
             return self.VARS[key]
-        raise KeyError('Key {0} did not exists in the enviroment'.format(key))
+        raise KeyError('Key {0} did not exists in the environment'.format(key))
