@@ -40,9 +40,9 @@ class ElectiveKindAdmin(admin.ModelAdmin):
 
 class ElectiveThematicAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name']}),
+        (None, {'fields': ['name', 'english_name']}),
     ]
-    list_display = ('name',)
+    list_display = ('name', 'english_name')
 
 
 admin.site.register(Elective, ElectiveAdmin)
