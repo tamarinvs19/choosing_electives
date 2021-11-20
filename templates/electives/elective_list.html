@@ -3,13 +3,20 @@
   Elective list
 {% endblock %}
 {% block body %}
-    <div class="accordion accordion-flush" id="accordionPanelsElective">
-    {% for thematic, electives in elective_groups.items %}
-        {% include "electives/themetic_list.html" with thematic=thematic electives=electives %}
-    {% endfor %}
-    </div>
+  <div class="switch-container">
+    Open all
+    <label class="switch">
+      <input type="checkbox" onchange="clickSwitch(this)">
+      <span class="slider round"></span>
+    </label>
+  </div>
+  <div class="accordion accordion-flush" id="accordionPanelsElective">
+  {% for thematic, electives in elective_groups.items %}
+      {% include "electives/themetic_list.html" with thematic=thematic electives=electives %}
+  {% endfor %}
+  </div>
   <script>
-      function getCookie(name) {
+  function getCookie(name) {
           let cookieValue = null;
           if (document.cookie && document.cookie !== '') {
               const cookies = document.cookie.split(';');
@@ -33,5 +40,14 @@
                 $(`#statistic-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'];
               });
       }
+
+      function clickSwitch(input) {
+          if (input.checked) {
+              $('.accordion-collapse').addClass('show');
+          } else {
+              $('.accordion-collapse').removeClass('show');
+          }
+      }
+
   </script>
 {% endblock %}
