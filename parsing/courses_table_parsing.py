@@ -175,12 +175,14 @@ def main():
     english_parser.load_page()
     english_electives = english_parser.parse_electives()
 
-    for (thematic_name, thematic_electives), (_, thematic_english_electives) in zip(
+    for (thematic_name, thematic_electives), (english_name, thematic_english_electives) in zip(
             electives.items(), english_electives.items()):
         if ElectiveThematic.objects.filter(name=thematic_name).exists():
             thematic = ElectiveThematic.objects.get(name=thematic_name)
+            thematic.english_name = english_name
+            thematic.save()
         else:
-            thematic = ElectiveThematic.objects.create(name=thematic_name)
+            thematic = ElectiveThematic.objects.create(name=thematic_name, english_name=english_name)
         for thematic_elective, english_elective in zip(thematic_electives, thematic_english_electives):
             if Elective.objects.filter(codename=thematic_elective['codename']).exists():
                 elective = Elective.objects.get(codename=thematic_elective['codename'])
