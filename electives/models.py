@@ -126,6 +126,14 @@ class Elective(models.Model):
     text_teachers = models.CharField(max_length=100, default='', null=True)
 
     @property
+    def has_russian_kind(self) -> bool:
+        return self.kinds.filter(language='ru').exists()
+
+    @property
+    def has_english_kind(self) -> bool:
+        return self.kinds.filter(language='en').exists()
+
+    @property
     def text_kinds(self) -> list[(str, str, str)]:
         """Generate the list of kinds as tuple (short_form, long_form, semester)."""
         return [(kind.short_name, kind.long_name, kind.semester) for kind in self.kinds.all()]
