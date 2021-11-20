@@ -12,6 +12,7 @@ from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfEle
 
 RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
 ENGLISH_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html'
+NO_ENGLISH_MARKER = '(no English name)'
 
 
 class Parser(object):
@@ -184,7 +185,8 @@ def main():
             if Elective.objects.filter(codename=thematic_elective['codename']).exists():
                 elective = Elective.objects.get(codename=thematic_elective['codename'])
                 elective.name = thematic_elective['fullname']
-                elective.english_name = english_elective['fullname']
+                if NO_ENGLISH_MARKER not in english_elective['fullname']:
+                    elective.english_name = english_elective['fullname']
                 elective.thematic = thematic
                 elective.text_teachers = thematic_elective['teachers']
                 elective.description = thematic_elective['description']
