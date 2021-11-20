@@ -10,6 +10,9 @@ from django.core.exceptions import ValidationError
 
 from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
 
+RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
+ENGLISH_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html'
+
 
 class Parser(object):
     def __init__(self, url: str) -> None:
@@ -163,20 +166,33 @@ class Parser(object):
 
 
 def main():
-    parser = Parser('https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html')
+    parser = Parser(RUSSIAN_URL)
     parser.load_page()
     electives = parser.parse_electives()
-    for thematic_name, thematic_electives in electives.items():
+
+    english_parser = Parser(ENGLISH_URL)
+    english_parser.load_page()
+    english_electives = english_parser.parse_electives()
+
+    for (thematic_name, thematic_electives), (_, thematic_english_electives) in zip(
+            electives.items(), english_electives.items()):
         if ElectiveThematic.objects.filter(name=thematic_name).exists():
             thematic = ElectiveThematic.objects.get(name=thematic_name)
         else:
             thematic = ElectiveThematic.objects.create(name=thematic_name)
-        for thematic_elective in thematic_electives:
+        for thematic_elective, english_elective in zip(thematic_electives, thematic_english_electives):
             if Elective.objects.filter(codename=thematic_elective['codename']).exists():
                 elective = Elective.objects.get(codename=thematic_elective['codename'])
+                elective.name = thematic_elective['fullname']
+                elective.english_name = english_elective['fullname']
+                elective.thematic = thematic
+                elective.text_teachers = thematic_elective['teachers']
+                elective.description = thematic_elective['description']
+                elective.save()
             else:
                 elective = Elective.objects.create(
                     name=thematic_elective['fullname'],
+                    english_name=english_elective['name'],
                     codename=thematic_elective['codename'],
                     thematic=thematic,
                     text_teachers=thematic_elective['teachers'],

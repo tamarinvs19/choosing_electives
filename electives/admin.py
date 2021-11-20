@@ -8,11 +8,6 @@ class StudentOnElectiveInline(admin.TabularInline):
     extra = 2
 
 
-class TeacherOnElectiveInline(admin.TabularInline):
-    model = TeacherOnElective
-    extra = 1
-
-
 class KindOfElectiveInline(admin.TabularInline):
     model = KindOfElective
     extra = 1
@@ -25,11 +20,13 @@ class MandatoryElectiveForStudentGroupInline(admin.TabularInline):
 
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'codename', 'description', 'thematic', 'text_teachers']}),
+        (None, {'fields': ['name', 'english_name', 'codename', 'description', 'thematic', 'text_teachers']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
-    inlines = [KindOfElectiveInline, TeacherOnElectiveInline,
-               StudentOnElectiveInline, MandatoryElectiveForStudentGroupInline]
+    inlines = [KindOfElectiveInline,
+               StudentOnElectiveInline,
+               MandatoryElectiveForStudentGroupInline,
+               ]
     list_display = ('name',)
     search_fields = ['name']
 

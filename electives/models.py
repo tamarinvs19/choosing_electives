@@ -102,6 +102,7 @@ class Elective(models.Model):
     Elective model
 
     :name:                 |  The name of this elective
+    :english_name:         |  The english name of this elective
     :credit_unit:          |  The credit_unit of this elective
     :description:          |  The description of this elective
     :max_number_students:  |  Maximum of number of students on this elective
@@ -109,10 +110,11 @@ class Elective(models.Model):
     :thematic:             |  ForeignKey with thematic of this elective
     :kinds:                |  ManyToManyField with possible kinds of this elective
     :students:             |  ManyToManyField with students on this elective
-    :teachers:             |  ManyToManyField with teachers on this elective
+    :text_teachers:        |  List of teacher names
     """
 
     name = models.CharField(max_length=200)
+    english_name = models.CharField(max_length=200, null=True, default=None)
     codename = models.CharField(max_length=100, unique=True)
     description = models.TextField(default='')
     max_number_students = models.PositiveIntegerField(default=255)
@@ -120,18 +122,7 @@ class Elective(models.Model):
     thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)
     kinds = models.ManyToManyField(ElectiveKind, related_name='elective_kinds', through='KindOfElective')
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
-    teachers = models.ManyToManyField(Person, related_name='teacher_list', through='TeacherOnElective')
     text_teachers = models.CharField(max_length=100, default='', null=True)
-
-    @property
-    def text_teacher(self) -> str:
-        """Generate the teacher's list in the text format."""
-        if len(self.teachers.all()) > 0:
-            return ', '.join(map(lambda t: str(t), self.teachers.all()))
-        elif self.text_teachers is not None:
-            return self.text_teachers
-        else:
-            return 'Не определен'
 
     @property
     def text_kinds(self) -> list[(str, str, str)]:
