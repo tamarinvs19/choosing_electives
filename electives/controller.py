@@ -3,6 +3,7 @@ from typing import Tuple, List, Dict, Optional
 
 from loguru import logger
 
+from electives.elective_statistic import Statistic
 from electives.models import KindOfElective, Elective, StudentOnElective, ElectiveKind, ElectiveThematic
 from users.models import Person
 
@@ -12,30 +13,19 @@ KindWithSelectStatusAndStatistic = namedtuple('KindWithSelectStatusAndStatistic'
                                               ['kind', 'selected', 'statistic'])
 ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 
+statistic = Statistic()
 
-def get_electives_by_thematics(student: Person) -> Dict[ElectiveThematic, List[ElectiveWithKinds]]:
-    electives = Elective.objects.all().select_related('thematic')
-    groups = {thematic: [] for thematic in ElectiveThematic.objects.all()}
-    for elective in electives:
-        kinds = get_student_elective_kinds(student, elective)
-        statistics = get_statistics(elective)
-        new_kinds = [
-            KindWithSelectStatusAndStatistic(
-                kind.kind,
-                kind.selected,
-                0 if kind.kind not in statistics.keys()
-                else statistics[kind.kind],
-            )
-            for kind in kinds
-        ]
-        groups[elective.thematic].append(ElectiveWithKinds(elective, new_kinds))
-    return groups
+
+def get_electives_by_thematics(student: Person):
+    return statistic.generate_view(student.id)
 
 
 def get_statistics(elective: Elective) -> Dict[ElectiveKind, int]:
-    students_on_elective = StudentOnElective.objects\
-        .filter(elective=elective)\
-        .select_related('kind')
+    students_on_elective = StudentOnElective.objects.filter(
+        elective=elective
+    ).select_related(
+        'kind'
+    )
     kinds = Counter([soe.kind for soe in students_on_elective])
     return dict(kinds)
 
@@ -47,13 +37,15 @@ def get_student_elective_kinds(student: Person, elective: Elective) -> List[Kind
         for kind_of_elective in kinds_of_elective
     ]
 
-    student_on_electives = StudentOnElective.objects\
-        .filter(student=student, elective=elective)\
-        .all().select_related('kind')
-    student_kinds = [
+    student_on_electives = StudentOnElective.objects.filter(
+        student=student, elective=elective,
+    ).select_related(
+        'kind'
+    ).all()
+    student_kinds = {
         student_on_elective.kind
         for student_on_elective in student_on_electives
-    ]
+    }
 
     return [
         KindWithSelectStatus(kind, kind in student_kinds)
@@ -83,6 +75,7 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
                     elective=elective,
                     kind=kind,
                 )
+                statistic.add_student(elective, kind, student.id)
     for kind in student_kinds:
         if kind not in selected_kinds:
             student_on_elective = StudentOnElective.objects.get(
@@ -91,6 +84,7 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
                 kind=kind,
             )
             student_on_elective.delete()
+            statistic.remove_student(elective, kind, student.id)
 
 
 def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
@@ -107,12 +101,14 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
         ).all()
         if len(student_on_elective) == 1:
             student_on_elective[0].delete()
+            statistic.remove_student(elective, kind, student.id)
         else:
             StudentOnElective.objects.create(
                 student=student,
                 elective=elective,
                 kind=kind,
             )
+            statistic.add_student(elective, kind, student.id)
 
 
 def change_exam(student_on_elective_id: int) -> Optional[StudentOnElective]:
@@ -143,6 +139,8 @@ def change_kind(student_on_elective_id: int, kind_id: int) -> Optional[StudentOn
         return None
 
     student_on_elective.kind = kind
+    statistic.remove_student(student_on_elective.elective, student_on_elective.kind, student_on_elective.student.id)
+    statistic.add_student(student_on_elective.elective, kind, student_on_elective.student.id)
     if kind.is_seminar:
         student_on_elective.with_examination = False
     student_on_elective.save()
@@ -160,3 +158,8 @@ def attach_application(student_on_elective_id: int) -> Optional[StudentOnElectiv
     student_on_elective.attached = True
     student_on_elective.save()
     return student_on_elective
+
+
+# def get_electives_by_thematics(student: Person, statistic: Statistic):
+#     selected_kind = StudentOnElective.objects.filter(student=student)
+#     return statistic.data

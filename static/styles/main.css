@@ -108,6 +108,8 @@ ul.description-table li:first-child {
 
 .statistic {
   margin-left: 4px;
+  padding-left: 4px;
+  border-left: 1px solid gray;
 }
 
 .switch-container {

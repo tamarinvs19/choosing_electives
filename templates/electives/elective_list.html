@@ -12,7 +12,7 @@
   </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
   {% for thematic, electives in elective_groups.items %}
-      {% include "electives/themetic_list.html" with thematic=thematic electives=electives %}
+    {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id %}
   {% endfor %}
   </div>
   <script>

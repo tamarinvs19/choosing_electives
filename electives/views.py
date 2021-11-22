@@ -10,6 +10,7 @@ from loguru import logger
 
 from users.models import Person
 from . import controller
+from .elective_statistic import Statistic
 from .models import Elective, ElectiveThematic, StudentOnElective, ElectiveKind
 
 
@@ -17,6 +18,7 @@ from .models import Elective, ElectiveThematic, StudentOnElective, ElectiveKind
 def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
     groups = controller.get_electives_by_thematics(user)
+
     context = {
         'elective_groups': groups,
     }

@@ -13,6 +13,12 @@ KIND_NAMES: dict[int, str] = {
     4: 'Большой',
 }
 
+ENGLISH_KIND_NAMES: dict[int, str] = {
+    2: 'Seminar',
+    3: 'Small',
+    4: 'Large',
+}
+
 LANG_NAMES: dict[str, str] = {
     'ru': 'на русском',
     'en': 'на английском',
@@ -40,6 +46,9 @@ class ElectiveKind(models.Model):
                 ).exists():
             raise ValidationError('There is can be only one ElectiveKind instance with the same fields')
         return super(ElectiveKind, self).save(*args, **kwargs)
+
+    def __repr__(self) -> str:
+        return '<ElectiveKind: {0}>'.format(self.short_name)
 
     def __str__(self) -> str:
         return '{kind} {lang} {semester}'.format(
@@ -79,6 +88,14 @@ class ElectiveKind(models.Model):
             return '{lang}2{semester}'.format(
                 lang=self.language, semester=semester,
             )
+
+    @property
+    def credit_units_name(self) -> str:
+        return KIND_NAMES[self.credit_units]
+
+    @property
+    def credit_units_english_name(self) -> str:
+        return ENGLISH_KIND_NAMES[self.credit_units]
 
 
 class ElectiveThematic(models.Model):
@@ -125,6 +142,9 @@ class Elective(models.Model):
     students = models.ManyToManyField(Person, related_name='student_list', through='StudentOnElective')
     text_teachers = models.CharField(max_length=100, default='', null=True)
 
+    def __repr__(self) -> str:
+        return '<Elective: {0}>'.format(self.codename)
+
     @property
     def has_russian_kind(self) -> bool:
         return self.kinds.filter(language='ru').exists()
@@ -132,6 +152,10 @@ class Elective(models.Model):
     @property
     def has_english_kind(self) -> bool:
         return self.kinds.filter(language='en').exists()
+
+    @property
+    def has_not_fall(self) -> bool:
+        return not self.kinds.filter(semester=1).exists()
 
     @property
     def text_kinds(self) -> list[(str, str, str)]:

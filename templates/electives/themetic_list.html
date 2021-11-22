@@ -17,66 +17,56 @@
         <div class="row title-row">
           <div class="col-5">Title</div>
           <div class="col-3">Teachers</div>
-          <div class="col-4">Kind</div>
+          <div class="col-2">Fall</div>
+          <div class="col-2">Spring</div>
         </div>
-        {% for elective_data in electives %}
+        {% for elective, languages in electives.items %}
           <div class="elective-row row table-row">
-          {% if elective_data.elective.has_russian_kind %}
+          {% for language, semesters in languages.items %}
           <div class="row">
             <div class="col-5">
-              <a href={% url 'electives:elective_page' elective_data.elective.id %}>
-                {{ elective_data.elective.name }}
+              <a href={% url 'electives:elective_page' elective.id %}>
+                {% if language == 'ru' %}
+                  {{ elective.name }}
+                {% else %}
+                  {{ elective.english_name }}
+                {% endif %}
               </a>
             </div>
-            <div class="col-3">{{ elective_data.elective.text_teachers }}</div>
-            <div class="col-4">
-              {% for kind_data in elective_data.kinds  %}
-                <input type="checkbox" id="button-{{ kind_data.kind.short_name }}-{{ elective_data.elective.id }}"
-                       value="{{ elective_data.elective.short_name }}" class="checkbox-kind"
-                       onclick="change_kind({{ elective_data.elective.id }}, {{ kind_data.kind.id }})"
-                        {% if kind_data.selected %} checked {% endif %}>
-                <label for="button-{{ kind_data.kind.short_name }}-{{ elective_data.elective.id }}"
-                       class="semester-{{ kind_data.kind.semester }} kind-button"
-                       title="{{ kind_data.kind.long_name }}">
-                  {{ kind_data.kind.short_name }}
-                  <div id="statistic-{{ elective_data.elective.id }}-{{ kind_data.kind.id }}" class="statistic">
-                    {% if kind_data.statistic > 0 %}
-                      {{ kind_data.statistic }}
-                    {% endif %}
+            {% if elective.has_english_kind and language == 'en' %}
+              <div class="col-3">{{ elective.text_teachers }}</div>
+            {% elif elective.has_russian_kind and not elective.has_english_kind %}
+              <div class="col-3">{{ elective.text_teachers }}</div>
+            {% else %}
+              <div class="col-3"></div>
+            {% endif %}
+            {% if elective.has_not_fall %}
+              <div class="col-2"></div>
+            {% endif %}
+            {% for semester, kinds in semesters.items %}
+              <div class="col-2">
+                {% for kind, info in kinds.items %}
+                <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.id }}"
+                       value="{{ elective.short_name }}" class="checkbox-kind"
+                       onclick="change_kind({{ elective.id }}, {{ kind.id }})"
+                        {% if info.1 %} checked {% endif %}>
+                <label for="button-{{ kind.short_name }}-{{ elective.id }}"
+                       class="semester-{{ kind.semester }} kind-button"
+                       title="{{ kind.long_name }}">
+                  {% if language == 'ru' %}
+                    {{ kind.credit_units_name }}
+                  {% else %}
+                    {{ kind.credit_units_english_name }}
+                  {% endif %}
+                  <div id="statistic-{{ elective.id }}-{{ kind.id }}" class="statistic">
+                    {{ info.0 }}
                   </div>
                 </label>
-              {% endfor %}
-            </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
           </div>
-          {% endif %}
-          {% if elective_data.elective.has_english_kind %}
-          <div class="row">
-            <div class="col-5">
-              <a href={% url 'electives:elective_page' elective_data.elective.id %}>
-                {{ elective_data.elective.english_name }}
-              </a>
-            </div>
-            <div class="col-3">{{ elective_data.elective.text_teachers }}</div>
-            <div class="col-4">
-              {% for kind_data in elective_data.kinds  %}
-                <input type="checkbox" id="button-{{ kind_data.kind.short_name }}-{{ elective_data.elective.id }}"
-                       value="{{ elective_data.elective.short_name }}" class="checkbox-kind"
-                       onclick="change_kind({{ elective_data.elective.id }}, {{ kind_data.kind.id }})"
-                        {% if kind_data.selected %} checked {% endif %}>
-                <label for="button-{{ kind_data.kind.short_name }}-{{ elective_data.elective.id }}"
-                       class="semester-{{ kind_data.kind.semester }} kind-button"
-                       title="{{ kind_data.kind.long_name }}">
-                  {{ kind_data.kind.short_name }}
-                  <div id="statistic-{{ elective_data.elective.id }}-{{ kind_data.kind.id }}" class="statistic">
-                    {% if kind_data.statistic > 0 %}
-                      {{ kind_data.statistic }}
-                    {% endif %}
-                  </div>
-                </label>
-              {% endfor %}
-            </div>
-          </div>
-          {% endif %}
+          {% endfor %}
           </div>
         {% endfor %}
       </div>
