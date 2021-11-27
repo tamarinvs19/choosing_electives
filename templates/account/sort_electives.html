@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block head_title %}
-Выбранные элективы
+Selected electives
 {% endblock %}
 {% block extra_styles %}
   <link rel="stylesheet" type="text/css" href="{% static 'styles/applications.css' %}">
@@ -10,13 +10,13 @@
 
 {% block body %}
 <div class="container">
-  <div class="row">
-    <h2>Выбранные элективы</h2>
+  <div class="row title-row">
+    <h2>Your applications</h2>
   </div>
   <div class="row canvas">
-    <div class="col-md-3 fall-column column">
+    <div class="col-xl-3 col-lg-6 fall-column column">
       <div class="title">
-        <h5>Осень</h5>
+        <h5>Fall</h5>
       </div>
       <div class="inner-column" id="fall">
         {% for application in applications_fall_attached %}
@@ -24,44 +24,140 @@
         {% endfor %}
       </div>
     </div>
-  <div class="col-md-3 main-column" id="mainLeft">
-    {% for application in applications_fall %}
-      {% include "account/application_card.html" with application=application %}
-    {% endfor %}
-  </div>
-    <div class="col-md-3 main-column" id="mainRight">
-      {% for application in applications_spring %}
-        {% include "account/application_card.html" with application=application %}
-      {% endfor %}
+    <div class="col-xl-3 col-lg-6 maybe-fall-column column">
+      <div class="title">
+        <h5>Maybe - fall</h5>
+      </div>
+      <div class="inner-column" id="maybeFall">
+        {% for application in applications_fall %}
+          {% include "account/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
     </div>
-  <div class="col-md-3 spring-column column">
-    <div class="title">
-      <h5>Весна</h5>
+    <div class="col-xl-3 col-lg-6 maybe-spring-column column">
+      <div class="title">
+        <h5>Maybe - spring</h5>
+      </div>
+      <div class="inner-column" id="maybeSpring">
+        {% for application in applications_spring %}
+          {% include "account/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
     </div>
-    <div class="inner-column" id="spring">
-      {% for application in applications_spring_attached %}
-        {% include "account/application_card.html" with application=application %}
-      {% endfor %}
+    <div class="col-xl-3 col-lg-6 spring-column column">
+      <div class="title">
+        <h5>Spring</h5>
+      </div>
+      <div class="inner-column" id="spring">
+        {% for application in applications_spring_attached %}
+          {% include "account/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
     </div>
-  </div>
   </div>
 </div>
 <script>
-  let mainLeftSortable = new Sortable(mainLeft, {
-      group: 'electives-fall',
-  });
-  let fallSortable = new Sortable(fall, {
-      group: 'electives-fall',
+  let currentDrag;
+  let maybeFallSortable = new Sortable(maybeFall, {
+      group: 'electives',
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (_) {
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
       onAdd: function (evt) {
           let application = evt.item;
-          attachApplication(application);
+          attachApplication(application, 'maybe-fall');
       }
   });
-  let mainRightSortable = new Sortable(mainRight, {
-      group: 'electives-spring',
+  let fallSortable = new Sortable(fall, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '2';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (_) {
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+      onAdd: function (evt) {
+          let application = evt.item;
+          attachApplication(application, 'fall');
+      }
+  });
+  let mainRightSortable = new Sortable(maybeSpring, {
+      group: 'electives',
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (_) {
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+      onAdd: function (evt) {
+          let application = evt.item;
+          attachApplication(application, 'maybe-spring');
+      }
   });
   let springSortable = new Sortable(spring, {
-      group: 'electives-spring',
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '1';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (_) {
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+      onAdd: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+          attachApplication(application, 'spring');
+      },
   });
 
   function getCookie(name) {
@@ -98,7 +194,11 @@
 
   function changeKind(applicationId, kindId) {
       $.post("{% url 'electives:change_application_kind' %}",
-          {'student_on_elective_id': applicationId, 'kind_id': kindId, 'csrfmiddlewaretoken': csrftoken},
+          {
+              'student_on_elective_id': applicationId,
+              'kind_id': kindId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
           function(data) {
               if (data['OK'] === true) {
                   let examTag = $(`#exam-${applicationId}`)[0];
@@ -117,11 +217,43 @@
       );
   }
 
-  function attachApplication(application) {
+  function attachApplication(application, target) {
       const applicationId = application.id.split('-')[1];
       $.post("{% url 'electives:attach_application' %}",
-          {'student_on_elective_id': applicationId, 'csrfmiddlewaretoken': csrftoken},
-          function(data) {}
+          {
+              'student_on_elective_id': applicationId,
+              'target': target,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+              if (data['OK'] === true) {
+                  if (data['semester'] === '1') {
+                      $('.fall-kind').css('display', 'list-item');
+                      $('.spring-kind').css('display', 'none');
+                  } else {
+                      $('.spring-kind').css('display', 'list-item');
+                      $('.fall-kind').css('display', 'none');
+                  }
+                  return true;
+              } else {
+                  return false;
+              }
+              //show message
+          }
+      );
+  }
+
+  function removeApplication(applicationId) {
+      $.post("{% url 'electives:remove_application' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+            if (data['OK'] === true) {
+                $(`#application-${applicationId}`).remove()
+            }
+          }
       );
   }
 

@@ -116,14 +116,22 @@
   width: 285px;
   min-height: 200px;
   padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
 
   border-radius: 5px;
 }
 .fall-column {
   background-color: #f8a800;
 }
+.maybe-fall-column {
+  background-color: rgba(248, 168, 0, 0.7);
+}
 .spring-column {
   background-color: #67861f;
+}
+.maybe-spring-column {
+  background-color: rgba(103, 134, 31, 0.7);
 }
 .inner-column {
   width: 270px;
@@ -152,4 +160,52 @@
   z-index: -1000;
 
   color: white;
+}
+
+.elective-name {
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 2px;
+}
+
+.card-last-row {
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.semesters {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+
+  padding: 1px;
+
+  font-weight: bold;
+}
+
+.semesters:hover {
+  cursor: help;
+}
+
+.semester-tag {
+  padding: 5px 2px 2px;
+}
+.semester-tag:not(:first-of-type) {
+  margin-left: 2px;
+}
+
+.fall-tag {
+  color: #f8a800;
+}
+.spring-tag {
+  color: #67861f;
+}
+
+.title-row {
+  text-align: center;
 }

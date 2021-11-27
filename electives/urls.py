@@ -11,5 +11,6 @@ urlpatterns = [
     path('change_application_exam/', views.change_application_exam, name='change_application_exam'),
     path('change_application_kind/', views.change_application_kind, name='change_application_kind'),
     path('attach_application/', views.attach_application, name='attach_application'),
+    path('remove_application/', views.remove_application, name='remove_application'),
 ]
 

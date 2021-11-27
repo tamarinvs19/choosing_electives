@@ -28,6 +28,10 @@ SEMESTERS: dict[int: str] = {
     1: 'осенний',
     2: 'весенний',
 }
+ENGLISH_SEMESTERS: dict[int: str] = {
+    1: 'fall',
+    2: 'spring',
+}
 
 
 class ElectiveKind(models.Model):
@@ -63,6 +67,10 @@ class ElectiveKind(models.Model):
         return str(self)
 
     @property
+    def semester_english_name(self) -> str:
+        return ENGLISH_SEMESTERS[self.semester]
+
+    @property
     def is_seminar(self) -> bool:
         """Return True if it is a seminar"""
         return self.credit_units == 2
@@ -88,6 +96,14 @@ class ElectiveKind(models.Model):
             return '{lang}2{semester}'.format(
                 lang=self.language, semester=semester,
             )
+
+    @property
+    def middle_name(self) -> str:
+        """Generate the long name without semester"""
+        return '{kind} {lang}'.format(
+            kind=KIND_NAMES[self.credit_units],
+            lang=LANG_NAMES[self.language],
+        )
 
     @property
     def credit_units_name(self) -> str:
@@ -158,6 +174,18 @@ class Elective(models.Model):
         return not self.kinds.filter(semester=1).exists()
 
     @property
+    def has_fall(self) -> bool:
+        return self.kinds.filter(semester=1).exists()
+
+    @property
+    def has_not_spring(self) -> bool:
+        return not self.kinds.filter(semester=2).exists()
+
+    @property
+    def has_spring(self) -> bool:
+        return self.kinds.filter(semester=2).exists()
+
+    @property
     def text_kinds(self) -> list[(str, str, str)]:
         """Generate the list of kinds as tuple (short_form, long_form, semester)."""
         return [(kind.short_name, kind.long_name, kind.semester) for kind in self.kinds.all()]
@@ -193,6 +221,14 @@ class StudentOnElective(models.Model):
     @property
     def is_seminar(self) -> bool:
         return self.kind.is_seminar
+
+    @property
+    def text_kinds_with_ids(self) -> list[tuple[str, int, str]]:
+        """Generate the list of kinds as tuple (long_form, id, semester)."""
+        return [
+            (kind.middle_name, kind.id, ENGLISH_SEMESTERS[kind.semester])
+            for kind in self.elective.kinds.all()
+        ]
 
 
 class TeacherOnElective(models.Model):

@@ -104,7 +104,7 @@ def change_application_kind(request, **kwargs):
         student_on_elective = controller.change_kind(student_on_elective_id, kind_id)
         if student_on_elective is not None:
             return JsonResponse({
-                'full_kind': student_on_elective.kind.long_name,
+                'full_kind': student_on_elective.kind.middle_name,
                 'credit_units': student_on_elective.credit_units,
                 'with_exam': student_on_elective.with_examination,
                 'is_seminar': student_on_elective.is_seminar,
@@ -123,9 +123,30 @@ def change_application_kind(request, **kwargs):
 @require_POST
 def attach_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
-    if student_on_elective_id is not None:
-        controller.attach_application(int(student_on_elective_id))
+    target = request.POST.get('target', None)
+    if student_on_elective_id is not None and target is not None:
+        sone = controller.attach_application(int(student_on_elective_id), target)
+        if sone is None:
+            response = {
+                'OK': False,
+            }
+        else:
+            response = {
+                'OK': True,
+                'semester': sone.kind.semester,
+            }
         return JsonResponse({
-            'OK': True
+        })
+    return HttpResponseBadRequest
+
+
+@login_required
+@require_POST
+def remove_application(request, **kwargs):
+    student_on_elective_id = request.POST.get('student_on_elective_id', None)
+    if student_on_elective_id is not None:
+        controller.remove_application(int(student_on_elective_id))
+        return JsonResponse({
+            'OK': True,
         })
     return HttpResponseBadRequest

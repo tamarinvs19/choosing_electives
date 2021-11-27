@@ -147,17 +147,49 @@ def change_kind(student_on_elective_id: int, kind_id: int) -> Optional[StudentOn
     return student_on_elective
 
 
-def attach_application(student_on_elective_id: int) -> Optional[StudentOnElective]:
+def attach_application(student_on_elective_id: int, target: str) -> Optional[StudentOnElective]:
     try:
         student_on_elective = StudentOnElective.objects.get(
             id=student_on_elective_id,
         )
     except StudentOnElective.DoesNotExist as _:
         return None
+    kind = student_on_elective.kind
+    elective = student_on_elective.elective
+    possible_kinds = elective.kinds
 
-    student_on_elective.attached = True
+    semester = kind.semester
+    attached = student_on_elective.attached
+    match target:
+        case 'maybe-fall':
+            attached = False
+            semester = 1
+        case 'maybe-spring':
+            attached = False
+            semester = 2
+        case 'fall':
+            attached = True
+            semester = 1
+        case 'spring':
+            attached = True
+            semester = 2
+    try:
+        new_kind = possible_kinds.get(
+                credit_units=kind.credit_units,
+                language=kind.language,
+                semester=semester,
+        )
+    except ElectiveKind.DoesNotExist as _:
+        return None
+
+    student_on_elective.kind = new_kind
+    student_on_elective.attached = attached
     student_on_elective.save()
     return student_on_elective
+
+
+def remove_application(application_id: int) -> None:
+    StudentOnElective.objects.filter(id=application_id).delete()
 
 
 # def get_electives_by_thematics(student: Person, statistic: Statistic):

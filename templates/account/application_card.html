@@ -1,8 +1,10 @@
-<div class="application card small-font" id="application-{{ application.id }}">
+<div class="application card small-font" id="application-{{ application.id }}-{% if application.elective.has_fall %}1{% endif %}{% if application.elective.has_spring %}2{% endif %}">
   <div class="elective-name card-header">
-    <a href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
+    <a class="course-link" href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
       {{ application.elective.name }}
     </a>
+     <button type="button" class="close-button btn-close" aria-label="Remove application"
+             title="Remove application" onclick="removeApplication({{ application.id }})"></button>
   </div>
 
   <div class="application-body card-body">
@@ -11,11 +13,12 @@
         <button type="button" class="btn dropdown-toggle small-font"
                 data-bs-toggle="dropdown" aria-expanded="false"
                 id="kind-{{ application.id }}">
-          {{ application.kind.long_name }}
+          {{ application.kind.middle_name }}
         </button>
         <ul class="dropdown-menu small-font">
-          {% for full_kind, kind_id in application.elective.text_kinds_with_ids %}
-            <li>
+          {% for full_kind, kind_id, semester in application.text_kinds_with_ids %}
+            <li class="{{ semester }}-kind"
+                style="display: {% if semester == application.kind.semester_english_name %} list-item {% else %} none {% endif %}">
               <a class="dropdown-item" href="#"
                  onclick="changeKind({{ application.id }}, {{ kind_id }})">
                 {{ full_kind }}
@@ -25,26 +28,40 @@
         </ul>
       </div>
       <div class="card-element credit-units">
-            <span id="credits-{{ application.id }}">
-              {{ application.credit_units }}
-            </span> з.е.
+        <span id="credits-{{ application.id }}">
+          {{ application.credit_units }}
+        </span> з.е.
       </div>
     </div>
-    <div class="exam" role="group">
-      <label for="exam-{{ application.id }}"
-             class="exam-container small-font">
-        Экзамен
-        <input type="checkbox"
-               onclick="changeExam({{ application.id }})"
-                {% if application.is_seminar %}
-               disabled
-                {% else %}
-                  {% if application.with_examination %} checked {% endif %}
-                {% endif %}
-               id="exam-{{ application.id }}"
-               class="exam-input">
-        <span class="checkmark"></span>
-      </label>
+    <div class="card-last-row">
+      <div class="exam card-element" role="group">
+        <label for="exam-{{ application.id }}"
+               class="exam-container small-font">
+          Экзамен
+          <input type="checkbox"
+                 onclick="changeExam({{ application.id }})"
+                  {% if application.is_seminar %}
+                 disabled
+                  {% else %}
+                    {% if application.with_examination %} checked {% endif %}
+                  {% endif %}
+                 id="exam-{{ application.id }}"
+                 class="exam-input">
+          <span class="checkmark"></span>
+        </label>
+      </div>
+      <div class="card-element semesters">
+        {% if application.elective.has_fall %}
+        <span class="semester-tag fall-tag" id="fallSemesterTag" title="Fall semester is possible">
+          Fall
+        </span>
+        {% endif %}
+        {% if application.elective.has_spring %}
+        <span class="semester-tag spring-tag" id="springSemesterTag" title="Spring semester is possible">
+          Spring
+        </span>
+        {% endif %}
+      </div>
     </div>
   </div>
 </div>
