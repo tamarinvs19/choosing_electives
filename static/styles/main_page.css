@@ -1,0 +1,158 @@
+.env-page {
+  padding: 10px 30px 30px 0;
+}
+
+.title-row {
+  padding: 8px 0;
+
+  font-weight: bold;
+}
+
+.table-row {
+  padding: 8px 0;
+
+  border-top: 1px solid #e5e5e5;
+}
+
+.elective-row:hover {
+  background-color: #f3f3f3;
+}
+
+.elective-description {
+  word-break: break-all;
+}
+
+.accordion-button:not(.collapsed) {
+  background-color: #e0f2f1;
+  color: #01579b;
+}
+
+.kind-button {
+  display: inline-flex;
+
+  margin: 2px;
+  padding: 3px 5px;
+
+  border: 1px solid gray;
+  border-radius: 2px;
+
+  transition: 0.2s ease-in-out;
+
+  color: #333333;
+  font-family: 'Iosevka Medium', monospace;
+}
+
+.semester-1 {
+  --color-1-f: rgba(255, 220, 51, 0.5);
+  --color-2-f: rgba(225, 180, 30, 0.1);
+  background: linear-gradient(var(--color-1-f), var(--color-2-f)) var(--color-2-f);
+}
+.semester-1:hover {
+  background: linear-gradient(var(--color-2-f), var(--color-1-f)) var(--color-2-f);
+  cursor: pointer;
+}
+.checkbox-kind:checked + .semester-1 {
+  background: linear-gradient(rgb(225, 180, 30), rgb(255, 220, 51)) rgb(225, 180, 30);
+  box-shadow: 0 0 0 1px #bbb inset, 0 1px 3px rgba(0, 0, 0, 0.5) inset, 0 1px 2px #fff;
+}
+
+.semester-2 {
+  --color-1-s: rgba(194, 227, 132, 0.5);
+  --color-2-s: rgba(154, 205, 50, 0.1);
+  background: linear-gradient(var(--color-1-s), var(--color-2-s)) var(--color-2-s);
+}
+.semester-2:hover {
+  background: linear-gradient(var(--color-2-s), var(--color-1-s)) var(--color-2-s);
+  cursor: pointer;
+}
+.checkbox-kind:checked + .semester-2 {
+  background: linear-gradient(rgb(154, 205, 50), rgb(194, 227, 132)) rgb(154, 205, 50);
+  box-shadow: 0 0 0 1px #bbb inset, 0 1px 3px rgba(0, 0, 0, 0.5) inset, 0 1px 2px #fff;
+}
+
+.checkbox-kind {
+  display: none;
+}
+
+.statistic {
+  margin-left: 4px;
+  padding-left: 4px;
+  border-left: 1px solid gray;
+}
+
+.switch-container {
+  width: 40px;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #01579b;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #01579b;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.switch-container {
+  position: fixed;
+  top: 90px;
+  right: 40px;
+}
+
+.switch-container {
+  width: 100px;
+}

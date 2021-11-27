@@ -24,6 +24,11 @@ LANG_NAMES: dict[str, str] = {
     'en': 'на английском',
 }
 
+ENGLISH_LANG_NAMES: dict[str, str] = {
+    'ru': 'in Russian',
+    'en': 'in English',
+}
+
 SEMESTERS: dict[int: str] = {
     1: 'осенний',
     2: 'весенний',
@@ -55,11 +60,18 @@ class ElectiveKind(models.Model):
         return '<ElectiveKind: {0}>'.format(self.short_name)
 
     def __str__(self) -> str:
-        return '{kind} {lang} {semester}'.format(
-                kind=KIND_NAMES[self.credit_units],
-                lang=LANG_NAMES[self.language],
-                semester=SEMESTERS[self.semester],
-        )
+        if self.language == 'ru':
+            return '{kind} {lang} {semester}'.format(
+                    kind=KIND_NAMES[self.credit_units],
+                    lang=LANG_NAMES[self.language],
+                    semester=SEMESTERS[self.semester],
+            )
+        else:
+            return '{kind} {lang} {semester}'.format(
+                kind=ENGLISH_KIND_NAMES[self.credit_units],
+                lang=ENGLISH_LANG_NAMES[self.language],
+                semester=ENGLISH_SEMESTERS[self.semester],
+            )
 
     @admin.display(description='Title')
     def show_name(self) -> str:
@@ -100,10 +112,16 @@ class ElectiveKind(models.Model):
     @property
     def middle_name(self) -> str:
         """Generate the long name without semester"""
-        return '{kind} {lang}'.format(
-            kind=KIND_NAMES[self.credit_units],
-            lang=LANG_NAMES[self.language],
-        )
+        if self.language == 'ru':
+            return '{kind} {lang}'.format(
+                kind=KIND_NAMES[self.credit_units],
+                lang=LANG_NAMES[self.language],
+            )
+        else:
+            return '{kind} {lang}'.format(
+                kind=ENGLISH_KIND_NAMES[self.credit_units],
+                lang=ENGLISH_LANG_NAMES[self.language],
+            )
 
     @property
     def credit_units_name(self) -> str:
@@ -184,6 +202,12 @@ class Elective(models.Model):
     @property
     def has_spring(self) -> bool:
         return self.kinds.filter(semester=2).exists()
+
+    @property
+    def translated_name(self) -> str:
+        if self.has_english_kind:
+            return self.english_name
+        return self.name
 
     @property
     def text_kinds(self) -> list[(str, str, str)]:

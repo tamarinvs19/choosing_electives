@@ -1,6 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block head_title %}
   {{ elective.codename }}
+{% endblock %}
+{% block extra_styles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'styles/elective_page.css' %}">
 {% endblock %}
 
 {% block body %}
@@ -8,7 +12,7 @@
   <div class="row col-md-8 offset-md-2 env-page">
     <div class="row">
       <div class="col-8">
-        <h2>{{ elective.name }}</h2>
+        <h2>{{ elective.translated_name }}</h2>
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
              aria-label="breadcrumb">
           <ol class="breadcrumb">
@@ -20,14 +24,14 @@
                 </svg>
               </a>
             </li>
-            <li class="breadcrumb-item"><a href="/electives/">Элективы</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ elective.name }}</li>
+            <li class="breadcrumb-item"><a href="/electives/">Electives</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ elective.translated_name }}</li>
           </ol>
         </nav>
       </div>
       <div class="col-4">
         <ul class="list-group list-group-horizontal description-table">
-          <li class="list-group-item list-group-item-info flex-fill">Код</li>
+          <li class="list-group-item list-group-item-info flex-fill">Codename</li>
           <li class="list-group-item list-group-item-info flex-fill">{{ elective.codename }}</li>
         </ul>
       </div>
@@ -40,11 +44,10 @@
             <h2 class="accordion-header" id="headingOne">
               <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
                       aria-expanded="true" aria-controls="collapseOne">
-                Описание
+                Description
               </button>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
-                 data-bs-parent="#accordionElectivePage">
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
               <div class="elective-description accordion-body">
                 {{ elective.description }}
               </div>
@@ -52,15 +55,14 @@
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                <span>Преподаватели</span>
+              <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                <span>Teachers</span>
               </button>
             </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                 data-bs-parent="#accordionElectivePage">
+            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
               <div class="accordion-body">
-                {{ elective.text_teacher }}
+                {{ elective.text_teachers }}
               </div>
             </div>
           </div>
@@ -68,17 +70,23 @@
               <h2 class="accordion-header" id="headingThree">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
                         data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                  Студенты
+                  Students
                   <span class="info-counter badge rounded-pill bg-light text-dark">{{ students_count }}</span>
                 </button>
               </h2>
-              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                   data-bs-parent="#accordionElectivePage">
+              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
                 <div class="accordion-body">
                   <ol class="list-group list-group-numbered">
-                    {% for student in students %}
+                    {% for student, kinds in students %}
                       <li class="list-group-item">
                         {{ student }}
+                        <div class="kinds-box">
+                          {% for kind in kinds %}
+                            <div class="elective-kind">
+                              {{ kind }}
+                            </div>
+                          {% endfor %}
+                        </div>
                       </li>
                     {% endfor %}
                   </ol>
@@ -88,7 +96,7 @@
           </div>
         </div>
         <div class="col-lg-4">
-          <h5>Выбор курса</h5>
+          <h5>Kinds</h5>
           <form method="POST" id="chooseKind">
             {% csrf_token %}
             <div class="elective-kinds">
@@ -111,7 +119,7 @@
               </ul>
             </div>
             <div class="d-grid gap-2 save-button">
-              <button type="submit" class="btn btn-outline-primary btn-sm" >Сохранить</button>
+              <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
             </div>
           </form>
         </div>

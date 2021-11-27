@@ -1,7 +1,7 @@
 <div class="application card small-font" id="application-{{ application.id }}-{% if application.elective.has_fall %}1{% endif %}{% if application.elective.has_spring %}2{% endif %}">
   <div class="elective-name card-header">
     <a class="course-link" href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
-      {{ application.elective.name }}
+      {{ application.elective.translated_name }}
     </a>
      <button type="button" class="close-button btn-close" aria-label="Remove application"
              title="Remove application" onclick="removeApplication({{ application.id }})"></button>
@@ -27,17 +27,17 @@
           {% endfor %}
         </ul>
       </div>
-      <div class="card-element credit-units">
+      <div class="card-element credit-units" title="Number of credit units">
         <span id="credits-{{ application.id }}">
           {{ application.credit_units }}
-        </span> з.е.
+        </span> credit units
       </div>
     </div>
     <div class="card-last-row">
       <div class="exam card-element" role="group">
         <label for="exam-{{ application.id }}"
                class="exam-container small-font">
-          Экзамен
+          Examination
           <input type="checkbox"
                  onclick="changeExam({{ application.id }})"
                   {% if application.is_seminar %}

@@ -125,7 +125,7 @@
   background-color: #f8a800;
 }
 .maybe-fall-column {
-  background-color: rgba(248, 168, 0, 0.7);
+  background-color: rgba(248, 168, 0, 0.8);
 }
 .spring-column {
   background-color: #67861f;
@@ -171,6 +171,8 @@
   top: 0;
   right: 0;
   margin: 2px;
+
+  cursor: pointer;
 }
 
 .card-last-row {
@@ -208,4 +210,14 @@
 
 .title-row {
   text-align: center;
+}
+
+.credit-units {
+  position: absolute;
+  right: 0;
+  padding: 4px;
+}
+
+.course-link {
+  margin-right: 10px;
 }

@@ -1,0 +1,42 @@
+ul.description-table {
+    font-size: 11pt;
+}
+
+ul.description-table li:first-child {
+    font-weight: bold;
+}
+
+.info-counter {
+    position: absolute;
+    right: 50px;
+}
+
+#accordionElectivePage {
+    padding-bottom: 20px;
+}
+
+.elective-kinds {
+    font-size: 11pt;
+}
+
+.save-button {
+    padding: 10px 0;
+}
+.kinds-box {
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+}
+
+.elective-kind {
+    display: inline-block;
+
+    padding: 4px;
+
+    background-color: rgba(0, 0, 0, 0.05);
+
+    border-radius: 30%;
+
+    color: #333333;
+    font-size: 10pt;
+}

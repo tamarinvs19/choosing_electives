@@ -1,4 +1,5 @@
 import json
+from collections import defaultdict
 from typing import cast
 
 from django.contrib.auth.decorators import login_required
@@ -29,13 +30,13 @@ def open_elective_list(request, **kwargs):
 def open_elective_page(request, elective_id, **kwargs):
     user = cast(Person, request.user)
     elective = Elective.objects.get(id=elective_id)
-    students = {
-        soe.student for soe in
-        StudentOnElective.objects.filter(elective=elective).select_related('student').only('student')
-    }
+    students = defaultdict(list)
+    for sone in StudentOnElective.objects.filter(elective=elective).select_related('student').only('student'):
+        students[sone.student].append(sone.kind.short_name)
+    logger.debug(students)
     context = {
         'elective': elective,
-        'students': students,
+        'students': students.items(),
         'students_count': len(students),
         'kinds': controller.get_student_elective_kinds(user, elective),
     }
