@@ -1,0 +1,45 @@
+[tool.poetry]
+name = "choosing_electives"
+version = "0.1.0"
+description = "Website for comfortable choosing electives"
+authors = ["Vyacheslav Tamarin <tamarin.vs@ya.ru>"]
+readme = "README.md"
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+django = "^3.2"
+django-allauth = "^0.46"
+django-decouple = "^2.1"
+django-split-settings = "^1.1"
+
+requests = "^2.26"
+pytz = "^2021.3"
+asgiref = "^3.4.1"
+
+beautifulsoup4 = "^4.10.0"
+lxml = "^4.6.4"
+sqlparse = "^0.4.2"
+
+psycopg2-binary = "^2.9"
+
+loguru = "^0.5.3"
+
+[tool.poetry.dev-dependencies]
+mypy = "^0.910"
+django-stubs = "^1.9"
+
+# nplusone = "^1.0"
+# wemake-python-styleguide = "^0.15"
+# flake8-django = "^1.1"
+
+django-extensions = "^3.1.5"
+ggshield = "^1.10.7"
+pre-commit = "^2.15.0"
+
+ipython = "^7.29.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

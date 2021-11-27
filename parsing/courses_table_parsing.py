@@ -8,7 +8,7 @@ import re
 
 from django.core.exceptions import ValidationError
 
-from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
+from server.apps.elective.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
 
 RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
 ENGLISH_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html'
