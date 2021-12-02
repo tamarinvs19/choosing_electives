@@ -49,7 +49,11 @@
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
               <div class="elective-description accordion-body">
-                {{ elective.description }}
+                {% if elective.description|length > 0 %}
+                <a href="{{ elective.description }}" class="description-link">Russian description</a>
+                {% elif elective.english_description|length > 0 %}
+                <a href="{{ elective.english_description }}" class="description-link">English description</a>
+                {% endif %}
               </div>
             </div>
           </div>

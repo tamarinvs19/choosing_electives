@@ -20,7 +20,8 @@ class MandatoryElectiveForStudentGroupInline(admin.TabularInline):
 
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'english_name', 'codename', 'description', 'thematic', 'text_teachers']}),
+        (None, {'fields': ['name', 'english_name', 'codename', 'description',
+                           'english_description', 'thematic', 'text_teachers']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
     inlines = [KindOfElectiveInline,

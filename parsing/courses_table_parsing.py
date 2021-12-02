@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+from loguru import logger
+
 from django.core.exceptions import ValidationError
 
 from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
@@ -184,6 +186,16 @@ def main():
         else:
             thematic = ElectiveThematic.objects.create(name=thematic_name, english_name=english_name)
         for thematic_elective, english_elective in zip(thematic_electives, thematic_english_electives):
+
+            description, english_description = '', ''
+            if NO_ENGLISH_MARKER not in english_elective['fullname']:
+                description = thematic_elective['description'][0]
+            elif len(thematic_elective['description']) == 1:
+                english_description = thematic_elective['description'][0]
+            else:
+                description = thematic_elective['description'][0]
+                english_description = thematic_elective['description'][1]
+
             if Elective.objects.filter(codename=thematic_elective['codename']).exists():
                 elective = Elective.objects.get(codename=thematic_elective['codename'])
                 elective.name = thematic_elective['fullname']
@@ -191,7 +203,8 @@ def main():
                     elective.english_name = english_elective['fullname']
                 elective.thematic = thematic
                 elective.text_teachers = thematic_elective['teachers']
-                elective.description = thematic_elective['description']
+                elective.description = description
+                elective.english_description = english_description
                 elective.save()
             else:
                 elective = Elective.objects.create(
@@ -200,7 +213,8 @@ def main():
                     codename=thematic_elective['codename'],
                     thematic=thematic,
                     text_teachers=thematic_elective['teachers'],
-                    description=thematic_elective['description']
+                    description=description,
+                    english_description=english_description,
                 )
             for elective_type, semester in itertools.product(
                     thematic_elective['credit_type'], thematic_elective['semesters']):

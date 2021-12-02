@@ -157,6 +157,7 @@ class Elective(models.Model):
     :english_name:         |  The english name of this elective
     :credit_unit:          |  The credit_unit of this elective
     :description:          |  The description of this elective
+    :english_description:  |  The english description of this elective
     :max_number_students:  |  Maximum of number of students on this elective
     :min_number_students:  |  Minimum of number of students on this elective
     :thematic:             |  ForeignKey with thematic of this elective
@@ -168,7 +169,8 @@ class Elective(models.Model):
     name = models.CharField(max_length=200)
     english_name = models.CharField(max_length=200, null=True, default=None)
     codename = models.CharField(max_length=100, unique=True)
-    description = models.TextField(default='')
+    description = models.CharField(max_length=200, default='')
+    english_description = models.CharField(max_length=200, default='')
     max_number_students = models.PositiveIntegerField(default=255)
     min_number_students = models.PositiveIntegerField(default=3)
     thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)
