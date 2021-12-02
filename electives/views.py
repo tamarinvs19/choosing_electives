@@ -65,11 +65,12 @@ def change_elective_kind(request, **kwargs):
         controller.change_kinds(user, elective_id, kind_id)
         elective = Elective.objects.get(id=elective_id)
         kind = ElectiveKind.objects.get(id=kind_id)
-        students_counts = {kind.id: count for kind, count in controller.get_statistics(elective).items()}
-        if kind.id in students_counts:
-            students_count = students_counts[kind.id]
-        else:
-            students_count = 0
+        students_count = controller.get_statistics(elective, kind)
+        if True not in students_count:
+            students_count[True] = 0
+        if False not in students_count:
+            students_count[False] = 0
+        logger.debug(students_count)
         return JsonResponse({'students_count': students_count})
     return HttpResponseBadRequest
 
@@ -136,8 +137,7 @@ def attach_application(request, **kwargs):
                 'OK': True,
                 'semester': sone.kind.semester,
             }
-        return JsonResponse({
-        })
+        return JsonResponse(response)
     return HttpResponseBadRequest
 
 

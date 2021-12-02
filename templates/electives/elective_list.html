@@ -37,7 +37,8 @@
           $.post("{% url 'electives:change_kind' %}",
               {'kind_id': kind_id, 'elective_id': elective_id, 'csrfmiddlewaretoken': csrftoken},
               function(data) {
-                $(`#statistic-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'];
+                  $(`#statistic-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'][true];
+                  $(`#statistic-maybe-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'][false];
               });
       }
 

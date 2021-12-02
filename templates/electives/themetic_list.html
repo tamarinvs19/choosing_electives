@@ -49,18 +49,28 @@
                 <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.id }}"
                        value="{{ elective.short_name }}" class="checkbox-kind"
                        onclick="change_kind({{ elective.id }}, {{ kind.id }})"
-                        {% if info.1 %} checked {% endif %}>
+                        {% if info.1.1 or info.0.1 %} checked {% endif %}>
                 <label for="button-{{ kind.short_name }}-{{ elective.id }}"
                        class="semester-{{ kind.semester }} kind-button"
                        title="{{ kind.long_name }}">
+                <div class="kind-inner-container">
+                <span class="kind-name">
                   {% if language == 'ru' %}
                     {{ kind.credit_units_name }}
                   {% else %}
                     {{ kind.credit_units_english_name }}
                   {% endif %}
-                  <div id="statistic-{{ elective.id }}-{{ kind.id }}" class="statistic">
-                    {{ info.0 }}
-                  </div>
+                </span>
+                  <span class="statistic-container">
+                  <span id="statistic-{{ elective.id }}-{{ kind.id }}" class="statistic" title="Number of applications">
+                    {{ info.1.0 }}
+                  </span>
+                    <span id="statistic-maybe-{{ elective.id }}-{{ kind.id }}" class="statistic statistic-maybe"
+                          title='Number of "maybe" applications'>
+                    {{ info.0.0 }}
+                  </span>
+                  </span>
+                </div>
                 </label>
                 {% endfor %}
               </div>

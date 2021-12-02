@@ -20,11 +20,11 @@ class BaseNode:
 
 
 @dataclass
-class _ApplicationCounter(BaseNode):
-    def __init__(self, elective: Elective, kind: ElectiveKind):
+class _MaybeCounter(BaseNode):
+    def __init__(self, elective: Elective, kind: ElectiveKind, attached: bool):
         items = Counter(
             sone.student.id
-            for sone in elective.studentonelective_set.filter(kind=kind)
+            for sone in elective.studentonelective_set.filter(kind=kind, attached=attached)
         )
         super().__init__(items)
 
@@ -35,9 +35,26 @@ class _ApplicationCounter(BaseNode):
         if student_id in self.items:
             self.items[student_id] -= 1
 
+    def remove_student_all(self, student_id: int):
+        self.items[student_id] = 0
+
     def generate_view(self, student_id: int):
         ids = self.items.keys()
         return len(ids), student_id in ids
+
+
+@dataclass
+class _ApplicationCounter(BaseNode):
+    def __init__(self, elective: Elective, kind: ElectiveKind):
+        items = {
+            True: _MaybeCounter(elective, kind, True),
+            False: _MaybeCounter(elective, kind, False),
+        }
+        super().__init__(items)
+
+    def remove_student_all(self, student_id: int) -> None:
+        for maybe_counter in self.items.values():
+            maybe_counter.remove_student_all(student_id)
 
 
 @dataclass
@@ -96,35 +113,14 @@ class Statistic(object):
     def __init__(self):
         self.data = _Data()
 
-    def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int):
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind].add_student(student_id)
+    def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
+        self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].add_student(student_id)
 
-    def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int):
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student(student_id)
+    def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
+        self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
 
     def generate_view(self, student_id: int):
         return self.data.generate_view(student_id)
 
-
-def _load_data():
-    data = {}
-    thematics = ElectiveThematic.objects.all()
-    for thematic in thematics:
-        statistic_inside_thematic = {}
-        electives = Elective.objects.filter(thematic=thematic)
-        for elective in electives:
-            kinds = elective.kinds.all()
-            kind_by_lang_semester = {
-                kind.language: {
-                    kind_lang.semester: {
-                        kind_semester: Counter(
-                            sone.student.id
-                            for sone in elective.studentonelective_set.filter(kind=kind_semester)
-                        )
-                        for kind_semester in kinds.filter(language=kind.language, semester=kind_lang.semester)
-                    } for kind_lang in kinds.filter(language=kind.language)
-                } for kind in kinds
-            }
-            statistic_inside_thematic[elective] = kind_by_lang_semester
-        data[thematic] = statistic_inside_thematic
-    return data
+    def remove_student_all(self, elective: Elective, kind: ElectiveKind, student_id: int):
+        self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)

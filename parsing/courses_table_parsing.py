@@ -188,7 +188,7 @@ def main():
         for thematic_elective, english_elective in zip(thematic_electives, thematic_english_electives):
 
             description, english_description = '', ''
-            if NO_ENGLISH_MARKER not in english_elective['fullname']:
+            if NO_ENGLISH_MARKER in english_elective['fullname']:
                 description = thematic_elective['description'][0]
             elif len(thematic_elective['description']) == 1:
                 english_description = thematic_elective['description'][0]

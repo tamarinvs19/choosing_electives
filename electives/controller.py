@@ -20,14 +20,13 @@ def get_electives_by_thematics(student: Person):
     return statistic.generate_view(student.id)
 
 
-def get_statistics(elective: Elective) -> Dict[ElectiveKind, int]:
+def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
     students_on_elective = StudentOnElective.objects.filter(
-        elective=elective
-    ).select_related(
-        'kind'
+        elective=elective,
+        kind=kind,
     )
-    kinds = Counter([soe.kind for soe in students_on_elective])
-    return dict(kinds)
+    counts = Counter([soe.attached for soe in students_on_elective])
+    return dict(counts)
 
 
 def get_student_elective_kinds(student: Person, elective: Elective) -> List[KindWithSelectStatus]:
@@ -88,6 +87,10 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
 
 
 def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
+    """
+    Если у студента есть заявления на этот курс, они удаляются,
+    если нет, то добавляется одно в maybe
+    """
     kind = ElectiveKind.objects.filter(id=kind_id).all()
     elective = Elective.objects.filter(id=elective_id).all()
     if len(kind) == 1 and len(elective) == 1:
@@ -99,16 +102,16 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
             elective=elective,
             kind=kind,
         ).all()
-        if len(student_on_elective) == 1:
-            student_on_elective[0].delete()
-            statistic.remove_student(elective, kind, student.id)
+        if len(student_on_elective) >= 1:
+            student_on_elective.delete()
+            statistic.remove_student_all(elective, kind, student.id)
         else:
             StudentOnElective.objects.create(
                 student=student,
                 elective=elective,
                 kind=kind,
             )
-            statistic.add_student(elective, kind, student.id)
+            statistic.add_student(elective, kind, student.id, False)
 
 
 def change_exam(student_on_elective_id: int) -> Optional[StudentOnElective]:
