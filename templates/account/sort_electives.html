@@ -15,7 +15,7 @@ Selected electives
   </div>
   <div class="row application-row">
     <div class="col-2 title-codes">
-      <span>Fall codes:</span>
+      <span>Fall request</span>
     </div>
     <div class="col-10 code-container">
       <span class="copy-codes" onclick="copyCodes('fall')"><i class="fas fa-copy"></i></span>
@@ -26,7 +26,7 @@ Selected electives
   </div>
   <div class="row application-row">
     <div class="col-2 title-codes">
-      <span>Spring codes:</span>
+      <span>Spring request</span>
     </div>
     <div class="col-10">
       <span class="copy-codes" onclick="copyCodes('spring')"><i class="fas fa-copy"></i></span>
@@ -87,6 +87,8 @@ Selected electives
 
     document.execCommand("copy");
     $tmp.remove();
+
+    // message about copy
   }
 
   let currentDrag;
@@ -103,11 +105,8 @@ Selected electives
           currentDrag = evt.item;
       },
       onEnd: function (evt) {
-          {#moveApplication(currentDrag, 1, evt.newIndex, false);#}
-          console.log(evt.to);
           attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
-          console.log('MaybeFall', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -117,10 +116,6 @@ Selected electives
           let application = evt.item;
           $(application).css('background', 'white');
       },
-      onAdd: function (evt) {
-          let application = evt.item;
-          {#attachApplication(application, 'maybe-fall', evt.newIndex);#}
-      }
   });
   let fallSortable = new Sortable(fall, {
       group: {
@@ -135,10 +130,8 @@ Selected electives
           currentDrag = evt.item;
       },
       onEnd: function (evt) {
-          {#moveApplication(currentDrag, 1, evt.newIndex, true);#}
           attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
-          console.log('Fall', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -148,10 +141,6 @@ Selected electives
           let application = evt.item;
           $(application).css('background', 'white');
       },
-      onAdd: function (evt) {
-          let application = evt.item;
-          {#attachApplication(application, 'fall', evt.newIndex);#}
-      }
   });
   let maybeSpringSortable = new Sortable(maybeSpring, {
       group: {
@@ -166,10 +155,8 @@ Selected electives
           currentDrag = evt.item;
       },
       onEnd: function (evt) {
-          {#moveApplication(currentDrag, 2, evt.newIndex, false);#}
           attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
-          console.log('MaybeSpring', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -179,10 +166,6 @@ Selected electives
           let application = evt.item;
           $(application).css('background', 'white');
       },
-      onAdd: function (evt) {
-          let application = evt.item;
-          {#attachApplication(application, 'maybe-spring', evt.newIndex);#}
-      }
   });
   let springSortable = new Sortable(spring, {
       group: {
@@ -197,10 +180,8 @@ Selected electives
           currentDrag = evt.item;
       },
       onEnd: function (evt) {
-          {#moveApplication(currentDrag, 2, evt.newIndex, true);#}
           attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
-          console.log('Spring', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -209,10 +190,6 @@ Selected electives
       onUnchoose: function (evt) {
           let application = evt.item;
           $(application).css('background', 'white');
-      },
-      onAdd: function (evt) {
-          let application = evt.item;
-          {#attachApplication(application, 'spring', evt.new_index);#}
       },
   });
 
