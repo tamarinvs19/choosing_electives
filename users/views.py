@@ -1,6 +1,8 @@
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+
+from electives import controller
 from electives.models import Elective, StudentOnElective
 
 
@@ -16,27 +18,29 @@ def open_sorting_page(request, user_id, **kwargs):
         student=user_id,
         kind__semester=1,
         attached=False,
-    ).all()
+    ).order_by('priority').all()
     applications_spring = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=2,
         attached=False,
-    ).all()
+    ).order_by('priority').all()
     applications_fall_attached = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=1,
         attached=True,
-    ).all()
+    ).order_by('priority').all()
     applications_spring_attached = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=2,
         attached=True,
-    ).all()
+    ).order_by('priority').all()
     context = {
         'applications_fall': applications_fall,
         'applications_spring': applications_spring,
         'applications_fall_attached': applications_fall_attached,
         'applications_spring_attached': applications_spring_attached,
+        'fall_code_row': controller.generate_application_row(student=user_id, semester=1),
+        'spring_code_row': controller.generate_application_row(student=user_id, semester=2),
     }
     return render(request, 'account/sort_electives.html', context)
 

@@ -221,3 +221,65 @@
 .course-link {
   margin-right: 10px;
 }
+
+.application-row {
+  margin-left: 2px;
+  margin-right: 8px;
+  margin-bottom: 10px;
+
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+.title-codes {
+  padding-top: 4px;
+  font-size: 18px;
+}
+
+.codes {
+  padding: 5px 50px 5px 5px;
+  border: 1px solid #747474;
+  border-radius: 3px;
+  overflow: auto;
+  white-space: nowrap;
+
+  /*noinspection CssInvalidPropertyValue*/
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 0%,
+    black 89%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+
+  color: #747474;
+  font-size: 11pt;
+}
+
+.codes::-webkit-scrollbar {
+  display: none;
+}
+
+.copy-codes {
+  position: absolute;
+  margin-left: -35px;
+
+  padding: 4px 8px;
+
+  border: 1px solid white;
+  border-radius: 3px;
+}
+
+.copy-codes:hover {
+  border: 1px solid #747474;
+}
+
+.copy-codes:active {
+  border: 1px solid #747474;
+  background-color: #ddd;
+}
+
+.code-container {
+  float: right;
+}

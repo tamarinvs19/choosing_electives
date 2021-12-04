@@ -13,6 +13,28 @@ Selected electives
   <div class="row title-row">
     <h2>Your applications</h2>
   </div>
+  <div class="row application-row">
+    <div class="col-2 title-codes">
+      <span>Fall codes:</span>
+    </div>
+    <div class="col-10 code-container">
+      <span class="copy-codes" onclick="copyCodes('fall')"><i class="fas fa-copy"></i></span>
+      <div class="codes codes-fall">
+        {{ fall_code_row }}
+      </div>
+    </div>
+  </div>
+  <div class="row application-row">
+    <div class="col-2 title-codes">
+      <span>Spring codes:</span>
+    </div>
+    <div class="col-10">
+      <span class="copy-codes" onclick="copyCodes('spring')"><i class="fas fa-copy"></i></span>
+      <div class="codes codes-spring">
+        {{ spring_code_row }}
+      </div>
+    </div>
+  </div>
   <div class="row canvas">
     <div class="col-xl-3 col-lg-6 fall-column column">
       <div class="title">
@@ -57,15 +79,35 @@ Selected electives
   </div>
 </div>
 <script>
+  function copyCodes(semester) {
+    let $tmp = $("<input>");
+    let codes = $(`#codes-${semester}`);
+    $("body").append($tmp);
+    $tmp.val(codes.text()).select();
+
+    document.execCommand("copy");
+    $tmp.remove();
+  }
+
   let currentDrag;
   let maybeFallSortable = new Sortable(maybeFall, {
-      group: 'electives',
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '2';
+          },
+      },
       animation: 150,
       onStart: function (evt) {
           currentDrag = evt.item;
       },
-      onEnd: function (_) {
+      onEnd: function (evt) {
+          {#moveApplication(currentDrag, 1, evt.newIndex, false);#}
+          console.log(evt.to);
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
+          console.log('MaybeFall', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -77,7 +119,7 @@ Selected electives
       },
       onAdd: function (evt) {
           let application = evt.item;
-          attachApplication(application, 'maybe-fall');
+          {#attachApplication(application, 'maybe-fall', evt.newIndex);#}
       }
   });
   let fallSortable = new Sortable(fall, {
@@ -92,8 +134,11 @@ Selected electives
       onStart: function (evt) {
           currentDrag = evt.item;
       },
-      onEnd: function (_) {
+      onEnd: function (evt) {
+          {#moveApplication(currentDrag, 1, evt.newIndex, true);#}
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
+          console.log('Fall', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -105,17 +150,26 @@ Selected electives
       },
       onAdd: function (evt) {
           let application = evt.item;
-          attachApplication(application, 'fall');
+          {#attachApplication(application, 'fall', evt.newIndex);#}
       }
   });
-  let mainRightSortable = new Sortable(maybeSpring, {
-      group: 'electives',
+  let maybeSpringSortable = new Sortable(maybeSpring, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '1';
+          },
+      },
       animation: 150,
       onStart: function (evt) {
           currentDrag = evt.item;
       },
-      onEnd: function (_) {
+      onEnd: function (evt) {
+          {#moveApplication(currentDrag, 2, evt.newIndex, false);#}
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
+          console.log('MaybeSpring', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -127,7 +181,7 @@ Selected electives
       },
       onAdd: function (evt) {
           let application = evt.item;
-          attachApplication(application, 'maybe-spring');
+          {#attachApplication(application, 'maybe-spring', evt.newIndex);#}
       }
   });
   let springSortable = new Sortable(spring, {
@@ -142,8 +196,11 @@ Selected electives
       onStart: function (evt) {
           currentDrag = evt.item;
       },
-      onEnd: function (_) {
+      onEnd: function (evt) {
+          {#moveApplication(currentDrag, 2, evt.newIndex, true);#}
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
           currentDrag = undefined;
+          console.log('Spring', evt.to, evt.from, evt.oldIndex, evt.newIndex);
       },
       onClone: function (evt) {
           let origEl = evt.item;
@@ -155,8 +212,7 @@ Selected electives
       },
       onAdd: function (evt) {
           let application = evt.item;
-          $(application).css('background', 'white');
-          attachApplication(application, 'spring');
+          {#attachApplication(application, 'spring', evt.new_index);#}
       },
   });
 
@@ -184,6 +240,7 @@ Selected electives
           function(data) {
               if (data['OK'] === true) {
                   $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
+                  updateCodes();
               }
               if (data['message']) {
                   // show message
@@ -209,6 +266,7 @@ Selected electives
                   if (data['is_seminar']) {
                       examTag.checked = false;
                   }
+                  updateCodes();
               }
               if (data['message']) {
                   // show message
@@ -217,24 +275,25 @@ Selected electives
       );
   }
 
-  function attachApplication(application, target) {
+  function attachApplication(application, target, newIndex) {
       const applicationId = application.id.split('-')[1];
       $.post("{% url 'electives:attach_application' %}",
           {
               'student_on_elective_id': applicationId,
               'target': target,
+              'new_index': newIndex,
               'csrfmiddlewaretoken': csrftoken,
           },
           function(data) {
               if (data['OK'] === true) {
-                  if (data['semester'] === '1') {
+                  if (data['semester'] === 1) {
                       $('.fall-kind').css('display', 'list-item');
                       $('.spring-kind').css('display', 'none');
                   } else {
                       $('.spring-kind').css('display', 'list-item');
                       $('.fall-kind').css('display', 'none');
                   }
-                  return true;
+                  updateCodes();
               } else {
                   return false;
               }
@@ -251,11 +310,23 @@ Selected electives
           },
           function(data) {
             if (data['OK'] === true) {
-                $(`#application-${applicationId}`).remove()
+                $(`#application-${applicationId}-1`).remove()
+                $(`#application-${applicationId}-12`).remove()
+                $(`#application-${applicationId}-2`).remove()
+                updateCodes();
             }
           }
       );
   }
 
+  function updateCodes() {
+      $.get("{% url 'electives:get_application_rows' %}",
+          {},
+          function (data) {
+              $('.codes-fall').html(data['codes_fall']);
+              $('.codes-spring').html(data['codes_spring']);
+          }
+      );
+  }
 </script>
 {% endblock %}

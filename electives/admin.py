@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
-    MandatoryElectiveInStudentGroup
+    MandatoryElectiveInStudentGroup, ApplicationsRoot
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -46,7 +46,28 @@ class ElectiveThematicAdmin(admin.ModelAdmin):
     list_display = ('name', 'english_name')
 
 
+class ApplicationAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['student', 'elective', 'kind', 'with_examination', 'attached', 'priority']}),
+    ]
+    list_display = ('student', 'elective', 'kind', 'attached', 'priority')
+
+
+class ApplicationsRootAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': [
+            'student',
+            'fall_root',
+            'maybe_fall_root',
+            'spring_root',
+            'maybe_spring_root',
+        ]}),
+    ]
+    list_display = ('student',)
+
+
 admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
 admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
-
+admin.site.register(ApplicationsRoot, ApplicationsRootAdmin)
+admin.site.register(StudentOnElective, ApplicationAdmin)

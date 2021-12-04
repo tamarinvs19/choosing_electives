@@ -32,11 +32,15 @@ class _MaybeCounter(BaseNode):
         self.items[student_id] += 1
 
     def remove_student(self, student_id: int):
+        logger.debug(['remove_student', student_id, self.items[student_id]])
         if student_id in self.items:
             self.items[student_id] -= 1
+            if self.items[student_id] == 0:
+                self.items.pop(student_id, None)
 
     def remove_student_all(self, student_id: int):
         self.items[student_id] = 0
+        self.items.pop(student_id, None)
 
     def generate_view(self, student_id: int):
         ids = self.items.keys()

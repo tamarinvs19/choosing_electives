@@ -1,6 +1,9 @@
 from collections import namedtuple, Counter
 from typing import Tuple, List, Dict, Optional
 
+from django.db import transaction
+from django.db.models import F, Max
+
 from loguru import logger
 
 from electives.elective_statistic import Statistic
@@ -69,12 +72,25 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
     for kind in selected_kinds:
         if kind in kinds:
             if kind not in student_kinds:
+                new_priority = StudentOnElective.objects.filter(
+                    student=student,
+                    elective=elective,
+                    kind__semester=kind.semester,
+                    attached=False,
+                ).aggregate(Max('priority'))['priority__max']
+
+                if new_priority is None:
+                    new_priority = 0
+                else:
+                    new_priority += 1
+
                 StudentOnElective.objects.create(
                     student=student,
                     elective=elective,
                     kind=kind,
+                    priority=new_priority,
                 )
-                statistic.add_student(elective, kind, student.id)
+                statistic.add_student(elective, kind, student.id, attached=False)
     for kind in student_kinds:
         if kind not in selected_kinds:
             student_on_elective = StudentOnElective.objects.get(
@@ -82,8 +98,9 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
                 student=student,
                 kind=kind,
             )
+
             student_on_elective.delete()
-            statistic.remove_student(elective, kind, student.id)
+            statistic.remove_student(elective, kind, student.id, student_on_elective.attached)
 
 
 def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
@@ -106,10 +123,23 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
             student_on_elective.delete()
             statistic.remove_student_all(elective, kind, student.id)
         else:
+            new_priority = StudentOnElective.objects.filter(
+                student=student,
+                kind__semester=kind.semester,
+                attached=False,
+            ).aggregate(Max('priority'))['priority__max']
+            logger.debug(new_priority)
+
+            if new_priority is None:
+                new_priority = 0
+            else:
+                new_priority += 1
+
             StudentOnElective.objects.create(
                 student=student,
                 elective=elective,
                 kind=kind,
+                priority=new_priority
             )
             statistic.add_student(elective, kind, student.id, False)
 
@@ -141,16 +171,42 @@ def change_kind(student_on_elective_id: int, kind_id: int) -> Optional[StudentOn
     except ElectiveKind.DoesNotExist as _:
         return None
 
+    StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        attached=student_on_elective.attached,
+        kind__semester=student_on_elective.kind.semester,
+        priority__gt=student_on_elective.priority,
+    ).update(priority=F('priority') - 1)
+
+    StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        attached=student_on_elective.attached,
+        kind__semester=kind.semester,
+        priority__gt=student_on_elective.priority,
+    ).update(priority=F('priority') + 1)
+
     student_on_elective.kind = kind
-    statistic.remove_student(student_on_elective.elective, student_on_elective.kind, student_on_elective.student.id)
-    statistic.add_student(student_on_elective.elective, kind, student_on_elective.student.id)
+    statistic.remove_student(
+        student_on_elective.elective,
+        student_on_elective.kind,
+        student_on_elective.student.id,
+        student_on_elective.attached,
+    )
+    statistic.add_student(
+        student_on_elective.elective,
+        kind,
+        student_on_elective.student.id,
+        student_on_elective.attached,
+    )
+
     if kind.is_seminar:
         student_on_elective.with_examination = False
     student_on_elective.save()
+
     return student_on_elective
 
 
-def attach_application(student_on_elective_id: int, target: str) -> Optional[StudentOnElective]:
+def attach_application(student_on_elective_id: int, target: str, new_index: int) -> Optional[StudentOnElective]:
     try:
         student_on_elective = StudentOnElective.objects.get(
             id=student_on_elective_id,
@@ -164,10 +220,10 @@ def attach_application(student_on_elective_id: int, target: str) -> Optional[Stu
     semester = kind.semester
     attached = student_on_elective.attached
     match target:
-        case 'maybe-fall':
+        case 'maybeFall':
             attached = False
             semester = 1
-        case 'maybe-spring':
+        case 'maybeSpring':
             attached = False
             semester = 2
         case 'fall':
@@ -185,16 +241,59 @@ def attach_application(student_on_elective_id: int, target: str) -> Optional[Stu
     except ElectiveKind.DoesNotExist as _:
         return None
 
+    StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        attached=student_on_elective.attached,
+        kind__semester=student_on_elective.kind.semester,
+        priority__gt=student_on_elective.priority,
+    ).update(priority=F('priority') - 1)
+
+    StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        attached=attached,
+        kind__semester=new_kind.semester,
+        priority__gte=new_index,
+    ).update(priority=F('priority') + 1)
+
+    statistic.remove_student(
+        student_on_elective.elective,
+        student_on_elective.kind,
+        student_on_elective.student.id,
+        student_on_elective.attached,
+    )
+    statistic.add_student(
+        student_on_elective.elective,
+        new_kind,
+        student_on_elective.student.id,
+        attached,
+    )
+
+    student_on_elective.priority = new_index
     student_on_elective.kind = new_kind
     student_on_elective.attached = attached
     student_on_elective.save()
+
     return student_on_elective
 
 
 def remove_application(application_id: int) -> None:
-    StudentOnElective.objects.filter(id=application_id).delete()
+    student_on_elective = StudentOnElective.objects.get(id=application_id)
+    student_on_elective.delete()
+    statistic.remove_student(
+        student_on_elective.elective,
+        student_on_elective.kind,
+        student_on_elective.student.id,
+        student_on_elective.attached,
+    )
 
 
-# def get_electives_by_thematics(student: Person, statistic: Statistic):
-#     selected_kind = StudentOnElective.objects.filter(student=student)
-#     return statistic.data
+def generate_application_row(student: Person, semester: int) -> str:
+    return ' '.join(
+        [
+            application.short_name
+            for application in StudentOnElective.objects.filter(
+                student=student,
+                kind__semester=semester,
+            ).order_by('-attached', 'priority')
+        ]
+    )

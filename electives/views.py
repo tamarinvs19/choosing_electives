@@ -5,14 +5,13 @@ from typing import cast
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from loguru import logger
 
 from users.models import Person
 from . import controller
-from .elective_statistic import Statistic
-from .models import Elective, ElectiveThematic, StudentOnElective, ElectiveKind
+from .models import Elective, StudentOnElective, ElectiveKind
 
 
 @login_required
@@ -126,8 +125,9 @@ def change_application_kind(request, **kwargs):
 def attach_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     target = request.POST.get('target', None)
-    if student_on_elective_id is not None and target is not None:
-        sone = controller.attach_application(int(student_on_elective_id), target)
+    new_index = request.POST.get('new_index', None)
+    if student_on_elective_id is not None and target is not None and new_index is not None:
+        sone = controller.attach_application(int(student_on_elective_id), target, new_index)
         if sone is None:
             response = {
                 'OK': False,
@@ -151,3 +151,13 @@ def remove_application(request, **kwargs):
             'OK': True,
         })
     return HttpResponseBadRequest
+
+
+@login_required
+@require_GET
+def get_application_rows(request, **kwargs):
+    student = cast(Person, request.user)
+    return JsonResponse({
+        'codes_fall': controller.generate_application_row(student, 1),
+        'codes_spring': controller.generate_application_row(student, 2),
+    })

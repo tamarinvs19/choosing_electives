@@ -1,7 +1,10 @@
 """Elective models"""
+from typing import Optional, Any, Dict, Tuple
+
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import F
 
 from groups.models import StudentGroup
 from users.models import Person
@@ -29,11 +32,11 @@ ENGLISH_LANG_NAMES: dict[str, str] = {
     'en': 'in English',
 }
 
-SEMESTERS: dict[int: str] = {
+SEMESTERS: dict[int, str] = {
     1: 'осенний',
     2: 'весенний',
 }
-ENGLISH_SEMESTERS: dict[int: str] = {
+ENGLISH_SEMESTERS: dict[int, str] = {
     1: 'fall',
     2: 'spring',
 }
@@ -181,6 +184,9 @@ class Elective(models.Model):
     def __repr__(self) -> str:
         return '<Elective: {0}>'.format(self.codename)
 
+    def __str__(self) -> str:
+        return '<Elective: {0}>'.format(self.codename)
+
     @property
     def has_russian_kind(self) -> bool:
         return self.kinds.filter(language='ru').exists()
@@ -232,8 +238,35 @@ class StudentOnElective(models.Model):
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
     kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
-    priority = models.PositiveIntegerField(default=1)
     attached = models.BooleanField(default=False)
+
+    priority = models.PositiveIntegerField(default=0)
+
+    # next_priority_application = models.OneToOneField(
+    #     'StudentOnElective',
+    #     on_delete=models.SET_NULL,
+    #     default=None,
+    #     null=True,
+    #     related_name='previous_priority_application',
+    # )
+
+    def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
+        StudentOnElective.objects.filter(
+            student=self.student,
+            attached=self.attached,
+            kind__semester=self.kind.semester,
+            priority__gt=self.priority,
+        ).update(priority=F('priority') - 1)
+
+        return super().delete(using, keep_parents)
+
+    def __str__(self):
+        return 'StudentOnElective - {0}: {1} {2}, {3}'.format(
+            self.student.username,
+            self.elective.codename,
+            self.kind.short_name,
+            self.attached,
+        )
 
     @property
     def credit_units(self) -> int:
@@ -243,6 +276,18 @@ class StudentOnElective(models.Model):
             return self.kind.credit_units
         else:
             return self.kind.credit_units - 1
+
+    @property
+    def short_name(self) -> str:
+        """Generate the short string form without semester letter"""
+        kind_mark = {2: 's', 3: '1', 4: '2'}
+        exam = '' if self.with_examination else '-'
+        return '{elective}{exam}:{lang}{kind}'.format(
+            elective=self.elective.codename,
+            lang=self.kind.language,
+            kind=kind_mark[self.kind.credit_units],
+            exam=exam,
+        )
 
     @property
     def is_seminar(self) -> bool:
@@ -255,6 +300,66 @@ class StudentOnElective(models.Model):
             (kind.middle_name, kind.id, ENGLISH_SEMESTERS[kind.semester])
             for kind in self.elective.kinds.all()
         ]
+
+
+class ApplicationsRoot(models.Model):
+    student = models.OneToOneField(
+        Person,
+        on_delete=models.CASCADE,
+        related_name='applications_root',
+    )
+
+    fall_root = models.OneToOneField(
+        StudentOnElective,
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        related_name='root_from_fall',
+    )
+    maybe_fall_root = models.OneToOneField(
+        'StudentOnElective',
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        related_name='root_from_maybe_fall',
+    )
+    spring_root = models.OneToOneField(
+        'StudentOnElective',
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        related_name='root_from_spring',
+    )
+    maybe_spring_root = models.OneToOneField(
+        'StudentOnElective',
+        on_delete=models.SET_NULL,
+        default=None,
+        null=True,
+        related_name='root_from_maybe_spring',
+    )
+
+    def get_root_by_name(self, root_name: str) -> StudentOnElective:
+        match root_name:
+            case 'fall': return self.fall_root
+            case 'maybe_fall': return self.maybe_fall_root
+            case 'spring': return self.spring_root
+            case 'maybe_spring': return self.maybe_spring_root
+
+    def get_element(self, index: int, branch_name: str) -> Optional[StudentOnElective]:
+        node = self.get_root_by_name(branch_name)
+        current_index = 0
+        while node is not None and current_index < index:
+            node = node.next_priority_application
+            current_index += 1
+        return node
+
+    def get_the_latest(self, branch_name: str) -> Optional[StudentOnElective]:
+        parent: Optional[StudentOnElective] = None
+        node = self.get_root_by_name(branch_name)
+        while node is not None:
+            node = node.next_priority_application
+            parent = node
+        return parent
 
 
 class TeacherOnElective(models.Model):
