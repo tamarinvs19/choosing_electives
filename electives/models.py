@@ -295,5 +295,5 @@ class StudentOnElective(models.Model):
 
 
 class MandatoryThematicInStudentGroup(models.Model):
-    thematic = models.ForeignKey(ElectiveThematic, on_delete=models.CASCADE)
-    student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE)
+    thematic = models.ForeignKey(ElectiveThematic, on_delete=models.CASCADE, related_name='mandatory_thematics')
+    student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, related_name='mandatory_thematics')
