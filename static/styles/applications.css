@@ -272,10 +272,14 @@
     black 89%,
     transparent 100%
   );
-  mask-image: linear-gradient(to right, transparent 0%, black 15%, black 85%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 0%, black 89%, transparent 100%);
 
   color: #747474;
   font-size: 11pt;
+}
+
+.codes {
+  min-height: 32px;
 }
 
 .codes::-webkit-scrollbar {
@@ -309,6 +313,7 @@
   float: right;
   display: inline-block;
   padding: 5px 5px 2px;
+  margin-top: -4px;
   background-color: white;
   color: #1b1b1b;
   border-radius: 3px;

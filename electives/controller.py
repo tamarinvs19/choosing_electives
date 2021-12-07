@@ -34,10 +34,15 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
 
 def get_student_elective_kinds(student: Person, elective: Elective) -> List[KindWithSelectStatus]:
     kinds_of_elective = KindOfElective.objects.filter(elective=elective).all().select_related('kind')
+
+    def compare(self):
+        return self.language, self.semester, self.credit_units
+
     kinds = [
         kind_of_elective.kind
         for kind_of_elective in kinds_of_elective
     ]
+    kinds.sort(key=compare)
 
     student_on_electives = StudentOnElective.objects.filter(
         student=student, elective=elective,
