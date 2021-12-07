@@ -2,6 +2,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from users.models import Person
+
 
 class Curriculum(models.Model):
     """The educational program"""
@@ -39,20 +41,20 @@ class StudentGroup(models.Model):
     curriculum: Curriculum = models.ForeignKey(Curriculum, on_delete=models.CASCADE)
     course_value: YearOfEducation = models.ForeignKey(YearOfEducation, on_delete=models.CASCADE)
 
-    min_credit_unit_autumn = models.PositiveSmallIntegerField()
-    max_credit_unit_autumn = models.PositiveSmallIntegerField()
+    min_credit_unit_fall = models.PositiveSmallIntegerField()
+    max_credit_unit_fall = models.PositiveSmallIntegerField()
     min_credit_unit_spring = models.PositiveSmallIntegerField()
     max_credit_unit_spring = models.PositiveSmallIntegerField()
 
-    min_number_of_exams_autumn = models.PositiveSmallIntegerField(default=1)
-    max_number_of_exams_autumn = models.PositiveSmallIntegerField(default=1)
+    min_number_of_exams_fall = models.PositiveSmallIntegerField(default=1)
+    max_number_of_exams_fall = models.PositiveSmallIntegerField(default=1)
     min_number_of_exams_spring = models.PositiveSmallIntegerField(default=1)
     max_number_of_exams_spring = models.PositiveSmallIntegerField(default=1)
 
-    max_light_credit_unit_autumn = models.PositiveSmallIntegerField(default=1, null=True)
+    max_light_credit_unit_fall = models.PositiveSmallIntegerField(default=1, null=True)
     max_light_credit_unit_spring = models.PositiveSmallIntegerField(default=1, null=True)
 
-    max_cs_courses_autumn = models.PositiveSmallIntegerField(default=1, null=True)
+    max_cs_courses_fall = models.PositiveSmallIntegerField(default=1, null=True)
     max_cs_courses_spring = models.PositiveSmallIntegerField(default=1, null=True)
 
     def __str__(self):
@@ -66,3 +68,21 @@ class StudentGroup(models.Model):
         ).exists():
             raise ValidationError('There is can be only one StudentGroup instance with the same fields')
         return super(StudentGroup, self).save(*args, **kwargs)
+
+
+class Student(models.Model):
+    person = models.OneToOneField(
+        Person,
+        related_name='student_data',
+        on_delete=models.SET_NULL,
+        null=True,
+        default=None,
+    )
+    student_group = models.ForeignKey(
+        StudentGroup,
+        on_delete=models.SET_NULL,
+        null=True,
+        default=None,
+        related_name='students',
+    )
+

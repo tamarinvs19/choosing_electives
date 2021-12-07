@@ -239,16 +239,7 @@ class StudentOnElective(models.Model):
     kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
     attached = models.BooleanField(default=False)
-
     priority = models.PositiveIntegerField(default=0)
-
-    # next_priority_application = models.OneToOneField(
-    #     'StudentOnElective',
-    #     on_delete=models.SET_NULL,
-    #     default=None,
-    #     null=True,
-    #     related_name='previous_priority_application',
-    # )
 
     def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         StudentOnElective.objects.filter(
@@ -302,71 +293,6 @@ class StudentOnElective(models.Model):
         ]
 
 
-class ApplicationsRoot(models.Model):
-    student = models.OneToOneField(
-        Person,
-        on_delete=models.CASCADE,
-        related_name='applications_root',
-    )
-
-    fall_root = models.OneToOneField(
-        StudentOnElective,
-        on_delete=models.SET_NULL,
-        default=None,
-        null=True,
-        related_name='root_from_fall',
-    )
-    maybe_fall_root = models.OneToOneField(
-        'StudentOnElective',
-        on_delete=models.SET_NULL,
-        default=None,
-        null=True,
-        related_name='root_from_maybe_fall',
-    )
-    spring_root = models.OneToOneField(
-        'StudentOnElective',
-        on_delete=models.SET_NULL,
-        default=None,
-        null=True,
-        related_name='root_from_spring',
-    )
-    maybe_spring_root = models.OneToOneField(
-        'StudentOnElective',
-        on_delete=models.SET_NULL,
-        default=None,
-        null=True,
-        related_name='root_from_maybe_spring',
-    )
-
-    def get_root_by_name(self, root_name: str) -> StudentOnElective:
-        match root_name:
-            case 'fall': return self.fall_root
-            case 'maybe_fall': return self.maybe_fall_root
-            case 'spring': return self.spring_root
-            case 'maybe_spring': return self.maybe_spring_root
-
-    def get_element(self, index: int, branch_name: str) -> Optional[StudentOnElective]:
-        node = self.get_root_by_name(branch_name)
-        current_index = 0
-        while node is not None and current_index < index:
-            node = node.next_priority_application
-            current_index += 1
-        return node
-
-    def get_the_latest(self, branch_name: str) -> Optional[StudentOnElective]:
-        parent: Optional[StudentOnElective] = None
-        node = self.get_root_by_name(branch_name)
-        while node is not None:
-            node = node.next_priority_application
-            parent = node
-        return parent
-
-
-class TeacherOnElective(models.Model):
-    teacher = models.ForeignKey(Person, on_delete=models.CASCADE)
-    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
-
-
-class MandatoryElectiveInStudentGroup(models.Model):
-    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+class MandatoryThematicInStudentGroup(models.Model):
+    thematic = models.ForeignKey(ElectiveThematic, on_delete=models.CASCADE)
     student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE)

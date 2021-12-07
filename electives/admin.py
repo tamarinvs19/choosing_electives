@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
-    MandatoryElectiveInStudentGroup, ApplicationsRoot
+from .models import Elective, StudentOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
+    MandatoryThematicInStudentGroup
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -13,8 +13,8 @@ class KindOfElectiveInline(admin.TabularInline):
     extra = 1
 
 
-class MandatoryElectiveForStudentGroupInline(admin.TabularInline):
-    model = MandatoryElectiveInStudentGroup
+class MandatoryThematicInline(admin.TabularInline):
+    model = MandatoryThematicInStudentGroup
     extra = 1
 
 
@@ -24,10 +24,10 @@ class ElectiveAdmin(admin.ModelAdmin):
                            'english_description', 'thematic', 'text_teachers']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
-    inlines = [KindOfElectiveInline,
-               StudentOnElectiveInline,
-               MandatoryElectiveForStudentGroupInline,
-               ]
+    inlines = [
+        KindOfElectiveInline,
+        StudentOnElectiveInline,
+    ]
     list_display = ('name',)
     search_fields = ['name']
 
@@ -43,6 +43,9 @@ class ElectiveThematicAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['name', 'english_name']}),
     ]
+    inlines = [
+        MandatoryThematicInline,
+    ]
     list_display = ('name', 'english_name')
 
 
@@ -53,21 +56,7 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('student', 'elective', 'kind', 'attached', 'priority')
 
 
-class ApplicationsRootAdmin(admin.ModelAdmin):
-    fieldsets = [
-        (None, {'fields': [
-            'student',
-            'fall_root',
-            'maybe_fall_root',
-            'spring_root',
-            'maybe_spring_root',
-        ]}),
-    ]
-    list_display = ('student',)
-
-
 admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
 admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
-admin.site.register(ApplicationsRoot, ApplicationsRootAdmin)
 admin.site.register(StudentOnElective, ApplicationAdmin)

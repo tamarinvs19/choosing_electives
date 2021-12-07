@@ -18,7 +18,9 @@ Selected electives
       <span>Fall request</span>
     </div>
     <div class="col-10 code-container">
-      <span class="copy-codes" onclick="copyCodes('fall')"><i class="fas fa-copy"></i></span>
+      <span class="copy-codes" onclick="copyCodes('fall')">
+				<i class="fas fa-copy"></i>
+			</span>
       <div class="codes codes-fall">
         {{ fall_code_row }}
       </div>
@@ -29,7 +31,9 @@ Selected electives
       <span>Spring request</span>
     </div>
     <div class="col-10">
-      <span class="copy-codes" onclick="copyCodes('spring')"><i class="fas fa-copy"></i></span>
+      <span class="copy-codes" onclick="copyCodes('spring')">
+				<i class="fas fa-copy"></i>
+			</span>
       <div class="codes codes-spring">
         {{ spring_code_row }}
       </div>
@@ -38,7 +42,25 @@ Selected electives
   <div class="row canvas">
     <div class="col-xl-3 col-lg-6 fall-column column">
       <div class="title">
-        <h5>Fall</h5>
+        <h5 class="column-title">Fall</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content fall-credits">
+              {{ credit_units_fall.sum }}
+            </span>
+          </div>
+          <div class="min-credit-units credit-units-value">
+            <span class="credit-units-title">
+              /
+            </span>
+            <span class="credit-units-content">
+              {{ credit_units_fall.min }}
+            </span>
+          </div>
+        </div>
       </div>
       <div class="inner-column" id="fall">
         {% for application in applications_fall_attached %}
@@ -68,7 +90,25 @@ Selected electives
     </div>
     <div class="col-xl-3 col-lg-6 spring-column column">
       <div class="title">
-        <h5>Spring</h5>
+        <h5 class="column-title">Spring</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content spring-credits">
+              {{ credit_units_spring.sum }}
+            </span>
+          </div>
+          <div class="min-credit-units credit-units-value">
+            <span class="credit-units-title">
+              /
+            </span>
+            <span class="credit-units-content">
+              {{ credit_units_spring.min }}
+            </span>
+          </div>
+        </div>
       </div>
       <div class="inner-column" id="spring">
         {% for application in applications_spring_attached %}
@@ -302,6 +342,8 @@ Selected electives
           function (data) {
               $('.codes-fall').html(data['codes_fall']);
               $('.codes-spring').html(data['codes_spring']);
+              $('.fall-credits').html(data['credit_units_fall']['sum']);
+              $('.spring-credits').html(data['credit_units_spring']['sum']);
           }
       );
   }

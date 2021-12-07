@@ -160,4 +160,10 @@ def get_application_rows(request, **kwargs):
     return JsonResponse({
         'codes_fall': controller.generate_application_row(student, 1),
         'codes_spring': controller.generate_application_row(student, 2),
+        'credit_units_fall': {
+            'sum': controller.calc_sum_credit_units(student, 1),
+        },
+        'credit_units_spring': {
+            'sum': controller.calc_sum_credit_units(student, 2),
+        },
     })

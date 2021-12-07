@@ -297,3 +297,14 @@ def generate_application_row(student: Person, semester: int) -> str:
             ).order_by('-attached', 'priority')
         ]
     )
+
+
+def calc_sum_credit_units(student: Person, semester: int) -> int:
+    return sum(
+        application.credit_units
+        for application in StudentOnElective.objects.filter(
+            student=student,
+            attached=True,
+            kind__semester=semester,
+        )
+    )

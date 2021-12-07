@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import StudentGroup, YearOfEducation, Curriculum
+from .models import StudentGroup, YearOfEducation, Curriculum, Student
 
 
 class StudentGroupAdmin(admin.ModelAdmin):
@@ -25,6 +25,14 @@ class StudentGroupAdmin(admin.ModelAdmin):
     list_display = ('curriculum', 'course_value')
 
 
+class StudentAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['person', 'student_group']})
+    ]
+    list_display = ('person', 'student_group')
+
+
+admin.site.register(Student, StudentAdmin)
 admin.site.register(StudentGroup, StudentGroupAdmin)
 admin.site.register(YearOfEducation)
 admin.site.register(Curriculum)

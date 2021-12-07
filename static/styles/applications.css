@@ -283,3 +283,20 @@
 .code-container {
   float: right;
 }
+
+.credit-units-window {
+  float: right;
+  display: inline-block;
+  padding: 5px 5px 2px;
+  background-color: white;
+  color: #1b1b1b;
+  border-radius: 3px;
+}
+
+.credit-units-value {
+  display: inline-block;
+}
+
+.column-title {
+  display: inline-block;
+}

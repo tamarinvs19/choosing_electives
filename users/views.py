@@ -4,6 +4,8 @@ from django.shortcuts import render
 
 from electives import controller
 from electives.models import Elective, StudentOnElective
+from groups.models import Student
+from users.models import Person
 
 
 @login_required
@@ -14,6 +16,7 @@ def open_personal_page(request, **kwargs):
 
 @login_required
 def open_sorting_page(request, user_id, **kwargs):
+    person = Person.objects.get(id=user_id)
     applications_fall = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=1,
@@ -41,6 +44,16 @@ def open_sorting_page(request, user_id, **kwargs):
         'applications_spring_attached': applications_spring_attached,
         'fall_code_row': controller.generate_application_row(student=user_id, semester=1),
         'spring_code_row': controller.generate_application_row(student=user_id, semester=2),
+        'credit_units_fall': {
+            'max': person.student_data.student_group.max_credit_unit_fall,
+            'min': person.student_data.student_group.min_credit_unit_fall,
+            'sum': controller.calc_sum_credit_units(person, 1),
+        },
+        'credit_units_spring': {
+            'max': person.student_data.student_group.max_credit_unit_spring,
+            'min': person.student_data.student_group.min_credit_unit_spring,
+            'sum': controller.calc_sum_credit_units(person, 2),
+        },
     }
     return render(request, 'account/sort_electives.html', context)
 
