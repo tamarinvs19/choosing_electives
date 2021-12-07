@@ -68,16 +68,31 @@ def change_elective_kind(request, **kwargs):
     elective_id = request.POST.get('elective_id', None)
     if kind_id is not None and elective_id is not None:
         elective_id, kind_id = int(elective_id), int(kind_id)
-        controller.change_kinds(user, elective_id, kind_id)
+        application = controller.change_kinds(user, elective_id, kind_id)
         elective = Elective.objects.get(id=elective_id)
         kind = ElectiveKind.objects.get(id=kind_id)
         students_count = controller.get_statistics(elective, kind)
-        if True not in students_count:
-            students_count[True] = 0
-        if False not in students_count:
-            students_count[False] = 0
-        logger.debug(students_count)
-        return JsonResponse({'students_count': students_count})
+        other_language_kind = None
+        other_kind_counts = None
+        other_short_name = None
+        if application is not None:
+            other_kind = application.elective.kinds.filter(
+                semester=application.kind.semester,
+                credit_units=application.kind.credit_units,
+            ).exclude(
+                language=application.kind.language,
+            ).all()
+            if len(other_kind) == 1:
+                other_kind_counts = controller.get_statistics(elective, other_kind[0])
+                other_language_kind = other_kind[0].id
+                other_short_name = other_kind[0].short_name
+        return JsonResponse({
+            'move': application is not None,
+            'students_count': students_count,
+            'other_language_kind': other_language_kind,
+            'other_kind_counts': other_kind_counts,
+            'other_short_name': other_short_name,
+        })
     return HttpResponseBadRequest
 
 
@@ -110,8 +125,14 @@ def change_application_kind(request, **kwargs):
     if student_on_elective_id is not None and kind_id is not None:
         student_on_elective_id, kind_id = int(student_on_elective_id), int(kind_id)
         student_on_elective = controller.change_kind(student_on_elective_id, kind_id)
+        all_applications = StudentOnElective.objects.filter(
+            student=student_on_elective.student,
+            elective=student_on_elective.elective,
+            kind=student_on_elective.kind
+        )
         if student_on_elective is not None:
             return JsonResponse({
+                'all_applications': [application.id for application in all_applications],
                 'full_kind': student_on_elective.kind.middle_name,
                 'credit_units': student_on_elective.credit_units,
                 'with_exam': student_on_elective.with_examination,

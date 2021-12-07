@@ -28,10 +28,13 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
         elective=elective,
         kind=kind,
     )
-    counts = Counter([soe.attached for soe in students_on_elective])
-    counts[True] = max(counts[True], 0)
-    counts[False] = max(counts[False], 0)
-    return dict(counts)
+    counts = {True: 0, False: 0}
+    students = set()
+    for soe in students_on_elective:
+        if soe.student not in students:
+            students.add(soe.student)
+            counts[soe.attached] += 1
+    return counts
 
 
 def get_student_elective_kinds(student: Person, elective: Elective) -> List[KindWithSelectStatus]:
@@ -110,7 +113,7 @@ def save_kinds(student: Person, elective: Elective, kind_short_names: List[str])
             statistic.remove_student(elective, kind, student.id, student_on_elective.attached)
 
 
-def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
+def change_kinds(student: Person, elective_id: int, kind_id: int) -> Optional[StudentOnElective]:
     """
     Если у студента есть заявления на этот курс, они удаляются,
     если нет, то добавляется одно в maybe
@@ -142,13 +145,26 @@ def change_kinds(student: Person, elective_id: int, kind_id: int) -> None:
             else:
                 new_priority += 1
 
-            StudentOnElective.objects.create(
+            applications = StudentOnElective.objects.filter(
+                student=student,
+                elective=elective,
+                kind__semester=kind.semester,
+                kind__credit_units=kind.credit_units,
+            )
+            for application in applications:
+                if application.kind.language != kind.language:
+                    statistic.remove_student(elective, application.kind, student.id, application.attached)
+                    statistic.add_student(elective, kind, student.id, application.attached)
+            applications.update(kind=kind)
+
+            application = StudentOnElective.objects.create(
                 student=student,
                 elective=elective,
                 kind=kind,
                 priority=new_priority
             )
             statistic.add_student(elective, kind, student.id, False)
+            return application
 
 
 def change_exam(student_on_elective_id: int) -> Optional[StudentOnElective]:
@@ -177,6 +193,18 @@ def change_kind(student_on_elective_id: int, kind_id: int) -> Optional[StudentOn
         )
     except ElectiveKind.DoesNotExist as _:
         return None
+
+    applications = StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        elective=student_on_elective.elective,
+        kind__semester=kind.semester,
+        kind__credit_units=kind.credit_units,
+    )
+    for application in applications:
+        if application.kind.language != kind.language:
+            statistic.remove_student(student_on_elective.elective, application.kind, student_on_elective.student.id, application.attached)
+            statistic.add_student(student_on_elective.elective, kind, student_on_elective.student.id, application.attached)
+    applications.update(kind=kind)
 
     StudentOnElective.objects.filter(
         student=student_on_elective.student,

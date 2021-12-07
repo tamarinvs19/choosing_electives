@@ -33,12 +33,17 @@
       }
       const csrftoken = getCookie('csrftoken');
 
-      function change_kind(elective_id, kind_id) {
+      function change_kind(electiveId, kindId) {
           $.post("{% url 'electives:change_kind' %}",
-              {'kind_id': kind_id, 'elective_id': elective_id, 'csrfmiddlewaretoken': csrftoken},
+              {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
               function(data) {
-                  $(`#statistic-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'][true];
-                  $(`#statistic-maybe-${elective_id}-${kind_id}`)[0].innerHTML = data['students_count'][false];
+                  $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
+                  $(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
+                  if (data['move'] !== null && data['other_language_kind'] !== null) {
+                      $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
+                      $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
+                      $(`#button-${data['other_short_name']}-${electiveId}`)[0].checked = false;
+                  }
               });
       }
 

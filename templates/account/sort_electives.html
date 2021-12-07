@@ -275,13 +275,15 @@ Selected electives
           },
           function(data) {
               if (data['OK'] === true) {
-                  let examTag = $(`#exam-${applicationId}`)[0];
-                  $(`#kind-${applicationId}`)[0].innerHTML = data['full_kind'];
-                  $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
-                  examTag.checked = data['with_exam'];
-                  examTag.disabled = data['is_seminar'] === true;
-                  if (data['is_seminar']) {
-                      examTag.checked = false;
+                  for (let applicationId of data['all_applications']) {
+                      let examTag = $(`#exam-${applicationId}`)[0];
+                      $(`#kind-${applicationId}`)[0].innerHTML = data['full_kind'];
+                      $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
+                      examTag.checked = data['with_exam'];
+                      examTag.disabled = data['is_seminar'] === true;
+                      if (data['is_seminar']) {
+                          examTag.checked = false;
+                      }
                   }
                   updateCodes();
               }
