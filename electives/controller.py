@@ -29,6 +29,8 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
         kind=kind,
     )
     counts = Counter([soe.attached for soe in students_on_elective])
+    counts[True] = max(counts[True], 0)
+    counts[False] = max(counts[False], 0)
     return dict(counts)
 
 

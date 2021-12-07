@@ -39,7 +39,7 @@ class _MaybeCounter(BaseNode):
                 self.items.pop(student_id, None)
 
     def remove_student_all(self, student_id: int):
-        self.items[student_id] = 0
+        # self.items[student_id] = 0
         self.items.pop(student_id, None)
 
     def generate_view(self, student_id: int):

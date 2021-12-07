@@ -33,11 +33,18 @@ def open_elective_page(request, elective_id, **kwargs):
     students = defaultdict(list)
     for sone in StudentOnElective.objects.filter(elective=elective).select_related('student').only('student'):
         students[sone.student].append(sone.kind.short_name)
+    statistic = {
+        kind: controller.get_statistics(elective, kind)
+        for kind in elective.kinds.all()
+    }
     context = {
         'elective': elective,
         'students': students.items(),
         'students_count': len(students),
-        'kinds': controller.get_student_elective_kinds(user, elective),
+        'kinds': [
+            (data, statistic[data.kind])
+            for data in controller.get_student_elective_kinds(user, elective)
+        ]
     }
     return render(request, 'electives/elective_page.html', context)
 
