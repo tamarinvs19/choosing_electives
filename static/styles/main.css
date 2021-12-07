@@ -1,7 +1,20 @@
+html {
+    height: 100%;
+}
 body {
     background-color: #fff;
     color: #333;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 12pt;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
+.body-content {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}

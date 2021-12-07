@@ -32,7 +32,6 @@ def open_elective_page(request, elective_id, **kwargs):
     students = defaultdict(list)
     for sone in StudentOnElective.objects.filter(elective=elective).select_related('student').only('student'):
         students[sone.student].append(sone.kind.short_name)
-    logger.debug(students)
     context = {
         'elective': elective,
         'students': students.items(),
