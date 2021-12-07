@@ -308,3 +308,28 @@ def calc_sum_credit_units(student: Person, semester: int) -> int:
             kind__semester=semester,
         )
     )
+
+
+def duplicate_application(application_id: int) -> StudentOnElective:
+    student_on_elective = StudentOnElective.objects.get(id=application_id)
+    StudentOnElective.objects.filter(
+        student=student_on_elective.student,
+        attached=student_on_elective.attached,
+        kind__semester=student_on_elective.kind.semester,
+        priority__gt=student_on_elective.priority,
+    ).update(priority=F('priority') + 1)
+    new_student_on_elective = StudentOnElective.objects.create(
+        student=student_on_elective.student,
+        elective=student_on_elective.elective,
+        kind=student_on_elective.kind,
+        with_examination=student_on_elective.with_examination,
+        attached=student_on_elective.attached,
+        priority=student_on_elective.priority + 1
+    )
+    statistic.add_student(
+        student_on_elective.elective,
+        student_on_elective.kind,
+        student_on_elective.student.id,
+        student_on_elective.attached,
+    )
+    return new_student_on_elective

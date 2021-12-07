@@ -2,6 +2,7 @@ import json
 from collections import defaultdict
 from typing import cast
 
+from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render
@@ -166,3 +167,27 @@ def get_application_rows(request, **kwargs):
             'sum': controller.calc_sum_credit_units(student, 2),
         },
     })
+
+
+@login_required
+@require_POST
+def duplicate_application(request, **kwargs):
+    student_on_elective_id = request.POST.get('student_on_elective_id', None)
+    if student_on_elective_id is not None:
+        new_application = controller.duplicate_application(int(student_on_elective_id))
+        prev_id = '#application-{0}-{1}{2}'.format(
+            student_on_elective_id,
+            1 if new_application.elective.has_fall else '',
+            2 if new_application.elective.has_spring else ''
+        )
+        render_application = render_to_string(
+            'account/application_card.html',
+            context={'application': new_application},
+            request=request,
+        )
+        return JsonResponse({
+            'OK': True,
+            'application': str(render_application),
+            'prev_id': prev_id,
+        })
+    return HttpResponseBadRequest

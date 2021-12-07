@@ -252,11 +252,12 @@ class StudentOnElective(models.Model):
         return super().delete(using, keep_parents)
 
     def __str__(self):
-        return 'StudentOnElective - {0}: {1} {2}, {3}'.format(
+        return 'StudentOnElective - {0}: {1} {2}, {3}, {4}'.format(
             self.student.username,
             self.elective.codename,
             self.kind.short_name,
             self.attached,
+            self.priority,
         )
 
     @property

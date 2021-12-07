@@ -3,8 +3,19 @@
     <a class="course-link" href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
       {{ application.elective.translated_name }}
     </a>
-     <button type="button" class="close-button btn-close" aria-label="Remove application"
-             title="Remove application" onclick="removeApplication({{ application.id }})"></button>
+     <button type="button" class="first-button" aria-label="Remove application"
+             title="Remove application" onclick="removeApplication({{ application.id }})">
+       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+  <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
+  <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
+</svg>
+     </button>
+    <button type="button" class="first-button second-button" aria-label="Double application"
+            title="Duplicate application" onclick="duplicateApplication({{ application.id }})">
+     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-back" viewBox="0 0 16 16">
+  <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z"/>
+</svg>
+    </button>
   </div>
 
   <div class="application-body card-body">

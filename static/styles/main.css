@@ -9,6 +9,7 @@ body {
     height: 100%;
     display: flex;
     flex-direction: column;
+    margin: 0;
 }
 
 .body-content {
@@ -17,4 +18,8 @@ body {
 
 footer {
     flex-shrink: 0;
+}
+
+.footer-container {
+    margin-top: 100px;
 }

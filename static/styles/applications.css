@@ -144,9 +144,11 @@
   background-color: snow;
 }
 
-.application .card-body,
+.application .card-body {
+  padding: 0.3rem 0.4rem 0.3rem 0.4rem;
+}
 .application .card-header {
-  padding: 0.3rem 0.4rem;
+  padding: 0.3rem 50px 0.3rem 0.4rem;
 }
 .application .btn {
   padding: 1px 4px;
@@ -166,13 +168,32 @@
   position: relative;
 }
 
-.close-button {
+.second-button,
+.first-button {
   position: absolute;
   top: 0;
   right: 0;
-  margin: 2px;
+
+  transform: scale(0.75);
+
+  margin: 2px 1px;
+  padding-bottom: 3px;
 
   cursor: pointer;
+
+  border: 0 solid #747474;
+  border-radius: 3px;
+}
+
+.second-button:hover {
+  background-color: darkgray;
+}
+.first-button:hover {
+  background-color: darkgray;
+}
+
+.second-button {
+  right: 25px;
 }
 
 .card-last-row {

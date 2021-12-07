@@ -50,10 +50,10 @@
             <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
               <div class="elective-description accordion-body">
                 {% if elective.description|length > 0 %}
-                  <a href="{{ elective.description }}" class="description-link">Russian description</a>
+                  <a href="{{ elective.description }}" target="_blank" class="description-link">Russian description</a>
                 {% endif %}
                 {% if elective.english_description|length > 0 %}
-                  <a href="{{ elective.english_description }}" class="description-link">English description</a>
+                  <a href="{{ elective.english_description }}" target="_blank" class="description-link">English description</a>
                 {% endif %}
               </div>
             </div>
@@ -107,10 +107,11 @@
             <div class="elective-kinds">
               <ul class="list-group">
                 {% for kind_with_status in kinds %}
-                  <label for="{{ kind_with_status.kind.short_name }}">
+                  <label for="{{ kind_with_status.kind.short_name }}" class="kind-label">
                   <li class="list-group-item">
                     <input id="{{ kind_with_status.kind.short_name }}"
                            class="form-check-input me-1"
+                           onclick="changeKind({{ kind_with_status.kind.id }}, {{ elective.id }})"
                            type="checkbox"
                            name="kinds"
                            {% if kind_with_status.selected %}
@@ -118,13 +119,11 @@
                            {% endif %}
                            value="{{ kind_with_status.kind.short_name }}">
                       {{ kind_with_status.kind.long_name }}
+                      <!-- статистика -->
                   </li>
                   </label>
                 {% endfor %}
               </ul>
-            </div>
-            <div class="d-grid gap-2 save-button">
-              <button type="submit" class="btn btn-outline-primary btn-sm">Submit</button>
             </div>
           </form>
         </div>
@@ -149,12 +148,13 @@
     }
     const csrftoken = getCookie('csrftoken');
 
-    $('#chooseKind').submit(function(e){
-        $.post("{% url 'electives:save_kinds' elective.id %}",
-            $(this).serialize(),
+    function changeKind(kindId, electiveId) {
+        $.post("{% url 'electives:change_kind' %}",
+            {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
             function(data) {
-        });
-    e.preventDefault();
-    });
+                {#$(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];#}
+                {#$(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];#}
+            });
+    }
   </script>
 {% endblock %}

@@ -347,5 +347,21 @@ Selected electives
           }
       );
   }
+
+  function duplicateApplication(applicationId) {
+      $.post("{% url 'electives:duplicate_application' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+              if (data['OK'] === true) {
+                  let application = data['application'];
+                  $(data['prev_id']).after(application);
+                  updateCodes();
+              }
+          }
+      );
+  }
 </script>
 {% endblock %}
