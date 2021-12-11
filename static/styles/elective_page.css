@@ -22,7 +22,7 @@ ul.description-table li:first-child {
 .save-button {
     padding: 10px 0;
 }
-.kinds-box {
+.kind-box {
     display: inline-block;
     position: absolute;
     right: 10px;
@@ -31,6 +31,7 @@ ul.description-table li:first-child {
 .elective-kind {
     display: inline-block;
 
+    margin-left: 2px;
     padding: 4px;
 
     background-color: rgba(0, 0, 0, 0.05);
@@ -43,4 +44,19 @@ ul.description-table li:first-child {
 
 .kind-label:hover {
     cursor: pointer;
+}
+
+.kinds-list-item {
+    max-width: 145px;
+}
+
+@media (max-width: 1550px) and (min-width: 1070px) {
+    .kind-group-item {
+        height: 60px;
+    }
+}
+@media (max-width: 1070px) and (min-width: 992px) {
+    .kind-group-item {
+        height: 80px;
+    }
 }

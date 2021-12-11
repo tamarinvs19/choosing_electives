@@ -30,16 +30,16 @@ def open_elective_list(request, **kwargs):
 def open_elective_page(request, elective_id, **kwargs):
     user = cast(Person, request.user)
     elective = Elective.objects.get(id=elective_id)
-    students = defaultdict(list)
+    students = defaultdict(set)
     for sone in StudentOnElective.objects.filter(elective=elective).select_related('student').only('student'):
-        students[sone.student].append(sone.kind.short_name)
+        students[sone.student].add(sone.kind.short_name)
     statistic = {
         kind: controller.get_statistics(elective, kind)
         for kind in elective.kinds.all()
     }
     context = {
         'elective': elective,
-        'students': students.items(),
+        'students': list(students.items()),
         'students_count': len(students),
         'kinds': [
             (data, statistic[data.kind])
@@ -75,6 +75,16 @@ def change_elective_kind(request, **kwargs):
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
+        statistic = {
+            kind: controller.get_statistics(elective, kind)
+            for kind in elective.kinds.all()
+        }
+        current_short_names = list(set(
+            data.kind.short_name
+            for data in controller.get_student_elective_kinds(user, elective)
+            if sum(statistic[data.kind].values()) > 0
+        ))
+        logger.debug(current_short_names)
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
@@ -92,6 +102,9 @@ def change_elective_kind(request, **kwargs):
             'other_language_kind': other_language_kind,
             'other_kind_counts': other_kind_counts,
             'other_short_name': other_short_name,
+            'current_short_names': current_short_names,
+            'user_id': user.id,
+            'student_name': str(user),
         })
     return HttpResponseBadRequest
 

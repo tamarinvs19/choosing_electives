@@ -81,17 +81,17 @@
               </h2>
               <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
                 <div class="accordion-body">
-                  <ol class="list-group list-group-numbered">
+                  <ol class="students-list list-group list-group-numbered">
                     {% for student, kinds in students %}
                       <li class="list-group-item">
                         {{ student }}
-{#                        <div class="kinds-box">#}
-{#                          {% for kind in kinds %}#}
-{#                            <div class="elective-kind">#}
-{#                              {{ kind }}#}
-{#                            </div>#}
-{#                          {% endfor %}#}
-{#                        </div>#}
+                        <div class="kind-box kind-box-{{ student.id }}">
+                          {% for kind in kinds %}
+                            <div class="elective-kind elective-kind-{{ student.id }}">
+                              {{ kind }}
+                            </div>
+                          {% endfor %}
+                        </div>
                       </li>
                     {% endfor %}
                   </ol>
@@ -108,7 +108,7 @@
               <ul class="list-group">
                 {% for kind_with_status, statistic in kinds %}
                   <label for="{{ kind_with_status.kind.short_name }}" class="kind-label">
-                  <li class="list-group-item">
+                  <li class="kind-group-item list-group-item">
                     <input id="{{ kind_with_status.kind.short_name }}"
                            class="form-check-input me-1"
                            onclick="changeKind({{ kind_with_status.kind.id }}, {{ elective.id }})"
@@ -118,7 +118,9 @@
                            {{ "checked" }}
                            {% endif %}
                            value="{{ kind_with_status.kind.short_name }}">
+                      <span class="kinds-list-item">
                       {{ kind_with_status.kind.long_name }}
+                      </span>
                     <span class="statistic-container">
                       <span id="statistic-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic" title="Number of applications">
                         {{ statistic.1 }}
@@ -166,6 +168,20 @@
                     $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
                     $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
                     $(`#${data['other_short_name']}`)[0].checked = false;
+                }
+                let kindBox = $(`.kind-box-${data['user_id']}`);
+                if (kindBox.length === 0) {
+                    let studentList = $(`.students-list`);
+                    studentList.append(
+                        `<li class="list-group-item"> ${data['student_name']} <div class='kind-box kind-box-${data['user_id']}'</div></li>`
+                    );
+                    kindBox = $(`.kind-box-${data['user_id']}`);
+                }
+                kindBox.empty();
+                for (let kind of data['current_short_names']) {
+                    kindBox.append(
+                        `<div class='elective-kind elective-kind-${data["user_id"]}'>${kind}</div>`
+                    );
                 }
             });
     }
