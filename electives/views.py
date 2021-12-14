@@ -240,8 +240,8 @@ def duplicate_application(request, **kwargs):
     return HttpResponseBadRequest
 
 
-# @login_required
-# @require_GET
-# def download_table(request, **kwargs):
-#     controller.generate_summary_table()
-#     return FileResponse
+@login_required
+@require_GET
+def download_table(request, **kwargs):
+    workbook_name = controller.generate_summary_table()
+    return FileResponse(open(workbook_name, 'rb'))

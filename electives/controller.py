@@ -1,8 +1,10 @@
-from collections import namedtuple, Counter
+from collections import namedtuple, Counter, defaultdict
 from typing import Tuple, List, Dict, Optional
 
+import xlsxwriter
+
 from django.db import transaction
-from django.db.models import F, Max
+from django.db.models import F, Max, Count
 
 from loguru import logger
 
@@ -368,3 +370,40 @@ def duplicate_application(application_id: int) -> StudentOnElective:
         student_on_elective.attached,
     )
     return new_student_on_elective
+
+
+def generate_summary_table():
+    workbook_name = 'tables.xlsx'
+    workbook = xlsxwriter.Workbook(workbook_name)
+    worksheet = workbook.add_worksheet()
+
+    kinds = sorted(ElectiveKind.objects.all(), key=lambda kind: (kind.semester, kind.credit_units, kind.language))
+    headers = [
+        'Codename',
+        'Elective russian name',
+        'Elective english name',
+        'Thematic',
+    ] + [
+        str(kind) for kind in kinds
+    ]
+
+    electives = Elective.objects.prefetch_related('studentonelective_set', 'kinds')
+    data = []
+    for elective in electives:
+        elective_data = defaultdict(str)
+        for kind in elective.kinds.all():
+            elective_data[kind.long_name] = elective.studentonelective_set.filter(
+                kind=kind
+            ).aggregate(
+                count=Count('kind')
+            )['count']
+        new_row = [elective.codename, elective.name, elective.english_name, elective.thematic.english_name] + [
+            elective_data[kind.long_name] for kind in kinds
+        ]
+        data.append(new_row)
+
+    worksheet.write_row(0, 0, headers)
+    for row_num, row in enumerate(data):
+        worksheet.write_row(row_num + 1, 0, data[row_num])
+    workbook.close()
+    return workbook_name

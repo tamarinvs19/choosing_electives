@@ -14,5 +14,6 @@ urlpatterns = [
     path('remove_application/', views.remove_application, name='remove_application'),
     path('duplicate_application/', views.duplicate_application, name='duplicate_application'),
     path('get_application_rows/', views.get_application_rows, name='get_application_rows'),
+    path('download_table/', views.download_table, name='download_table'),
 ]
 

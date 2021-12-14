@@ -93,6 +93,8 @@
   display: inline-block;
   width: 60px;
   height: 34px;
+  top: -6px;
+  margin-left: calc(100% - 200px);
 }
 
 /* Hide default HTML checkbox */

@@ -10,16 +10,19 @@
   </div>
   <div class="offcanvas-body">
     <div class="row">
-      Open all thematics
+      <span>
+        Open all thematics
       <label class="switch">
         <input type="checkbox" onchange="clickSwitch(this)">
         <span class="slider round"></span>
       </label>
+      </span>
     </div>
+    <hr>
     <div class="row">
-{#      <a href="{% url 'electives:download_table' %}" download>#}
+      <a class="btn btn-outline-secondary" href="{% url 'electives:download_table' %}" download>
         Download summary table
-{#      </a>#}
+      </a>
     </div>
   </div>
 </div>
