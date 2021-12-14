@@ -1,5 +1,7 @@
 from collections import Counter
 from dataclasses import dataclass
+from typing import Optional
+
 from django.db.models import QuerySet
 
 from loguru import logger
@@ -121,6 +123,9 @@ class _Data(BaseNode):
             if item not in thematics
         }
 
+    def generate_view_thematic(self, student_id: int, thematic: ElectiveThematic):
+        return self.items[thematic].generate_view(student_id)
+
 
 @dataclass
 class Statistic(object):
@@ -133,8 +138,11 @@ class Statistic(object):
     def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
 
-    def generate_view(self, student_id: int):
-        return self.data.generate_view(student_id)
+    def generate_view(self, student_id: int, thematic: Optional[ElectiveThematic] = None):
+        if thematic is None:
+            return self.data.generate_view(student_id)
+        else:
+            return self.data.generate_view_thematic(student_id, thematic)
 
     def remove_student_all(self, elective: Elective, kind: ElectiveKind, student_id: int):
         self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)

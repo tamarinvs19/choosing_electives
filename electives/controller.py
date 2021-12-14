@@ -21,8 +21,17 @@ ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 statistic = Statistic()
 
 
-def get_electives_by_thematics(student: Person):
+def get_electives_by_thematics(student: Person) -> object:
     return statistic.generate_view(student.id)
+
+
+# def get_sorted_electives_by_thematic(student: Person, thematic_id: int, sort_column: str) -> object:
+#     thematic = ElectiveThematic.objects.get(id=thematic_id)
+#     electives = statistic.generate_view(student.id, thematic)
+#     keys = electives.keys()
+#     if sort_column == 'fall':
+#         keys.sort(key=lambda elective: )
+#
 
 
 def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:

@@ -245,3 +245,17 @@ def duplicate_application(request, **kwargs):
 def download_table(request, **kwargs):
     workbook_name = controller.generate_summary_table()
     return FileResponse(open(workbook_name, 'rb'))
+
+
+# @login_required
+# @require_POST
+# def sorted_electives(request, **kwargs):
+#     user = cast(Person, request.user)
+#     thematic = request.POST.get('thematic', None)
+#     sort_column = request.POST.get('column', None)
+#     group = controller.get_sorted_electives_by_thematic(user, int(thematic), sort_column)
+#
+#     context = {
+#         'thematic_data': group,
+#     }
+#     return render(request, 'electives/elective_list.html', context)

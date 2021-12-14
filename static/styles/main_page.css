@@ -153,9 +153,6 @@ input:checked + .slider:before {
 }
 
 .switch-container {
-  /*position: fixed;*/
-  /*top: 90px;*/
-  /*right: 40px;*/
   margin: 5px auto;
   width: 100px;
 }
