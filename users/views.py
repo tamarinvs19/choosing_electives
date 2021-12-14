@@ -11,7 +11,7 @@ from users.models import Person
 @login_required
 def open_personal_page(request, **kwargs):
     context = {}
-    return render(request, 'account/personal_page.html', context)
+    return render(request, 'electives/personal_page.html', context)
 
 
 @login_required
@@ -61,5 +61,5 @@ def open_sorting_page(request, user_id, **kwargs):
             'sum': controller.calc_sum_credit_units(person, 2),
         },
     }
-    return render(request, 'account/sort_electives.html', context)
+    return render(request, 'electives/sort_electives.html', context)
 

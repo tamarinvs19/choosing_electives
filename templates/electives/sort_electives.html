@@ -64,7 +64,7 @@ Selected electives
       </div>
       <div class="inner-column" id="fall">
         {% for application in applications_fall_attached %}
-          {% include "account/application_card.html" with application=application %}
+          {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
     </div>
@@ -84,7 +84,7 @@ Selected electives
       </div>
       <div class="inner-column" id="maybeFall">
         {% for application in applications_fall %}
-          {% include "account/application_card.html" with application=application %}
+          {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
     </div>
@@ -104,7 +104,7 @@ Selected electives
       </div>
       <div class="inner-column" id="maybeSpring">
         {% for application in applications_spring %}
-          {% include "account/application_card.html" with application=application %}
+          {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
     </div>
@@ -132,7 +132,7 @@ Selected electives
       </div>
       <div class="inner-column" id="spring">
         {% for application in applications_spring_attached %}
-          {% include "account/application_card.html" with application=application %}
+          {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
     </div>
