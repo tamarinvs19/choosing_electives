@@ -3,7 +3,10 @@
 }
 
 .nav-link {
-  color: white;
+  color: rgba(255, 255, 255, .55);
+}
+.nav-link:hover {
+  color: rgba(255, 255, 255, .75);
 }
 
 #account-icon:hover {
