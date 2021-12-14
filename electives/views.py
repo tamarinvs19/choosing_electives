@@ -75,14 +75,10 @@ def change_elective_kind(request, **kwargs):
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
-        statistic = {
-            kind: controller.get_statistics(elective, kind)
-            for kind in elective.kinds.all()
-        }
         current_short_names = list(set(
             data.kind.short_name
             for data in controller.get_student_elective_kinds(user, elective)
-            if sum(statistic[data.kind].values()) > 0
+            if data.selected
         ))
         logger.debug(current_short_names)
         if application is not None:
