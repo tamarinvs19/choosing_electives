@@ -1,5 +1,6 @@
 .env-page {
-  padding: 10px 30px 30px 0;
+  /*padding: 10px 30px 30px 0;*/
+  border-bottom: none;
 }
 
 .title-row {
@@ -23,7 +24,7 @@
 }
 
 .accordion-button:not(.collapsed) {
-  background-color: #e0f2f1;
+  background-color: #effffe;
   color: #01579b;
 }
 
@@ -84,10 +85,6 @@
 
 .kind-inner-container {
   width: 100%;
-}
-
-.switch-container {
-  width: 40px;
 }
 
 /* The switch - the box around the slider */
@@ -154,12 +151,10 @@ input:checked + .slider:before {
 }
 
 .switch-container {
-  position: fixed;
-  top: 90px;
-  right: 40px;
-}
-
-.switch-container {
+  /*position: fixed;*/
+  /*top: 90px;*/
+  /*right: 40px;*/
+  margin: 5px auto;
   width: 100px;
 }
 

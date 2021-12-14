@@ -1,9 +1,9 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-{#  <meta name='viewport' content='width=device-width'>#}
-  {% load static %}
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
 
   <title>{% block head_title %}{% endblock %}</title>
   <link rel="shortcut icon" type="image/png" href="{% static 'favicon-mkn.png' %}"/>
@@ -28,7 +28,7 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
   {% block navbar %}
     <div class="navbar-div">
-        <div class="col-md-8 offset-md-2">
+        <div class="col-xl-8 offset-xl-2">
           {% include "navbar.html" %}
         </div>
     </div>

@@ -4,7 +4,7 @@ from typing import cast
 
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, FileResponse
 from django.shortcuts import render
 from django.views.decorators.http import require_POST, require_GET
 
@@ -238,3 +238,10 @@ def duplicate_application(request, **kwargs):
             'prev_id': prev_id,
         })
     return HttpResponseBadRequest
+
+
+# @login_required
+# @require_GET
+# def download_table(request, **kwargs):
+#     controller.generate_summary_table()
+#     return FileResponse

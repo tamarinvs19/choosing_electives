@@ -8,135 +8,133 @@
 {% endblock %}
 
 {% block body %}
+<div class="row col-md-8 offset-md-2 env-page">
   <div class="row">
-  <div class="row col-md-8 offset-md-2 env-page">
-    <div class="row">
-      <div class="col-8">
-        <h2>{{ elective.translated_name }}</h2>
-        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
-             aria-label="breadcrumb">
-          <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-              <a href="/">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                     class="bi bi-house-door-fill" viewBox="0 0 16 16">
-                  <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
-                </svg>
-              </a>
-            </li>
-            <li class="breadcrumb-item"><a href="/electives/">Electives</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ elective.translated_name }}</li>
-          </ol>
-        </nav>
-      </div>
-      <div class="col-4">
-        <ul class="list-group list-group-horizontal description-table">
-          <li class="list-group-item list-group-item-info flex-fill">Codename</li>
-          <li class="list-group-item list-group-item-info flex-fill">{{ elective.codename }}</li>
-        </ul>
-      </div>
+    <div class="col-8">
+      <h2>{{ elective.translated_name }}</h2>
+      <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"
+           aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="/">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                   class="bi bi-house-door-fill" viewBox="0 0 16 16">
+                <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>
+              </svg>
+            </a>
+          </li>
+          <li class="breadcrumb-item"><a href="/electives/">Electives</a></li>
+          <li class="breadcrumb-item active" aria-current="page">{{ elective.translated_name }}</li>
+        </ol>
+      </nav>
     </div>
+    <div class="col-4">
+      <ul class="list-group list-group-horizontal description-table">
+        <li class="list-group-item list-group-item-info flex-fill">Codename</li>
+        <li class="list-group-item list-group-item-info flex-fill">{{ elective.codename }}</li>
+      </ul>
+    </div>
+  </div>
 
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="accordion" id="accordionElectivePage">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                      aria-expanded="true" aria-controls="collapseOne">
-                Description
-              </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
-              <div class="elective-description accordion-body">
-                {% if elective.description|length > 0 %}
-                  <a href="{{ elective.description }}" target="_blank" class="description-link">Russian description</a>
-                {% endif %}
-                {% if elective.english_description|length > 0 %}
-                  <a href="{{ elective.english_description }}" target="_blank" class="description-link">English description</a>
-                {% endif %}
-              </div>
+  <div class="row">
+    <div class="col-lg-8">
+      <div class="accordion" id="accordionElectivePage">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+                    aria-expanded="true" aria-controls="collapseOne">
+              Description
+            </button>
+          </h2>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+            <div class="elective-description accordion-body">
+              {% if elective.description|length > 0 %}
+                <a href="{{ elective.description }}" target="_blank" class="description-link">Russian description</a>
+              {% endif %}
+              {% if elective.english_description|length > 0 %}
+                <a href="{{ elective.english_description }}" target="_blank" class="description-link">English description</a>
+              {% endif %}
             </div>
           </div>
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                <span>Teachers</span>
-              </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
-              <div class="accordion-body">
-                {{ elective.text_teachers }}
-              </div>
+        </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+              <span>Teachers</span>
+            </button>
+          </h2>
+          <div id="collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+            <div class="accordion-body">
+              {{ elective.text_teachers }}
             </div>
           </div>
-            <div class="accordion-item">
-              <h2 class="accordion-header" id="headingThree">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                  Students
+        </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                      data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Students
 {#                  <span class="info-counter badge rounded-pill bg-light text-dark">{{ students_count }}</span>#}
-                </button>
-              </h2>
-              <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
-                <div class="accordion-body">
-                  <ol class="students-list list-group list-group-numbered">
-                    {% for student, kinds in students %}
-                      <li class="list-group-item">
-                        {{ student }}
-                        <div class="kind-box kind-box-{{ student.id }}">
-                          {% for kind in kinds %}
-                            <div class="elective-kind elective-kind-{{ student.id }}">
-                              {{ kind }}
-                            </div>
-                          {% endfor %}
-                        </div>
-                      </li>
-                    {% endfor %}
-                  </ol>
-                </div>
+              </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
+              <div class="accordion-body">
+                <ol class="students-list list-group list-group-numbered">
+                  {% for student, kinds in students %}
+                    <li class="list-group-item">
+                      {{ student }}
+                      <div class="kind-box kind-box-{{ student.id }}">
+                        {% for kind in kinds %}
+                          <div class="elective-kind elective-kind-{{ student.id }}">
+                            {{ kind }}
+                          </div>
+                        {% endfor %}
+                      </div>
+                    </li>
+                  {% endfor %}
+                </ol>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-4">
-          <h5>Kinds</h5>
-          <form method="POST" id="chooseKind">
-            {% csrf_token %}
-            <div class="elective-kinds">
-              <ul class="list-group">
-                {% for kind_with_status, statistic in kinds %}
-                  <label for="{{ kind_with_status.kind.short_name }}" class="kind-label">
-                  <li class="kind-group-item list-group-item">
-                    <input id="{{ kind_with_status.kind.short_name }}"
-                           class="form-check-input me-1"
-                           onclick="changeKind({{ kind_with_status.kind.id }}, {{ elective.id }})"
-                           type="checkbox"
-                           name="kinds"
-                           {% if kind_with_status.selected %}
-                           {{ "checked" }}
-                           {% endif %}
-                           value="{{ kind_with_status.kind.short_name }}">
-                      <span class="kinds-list-item">
-                      {{ kind_with_status.kind.long_name }}
-                      </span>
-                    <span class="statistic-container">
-                      <span id="statistic-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic" title="Number of applications">
-                        {{ statistic.1 }}
-                      </span>
-                      <span id="statistic-maybe-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic statistic-maybe"
-                            title='Number of "maybe" applications'>
-                      {{ statistic.0 }}
-                      </span>
+      </div>
+      <div class="col-lg-4">
+        <h5>Kinds</h5>
+        <form method="POST" id="chooseKind">
+          {% csrf_token %}
+          <div class="elective-kinds">
+            <ul class="list-group">
+              {% for kind_with_status, statistic in kinds %}
+                <label for="{{ kind_with_status.kind.short_name }}" class="kind-label">
+                <li class="kind-group-item list-group-item">
+                  <input id="{{ kind_with_status.kind.short_name }}"
+                         class="form-check-input me-1"
+                         onclick="changeKind({{ kind_with_status.kind.id }}, {{ elective.id }})"
+                         type="checkbox"
+                         name="kinds"
+                         {% if kind_with_status.selected %}
+                         {{ "checked" }}
+                         {% endif %}
+                         value="{{ kind_with_status.kind.short_name }}">
+                    <span class="kinds-list-item">
+                    {{ kind_with_status.kind.long_name }}
                     </span>
-                  </li>
-                  </label>
-                {% endfor %}
-              </ul>
-            </div>
-          </form>
-        </div>
+                  <span class="statistic-container">
+                    <span id="statistic-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic" title="Number of applications">
+                      {{ statistic.1 }}
+                    </span>
+                    <span id="statistic-maybe-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic statistic-maybe"
+                          title='Number of "maybe" applications'>
+                    {{ statistic.0 }}
+                    </span>
+                  </span>
+                </li>
+                </label>
+              {% endfor %}
+            </ul>
+          </div>
+        </form>
       </div>
     </div>
   </div>
