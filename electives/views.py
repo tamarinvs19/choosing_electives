@@ -207,6 +207,12 @@ def get_application_rows(request, **kwargs):
         'credit_units_spring': {
             'sum': controller.calc_sum_credit_units(student, 2),
         },
+        'credit_units_maybe_fall': {
+            'sum': controller.calc_sum_credit_units(student, 1, False),
+        },
+        'credit_units_maybe_spring': {
+            'sum': controller.calc_sum_credit_units(student, 2, False),
+        },
     })
 
 

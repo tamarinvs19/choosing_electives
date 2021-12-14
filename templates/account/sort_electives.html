@@ -70,7 +70,17 @@ Selected electives
     </div>
     <div class="col-xl-3 col-lg-6 maybe-fall-column column">
       <div class="title">
-        <h5>Maybe fall</h5>
+        <h5 class="column-title">Maybe Fall</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content maybe-fall-credits">
+              {{ credit_units_maybe_fall.sum }}
+            </span>
+          </div>
+        </div>
       </div>
       <div class="inner-column" id="maybeFall">
         {% for application in applications_fall %}
@@ -80,7 +90,17 @@ Selected electives
     </div>
     <div class="col-xl-3 col-lg-6 maybe-spring-column column">
       <div class="title">
-        <h5>Maybe spring</h5>
+        <h5 class="column-title">Maybe Spring</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content maybe-spring-credits">
+              {{ credit_units_maybe_spring.sum }}
+            </span>
+          </div>
+        </div>
       </div>
       <div class="inner-column" id="maybeSpring">
         {% for application in applications_spring %}
@@ -346,6 +366,8 @@ Selected electives
               $('.codes-spring').html(data['codes_spring']);
               $('.fall-credits').html(data['credit_units_fall']['sum']);
               $('.spring-credits').html(data['credit_units_spring']['sum']);
+              $('.maybe-fall-credits').html(data['credit_units_maybe_fall']['sum']);
+              $('.maybe-spring-credits').html(data['credit_units_maybe_spring']['sum']);
           }
       );
   }

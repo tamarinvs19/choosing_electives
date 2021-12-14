@@ -334,12 +334,12 @@ def generate_application_row(student: Person, semester: int) -> str:
     )
 
 
-def calc_sum_credit_units(student: Person, semester: int) -> int:
+def calc_sum_credit_units(student: Person, semester: int, attached: bool = True) -> int:
     return sum(
         application.credit_units
         for application in StudentOnElective.objects.filter(
             student=student,
-            attached=True,
+            attached=attached,
             kind__semester=semester,
         )
     )

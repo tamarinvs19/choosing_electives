@@ -49,6 +49,12 @@ def open_sorting_page(request, user_id, **kwargs):
             'min': person.student_data.student_group.min_credit_unit_fall,
             'sum': controller.calc_sum_credit_units(person, 1),
         },
+        'credit_units_maybe_fall': {
+            'sum': controller.calc_sum_credit_units(person, 1, False),
+        },
+        'credit_units_maybe_spring': {
+            'sum': controller.calc_sum_credit_units(person, 2, False),
+        },
         'credit_units_spring': {
             'max': person.student_data.student_group.max_credit_unit_spring,
             'min': person.student_data.student_group.min_credit_unit_spring,
