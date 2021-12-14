@@ -3,29 +3,29 @@
   Elective list
 {% endblock %}
 {% block body %}
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    <h5 id="offcanvasRightLabel">Additional options</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div class="row">
-      <span>
-        Open all thematics
-      <label class="switch">
-        <input type="checkbox" onchange="clickSwitch(this)">
-        <span class="slider round"></span>
-      </label>
-      </span>
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">Additional options</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
     </div>
-    <hr>
-    <div class="row">
-      <a class="btn btn-outline-secondary" href="{% url 'electives:download_table' %}" download>
-        Download summary table
-      </a>
+    <div class="offcanvas-body">
+      <div class="row">
+        <span>
+          Open all thematics
+        <label class="switch">
+          <input type="checkbox" onchange="clickSwitch(this)">
+          <span class="slider round"></span>
+        </label>
+        </span>
+      </div>
+      <hr>
+      <div class="row">
+        <a class="btn btn-outline-secondary" href="{% url 'electives:download_table' %}" download>
+          Download summary table
+        </a>
+      </div>
     </div>
   </div>
-</div>
   <div class="switch-container">
     <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
