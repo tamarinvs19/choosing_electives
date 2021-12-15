@@ -23,3 +23,41 @@ footer {
 .footer-container {
     margin-top: 100px;
 }
+
+.statistic {
+    margin-left: 4px;
+    padding-left: 4px;
+}
+
+.kind-inner-container {
+    width: 100%;
+}
+
+.statistic-maybe {
+    color: #747474;
+}
+
+.statistic-container {
+    float: right;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #effffe;
+    color: #01579b;
+}
+
+.env-page {
+    padding-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .env-page {
+        width: calc(100% - 10px);
+        padding-left: 10px;
+    }
+}
+
+.title-row {
+    text-align: center;
+}
+

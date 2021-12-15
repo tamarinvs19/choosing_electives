@@ -6,12 +6,12 @@ class StudentGroupAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {'fields': ['curriculum', 'course_value']}),
         ('Fall', {'fields': [
-            'min_credit_unit_autumn',
-            'max_credit_unit_autumn',
-            'min_number_of_exams_autumn',
-            'max_number_of_exams_autumn',
-            'max_light_credit_unit_autumn',
-            'max_cs_courses_autumn',
+            'min_credit_unit_fall',
+            'max_credit_unit_fall',
+            'min_number_of_exams_fall',
+            'max_number_of_exams_fall',
+            'max_light_credit_unit_fall',
+            'max_cs_courses_fall',
         ]}),
         ('Spring', {'fields': [
             'min_credit_unit_spring',

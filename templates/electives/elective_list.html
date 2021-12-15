@@ -1,6 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 {% block head_title %}
   Elective list
+{% endblock %}
+{% block extra_styles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'styles/main_page.css' %}">
 {% endblock %}
 {% block body %}
   <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">

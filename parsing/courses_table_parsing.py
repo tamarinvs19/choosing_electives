@@ -1,6 +1,7 @@
 """Model for parsing HTML page with the list of courses"""
 import itertools
 import math
+from collections import defaultdict
 
 from bs4 import BeautifulSoup
 import requests
@@ -11,6 +12,7 @@ from loguru import logger
 from django.core.exceptions import ValidationError
 
 from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
+from groups.models import StudentGroup, Curriculum, YearOfEducation
 
 RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
 ENGLISH_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html'
@@ -168,7 +170,7 @@ class Parser(object):
         return thematic_table
 
 
-def main():
+def main_electives():
     parser = Parser(RUSSIAN_URL)
     parser.load_page()
     electives = parser.parse_electives()
@@ -176,6 +178,8 @@ def main():
     english_parser = Parser(ENGLISH_URL)
     english_parser.load_page()
     english_electives = english_parser.parse_electives()
+
+    elective_ids = []
 
     for (thematic_name, thematic_electives), (english_name, thematic_english_electives) in zip(
             electives.items(), english_electives.items()):
@@ -216,6 +220,9 @@ def main():
                     description=description,
                     english_description=english_description,
                 )
+
+            elective_ids.append(elective.id)
+
             for elective_type, semester in itertools.product(
                     thematic_elective['credit_type'], thematic_elective['semesters']):
                 try:
@@ -236,6 +243,82 @@ def main():
                         kind=kind,
                     )
 
+    logger.info('Remove electives with ids: {0}'.format(elective_ids))
+    Elective.objects.exclude(id__in=elective_ids).delete()
+
+
+def main_programs():
+    parser = Parser(RUSSIAN_URL)
+    parser.load_page()
+    student_groups = parser.generate_student_groups()
+    codenames = []
+    groups_dict = {}
+    for group_data in student_groups:
+        codenames.append(group_data['name'][2])
+        groups_dict[group_data['name'][2]] = group_data
+    codenames = zip(codenames[::2], codenames[1::2])
+
+    group_ids = []
+    for fall_code, spring_code in codenames:
+        fall_data = groups_dict[fall_code]
+        spring_data = groups_dict[spring_code]
+        year = fall_data['name'][1] // 2 + 1
+
+        if year != spring_data['name'][1] // 2:
+            raise ValueError('Incorrect pair: {0} and {1}'.format(fall_code, spring_code))
+
+        curriculum, _ = Curriculum.objects.get_or_create(name=fall_data['name'][0])
+        year_of_education, _ = YearOfEducation.objects.get_or_create(year=year)
+        student_group, _ = StudentGroup.objects.get_or_create(curriculum=curriculum, course_value=year_of_education)
+
+        group_ids.append(student_group.id)
+
+        student_group.min_credit_unit_fall = fall_data['credits'][0]
+        student_group.max_credit_unit_fall = fall_data['credits'][1]
+        student_group.min_credit_unit_spring = spring_data['credits'][0]
+        student_group.max_credit_unit_spring = spring_data['credits'][1]
+
+        if fall_data['exams'][0] != math.inf:
+            student_group.min_number_of_exams_fall = fall_data['exams'][0]
+        else:
+            student_group.min_number_of_exams_fall = None
+        if fall_data['exams'][1] != math.inf:
+            student_group.max_number_of_exams_fall = fall_data['exams'][1]
+        else:
+            student_group.max_number_of_exams_fall = None
+
+        if spring_data['exams'][0] != math.inf:
+            student_group.min_number_of_exams_spring = spring_data['exams'][0]
+        else:
+            student_group.min_number_of_exams_spring = None
+        if spring_data['exams'][1] != math.inf:
+            student_group.max_number_of_exams_spring = spring_data['exams'][1]
+        else:
+            student_group.max_number_of_exams_spring = None
+
+        if fall_data['light_credits'][1] != math.inf:
+            student_group.light_credit_unit_fall = fall_data['light_credits'][1]
+        else:
+            student_group.light_credit_unit_fall = None
+        if spring_data['light_credits'][1] != math.inf:
+            student_group.light_credit_unit_spring = spring_data['light_credits'][1]
+        else:
+            student_group.light_credit_unit_spring = None
+
+        if fall_data['cs_courses'][1] != math.inf:
+            student_group.max_cs_courses_fall = fall_data['cs_courses'][1]
+        else:
+            student_group.max_cs_courses_fall = None
+        if spring_data['cs_courses'][1] != math.inf:
+            student_group.max_cs_courses_spring = spring_data['cs_courses'][1]
+        else:
+            student_group.max_cs_courses_spring = None
+
+        student_group.save()
+
+    StudentGroup.objects.exclude(id__in=group_ids).delete()
+
 
 if __name__ == '__main__':
-    main()
+    main_programs()
+    main_electives()

@@ -20,6 +20,7 @@ DEBUG = env['DEBUG']
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    'ec27-45-93-133-191.ngrok.io',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -60,7 +61,10 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['identity.basic', 'identity.email', 'openid'],
     }
 }
+LOGIN_URL = '/electives/accounts/login/'
 LOGIN_REDIRECT_URL = '/electives/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/electives/accounts/login/'
+ACCOUNT_SIGNUP_REDIRECT_URL = "/electives/account/post_registration/"
 
 
 MIDDLEWARE = [

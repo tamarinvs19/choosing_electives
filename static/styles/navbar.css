@@ -3,6 +3,8 @@
 }
 
 .nav-link {
+  padding-left: 1px;
+  padding-right: 10px;
   color: rgba(255, 255, 255, .55);
 }
 .nav-link:hover {

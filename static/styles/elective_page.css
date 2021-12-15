@@ -5,6 +5,16 @@ ul.description-table {
 ul.description-table li:first-child {
     font-weight: bold;
 }
+@media (max-width: 615px) {
+    ul.description-table li:first-child {
+        display: none;
+    }
+    ul.description-table li {
+        border-radius: 0.25rem;
+        border: none;
+        text-align: center;
+    }
+}
 
 .info-counter {
     position: absolute;

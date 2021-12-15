@@ -1,7 +1,3 @@
-.env-page {
-  padding-top: 10px;
-}
-
 .div-electives {
   border-bottom: none;
 }
@@ -22,15 +18,6 @@
   background-color: #f3f3f3;
 }
 
-.elective-description {
-  word-break: break-all;
-}
-
-.accordion-button:not(.collapsed) {
-  background-color: #effffe;
-  color: #01579b;
-}
-
 .kind-button {
   display: inline-flex;
 
@@ -45,7 +32,14 @@
   transition: 0.2s ease-in-out;
 
   color: #333333;
-  font-family: 'Iosevka Medium', monospace;
+  font-family: 'Ubuntu Mono', monospace;
+}
+
+@media (max-width: 620px) {
+  .kind-name {
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+  }
 }
 
 .semester-1 {
@@ -78,16 +72,6 @@
 
 .checkbox-kind {
   display: none;
-}
-
-.statistic {
-  margin-left: 4px;
-  padding-left: 4px;
-  /*border-left: 1px solid gray;*/
-}
-
-.kind-inner-container {
-  width: 100%;
 }
 
 /* The switch - the box around the slider */
@@ -158,12 +142,4 @@ input:checked + .slider:before {
 .switch-container {
   margin: 5px auto;
   width: 100px;
-}
-
-.statistic-maybe {
-  color: #747474;
-}
-
-.statistic-container {
-  float: right;
 }
