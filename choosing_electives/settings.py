@@ -13,7 +13,7 @@ env = Env(
 )
 env.read_env(file_name='.env')
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or env['DJANGO_SECRET_KEY']
+SECRET_KEY = os.environ.get('SECRET_KEY') or env['DJANGO_SECRET_KEY']
 
 DEBUG = env['DEBUG']
 
