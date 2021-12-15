@@ -8,4 +8,4 @@ lxml
 bs4~=0.0.1
 django-allauth
 loguru
-xlsxwrite
+xlsxwriter
