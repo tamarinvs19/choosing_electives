@@ -140,6 +140,31 @@ input:checked + .slider:before {
 }
 
 .switch-container {
-  margin: 5px auto;
+  margin: 5px 0 5px calc(100% - 100px);
   width: 100px;
+}
+
+.sort {
+  float: right;
+
+  padding: 1px 4px;
+
+  color: #747474;
+
+  border: 1px solid white;
+  border-radius: 3px;
+}
+
+.sort:hover {
+  border-color: #888;
+  background-color: #dddddd;
+}
+
+.sort-electives:checked + .sort {
+  color: #111;
+  background-color: #a4d0e6;
+}
+
+.sort-electives {
+  display: none;
 }
