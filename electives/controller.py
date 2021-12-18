@@ -3,13 +3,12 @@ from typing import Tuple, List, Dict, Optional
 
 import xlsxwriter
 
-from django.db import transaction
 from django.db.models import F, Max, Count
 
 from loguru import logger
 
 from electives.elective_statistic import Statistic
-from electives.models import KindOfElective, Elective, StudentOnElective, ElectiveKind, ElectiveThematic
+from electives.models import KindOfElective, Elective, StudentOnElective, ElectiveKind
 from users.models import Person
 
 
@@ -19,6 +18,7 @@ KindWithSelectStatusAndStatistic = namedtuple('KindWithSelectStatusAndStatistic'
 ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 
 statistic = Statistic()
+# statistic = object
 
 
 def get_electives_by_thematics(student: Person) -> object:
@@ -340,7 +340,8 @@ def generate_application_row(student: Person, semester: int) -> str:
             for application in StudentOnElective.objects.filter(
                 student=student,
                 kind__semester=semester,
-            ).order_by('-attached', 'priority')
+                attached=True,
+            ).order_by('priority')
         ]
     )
 
@@ -392,11 +393,13 @@ def generate_summary_table():
         'Elective russian name',
         'Elective english name',
         'Thematic',
+        'Number of students'
     ] + [
         str(kind) for kind in kinds
     ]
 
     electives = Elective.objects.prefetch_related('studentonelective_set', 'kinds')
+
     data = []
     for elective in electives:
         elective_data = defaultdict(str)
@@ -404,9 +407,18 @@ def generate_summary_table():
             elective_data[kind.long_name] = elective.studentonelective_set.filter(
                 kind=kind
             ).aggregate(
-                count=Count('kind')
+                count=Count('student__id', distinct=True)
             )['count']
-        new_row = [elective.codename, elective.name, elective.english_name, elective.thematic.english_name] + [
+        number_of_students = elective.studentonelective_set.aggregate(
+            count=Count('student__id', distinct=True)
+        )['count']
+        new_row = [
+                      elective.codename,
+                      elective.name,
+                      elective.english_name,
+                      elective.thematic.english_name,
+                      number_of_students,
+                  ] + [
             elective_data[kind.long_name] for kind in kinds
         ]
         data.append(new_row)

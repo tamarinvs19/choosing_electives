@@ -169,11 +169,11 @@ class Elective(models.Model):
     :text_teachers:        |  List of teacher names
     """
 
-    name = models.CharField(max_length=200)
-    english_name = models.CharField(max_length=200, null=True, default='')
+    name = models.CharField(max_length=200, null=True, default='', blank=True)
+    english_name = models.CharField(max_length=200, null=True, default='', blank=True)
     codename = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=200, default='')
-    english_description = models.CharField(max_length=200, null=True, default='')
+    description = models.CharField(max_length=200, null=True, default='', blank=True)
+    english_description = models.CharField(max_length=200, null=True, default='', blank=True)
     max_number_students = models.PositiveIntegerField(default=255)
     min_number_students = models.PositiveIntegerField(default=3)
     thematic = models.ForeignKey(ElectiveThematic, null=True, on_delete=models.SET_NULL)

@@ -58,6 +58,13 @@ footer {
 }
 
 .title-row {
-    text-align: left;
+    text-align: center;
 }
 
+.account-box h1 {
+    text-align: center;
+}
+
+.primaryAction {
+    margin-top: 10px;
+}
