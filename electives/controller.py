@@ -404,8 +404,16 @@ def generate_summary_table():
     for elective in electives:
         elective_data = defaultdict(str)
         for kind in elective.kinds.all():
-            elective_data[kind.long_name] = elective.studentonelective_set.filter(
-                kind=kind
+            filtered_data = elective.studentonelective_set.filter(
+                kind=kind,
+            )
+            elective_data[kind.long_name] = filtered_data.filter(
+                attached=True,
+            ).aggregate(
+                count=Count('student__id', distinct=True)
+            )['count']
+            elective_data[f'MAYBE {kind.long_name}'] = filtered_data.filter(
+                attached=False,
             ).aggregate(
                 count=Count('student__id', distinct=True)
             )['count']
