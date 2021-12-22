@@ -1,61 +1,85 @@
 {% extends "base.html" %}
+{% load static %}
 {% block head_title %}
   Elective list
 {% endblock %}
-
+{% block extra_styles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'styles/main_page.css' %}">
+{% endblock %}
 {% block body %}
-  <div class="row">
-    <div id="div-electives" class="env-page col-md-8 offset-md-2">
-      <div class="row title-row">
-        <div class="col-4">Название</div>
-        <div class="col-4">Преподаватели</div>
-        <div class="col-2">Тип</div>
-        <div class="col-2">Статистика</div>
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasRightLabel">Additional options</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="row">
+        <span>
+          Open all thematics
+        <label class="switch">
+          <input type="checkbox" onchange="clickSwitch(this)">
+          <span class="slider round"></span>
+        </label>
+        </span>
       </div>
-      {% for thematic in thematics %}
-        <h3>{{ thematic.name }}</h3>
-      {% for elective in electives %}
-          {% if elective.thematic == thematic %}
-        <div class="row table-row">
-          <div class="col-4"><a href={% url 'electives:elective_page' elective.id %}>{{ elective.name }}</a></div>
-          <div class="col-4">{{ elective.text_teacher }}</div>
-          <div class="col-2">
-            {% for short_form, long_form, semester in elective.text_kinds %}
-              <span title="{{ long_form }}" class="semester-{{ semester }}">
-                <u>{{ short_form }}</u>
-              </span>
-            {% endfor %}
-          </div>
-          <div class="col-2">пока ничего</div>
-        </div>
-          {% endif %}
-      {% endfor %}
-      {% endfor %}
-      {#        <table class="electives">#}
-      {#            <thead>#}
-      {#            <tr>#}
-      {#                <th>Название</th>#}
-      {#                <th>Преподаватели</th>#}
-      {#                <th>Тип</th>#}
-      {#                <th>Статистика</th>#}
-      {#            </tr>#}
-      {#            </thead>#}
-      {#            <tbody>#}
-      {#                {% for elective in electives %}#}
-      {#                    <tr>#}
-      {#                        <td>{{elective.name}}</td>#}
-      {#                        <td>{{elective.text_teacher}}</td>#}
-      {#                        <td>{{elective.credit_unit}} </td>#}
-      {#                        <td>пока ничего</td>#}
-      {#                    </tr>#}
-      {#                    <tr class="elective-description">#}
-      {#                    <td>#}
-      {#                        {{ elective.description }}#}
-      {#                    </td>#}
-      {#                    </tr>#}
-      {#                {% endfor %}#}
-      {#            </tbody>#}
-      {#        </table>#}
+      <hr>
+      <div class="row">
+        <a class="btn btn-outline-secondary" href="{% url 'electives:download_table' %}" download>
+          Download summary table
+        </a>
+      </div>
     </div>
   </div>
+  <div class="switch-container">
+    <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
+            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+      Options
+    </button>
+  </div>
+  <div class="accordion accordion-flush" id="accordionPanelsElective">
+  {% for thematic, electives in elective_groups.items %}
+    {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id %}
+  {% endfor %}
+  </div>
+  <script>
+  function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  // Does this cookie string begin with the name we want?
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      const csrftoken = getCookie('csrftoken');
+
+      function change_kind(electiveId, kindId) {
+          $.post("{% url 'electives:change_kind' %}",
+              {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
+              function(data) {
+                  $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
+                  $(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
+                  if (data['move'] !== null && data['other_language_kind'] !== null) {
+                      $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
+                      $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
+                      $(`#button-${data['other_short_name']}-${electiveId}`)[0].checked = false;
+                  }
+              });
+      }
+
+      function clickSwitch(input) {
+          if (input.checked) {
+              $('.accordion-collapse').addClass('show');
+          } else {
+              $('.accordion-collapse').removeClass('show');
+          }
+      }
+
+  </script>
 {% endblock %}

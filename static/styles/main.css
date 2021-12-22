@@ -1,55 +1,70 @@
+html {
+    height: 100%;
+}
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 12pt;
-    color: #333;
     background-color: #fff;
+    color: #333;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 12pt;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.body-content {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+}
+
+.footer-container {
+    margin-top: 100px;
+}
+
+.statistic {
+    margin-left: 4px;
+    padding-left: 4px;
+}
+
+.kind-inner-container {
+    width: 100%;
+}
+
+.statistic-maybe {
+    color: #747474;
+}
+
+.statistic-container {
+    float: right;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: #effffe;
+    color: #01579b;
 }
 
 .env-page {
+    padding-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .env-page {
+        width: calc(100% - 10px);
+        padding-left: 10px;
+    }
+}
+
+.title-row {
+    text-align: center;
+}
+
+.account-box h1 {
+    text-align: center;
+}
+
+.primaryAction {
     margin-top: 10px;
-    padding-left: 30px;
-    padding-right: 30px;
-}
-
-#div-electives > div.title-row {
-    padding: 8px 0;
-    font-weight: bold;
-}
-
-#div-electives > div.table-row {
-    padding: 8px 0;
-    border-top: 1px solid #e5e5e5;
-}
-
-ul.description-table {
-    font-size: 11pt;
-}
-
-ul.description-table li:first-child {
-    font-weight: bold;
-}
-
-span.info-counter {
-    position: absolute;
-    right: 50px;
-}
-
-#accordionElectivePage {
-    padding-bottom: 20px;
-}
-
-div.elective-kinds {
-    font-size: 11pt;
-}
-
-div.save-button {
-    padding: 10px 0;
-}
-
-.semester-1 {
-    background-color: gold;
-}
-
-.semester-2 {
-    background-color: yellowgreen;
 }

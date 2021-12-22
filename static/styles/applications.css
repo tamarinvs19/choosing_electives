@@ -1,0 +1,332 @@
+.application {
+  position: relative;
+
+  width: 260px;
+
+  margin-bottom: 5px;
+
+  cursor: move;
+}
+
+.application:hover {
+  box-shadow: 0 0 1px 1px #aaa;
+}
+
+.chosen,
+.application:active {
+  box-shadow: 2px 2px 17px 1px #666;
+}
+
+.elective-kind {
+  border: #747474 solid 1px;
+  border-radius: 0.2rem;
+
+  font-size: 11pt;
+}
+.small-font {
+  font-size: 9pt;
+}
+.hidden-link {
+  overflow-x: hidden;
+
+  text-overflow: ellipsis;
+  word-wrap: unset;
+}
+
+.application-body {
+  white-space: nowrap;
+}
+
+.card-element {
+  display: inline-block;
+}
+
+.exam-container {
+  position: relative;
+
+  display: block;
+
+  padding-left: 25px;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.exam-input {
+  position: absolute;
+
+  height: 0;
+
+  cursor: pointer;
+  opacity: 0;
+  widows: 0;
+}
+
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 15px;
+  height: 15px;
+
+  border-radius: 4px;
+
+  background-color: #eee;
+}
+
+.exam-container:hover .exam-input ~ .checkmark {
+  background-color: #ccc;
+}
+
+.exam-container .exam-input:checked ~ .checkmark {
+  background-color: #01579b;
+}
+
+.checkmark:after {
+  position: absolute;
+
+  display: none;
+
+  content: '';
+}
+
+.exam-container .checkmark:after {
+  top: 2px;
+  left: 5px;
+
+  width: 5px;
+  height: 10px;
+
+  border: solid white;
+  border-width: 0 3px 3px 0;
+
+  transform: rotate(45deg);
+}
+
+.exam-container .exam-input:checked ~ .checkmark:after {
+  display: block;
+}
+
+.exam {
+  width: min-content;
+}
+
+.column {
+  width: 285px;
+  min-height: 200px;
+  padding: 10px;
+  margin-right: auto;
+  margin-bottom: 5px;
+  margin-left: auto;
+
+  border-radius: 5px;
+}
+.fall-column {
+  background-color: #f8a800;
+}
+.maybe-fall-column {
+  background-color: rgba(248, 168, 0, 0.6);
+}
+.spring-column {
+  background-color: #67861f;
+}
+.maybe-spring-column {
+  background-color: rgba(103, 134, 31, 0.6);
+}
+.inner-column {
+  width: 270px;
+  min-height: calc(100% - 30px);
+  margin-left: calc((100% - 270px) / 2);
+  padding: 5px;
+
+  border-radius: 3px;
+
+  background-color: snow;
+}
+
+.application .card-body {
+  padding: 0.3rem 0.4rem 0.3rem 0.4rem;
+}
+.application .card-header {
+  padding: 0.3rem 50px 0.3rem 0.4rem;
+}
+.application .btn {
+  padding: 1px 4px;
+}
+.application .card-subtitle {
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.title {
+  z-index: -1000;
+
+  color: white;
+}
+
+.elective-name {
+  position: relative;
+}
+
+.second-button,
+.first-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+
+  transform: scale(0.75);
+
+  margin: 2px 1px;
+  padding-bottom: 3px;
+
+  cursor: pointer;
+
+  border: 0 solid #747474;
+  border-radius: 3px;
+}
+
+.second-button:hover {
+  background-color: darkgray;
+}
+.first-button:hover {
+  background-color: darkgray;
+}
+
+.second-button {
+  right: 25px;
+}
+
+.card-last-row {
+  display: inline-block;
+  margin-top: 3px;
+}
+
+.semesters {
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+
+  padding: 1px;
+
+  font-weight: bold;
+}
+
+.semesters:hover {
+  cursor: help;
+}
+
+.semester-tag {
+  padding: 5px 2px 2px;
+}
+.semester-tag:not(:first-of-type) {
+  margin-left: 2px;
+}
+
+.fall-tag {
+  color: #f8a800;
+}
+.spring-tag {
+  color: #67861f;
+}
+
+.credit-units {
+  position: absolute;
+  right: 0;
+  padding: 4px;
+}
+
+.course-link {
+  margin-right: 10px;
+}
+
+.application-row {
+  margin-left: 2px;
+  margin-right: 8px;
+  margin-bottom: 10px;
+
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+.title-codes {
+  padding-top: 4px;
+  font-size: 18px;
+}
+
+.codes {
+  padding: 5px 50px 5px 5px;
+  border: 1px solid #747474;
+  border-radius: 3px;
+  overflow: auto;
+  white-space: nowrap;
+
+  /*noinspection CssInvalidPropertyValue*/
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 0%,
+    black 89%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(to right, transparent 0%, black 0%, black 89%, transparent 100%);
+
+  color: #747474;
+  font-size: 11pt;
+}
+
+.codes {
+  min-height: 32px;
+}
+
+.codes::-webkit-scrollbar {
+  display: none;
+}
+
+.copy-codes {
+  position: absolute;
+  margin-left: -35px;
+
+  padding: 4px 8px;
+
+  border: 1px solid white;
+  border-radius: 3px;
+}
+
+.copy-codes:hover {
+  border: 1px solid #747474;
+}
+
+.copy-codes:active {
+  border: 1px solid #747474;
+  background-color: #ddd;
+}
+
+.code-container {
+  float: right;
+}
+
+.credit-units-window {
+  float: right;
+  display: inline-block;
+  padding: 5px 5px 2px;
+  margin-top: -4px;
+  background-color: white;
+  color: #1b1b1b;
+  border-radius: 3px;
+}
+
+.credit-units-value {
+  display: inline-block;
+}
+
+.column-title {
+  font-weight: 700;
+  display: inline-block;
+}
+
+@media (min-width: 600px) and (max-width: 1200px) {
+  .column {
+    margin: 5px calc((50% - 285px) / 2);
+  }
+}

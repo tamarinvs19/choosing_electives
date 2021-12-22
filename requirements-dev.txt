@@ -28,3 +28,7 @@ beautifulsoup4~=4.10.0
 requests~=2.26.0
 lxml
 bs4~=0.0.1
+django-extensions
+pygraphviz~=1.7
+django-allauth
+loguru

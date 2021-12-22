@@ -7,7 +7,7 @@ class Person(User):
 
     def __str__(self):
         if self.first_name and self.last_name:
-            return '{0}. {1}'.format(self.first_name[0], self.last_name)
+            return '{0} {1}'.format(self.first_name, self.last_name)
         else:
             return self.username
 

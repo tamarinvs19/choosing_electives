@@ -1,0 +1,115 @@
+  <div id="accordionPanelsStayOpen{{ forloop.counter }}"
+       class="div-electives col-md-8 offset-md-2 accordion accordion-item">
+    <h3 class="thematic-name accordion-header"
+        id="panelsStayOpen-heading{{ forloop.counter }}">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+              data-bs-target="#panelsStayOpen-collapse{{ forloop.counter }}"
+              aria-expanded="true"
+              aria-controls="panelsStayOpen-collapse{{ forloop.counter }}">
+        {{ thematic.name }} / {{ thematic.english_name }}
+      </button>
+    </h3>
+    <div id="panelsStayOpen-collapse{{ forloop.counter }}"
+         class="accordion-collapse collapse "
+         aria-labelledby="panelsStayOpen-{{ forloop.counter }}">
+      <div class="accordion-body">
+        <div class="row title-row">
+          <div class="col-5">
+            Title
+            <input id="sortTitle-{{ thematic.id }}" class="sort-electives" type="radio" name="sortElectives-{{ thematic.id }}">
+            <span class="sort">
+              <label for="sortTitle-{{ thematic.id }}" class="sort-electives-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16">
+                  <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                </svg>
+              </label>
+            </span>
+          </div>
+          <div class="col-3">
+            Teachers
+          </div>
+          <div class="col-2">
+            Fall
+            <input id="sortFall-{{ thematic.id }}" class="sort-electives" type="radio" name="sortElectives-{{ thematic.id }}">
+            <span class="sort">
+              <label for="sortFall-{{ thematic.id }}" class="sort-electives-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16">
+                  <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                </svg>
+              </label>
+            </span>
+          </div>
+          <div class="col-2">
+            Spring
+            <input id="sortSpring-{{ thematic.id }}" class="sort-electives" type="radio" name="sortElectives-{{ thematic.id }}">
+            <span class="sort">
+              <label for="sortSpring-{{ thematic.id }}" class="sort-electives-label">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-sort-down" viewBox="0 0 16 16">
+                  <path d="M3.5 2.5a.5.5 0 0 0-1 0v8.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L3.5 11.293V2.5zm3.5 1a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zM7.5 6a.5.5 0 0 0 0 1h5a.5.5 0 0 0 0-1h-5zm0 3a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1h-3zm0 3a.5.5 0 0 0 0 1h1a.5.5 0 0 0 0-1h-1z"/>
+                </svg>
+              </label>
+            </span>
+          </div>
+        </div>
+        {% for elective, languages in electives.items %}
+          <div class="elective-row row table-row">
+          {% for language, semesters in languages.items %}
+          <div class="row">
+            <div class="col-5">
+              <a href={% url 'electives:elective_page' elective.id %}>
+                {% if language == 'ru' %}
+                  {{ elective.name }}
+                {% else %}
+                  {{ elective.english_name }}
+                {% endif %}
+              </a>
+            </div>
+            {% if elective.has_english_kind and language == 'en' %}
+              <div class="col-3">{{ elective.text_teachers }}</div>
+            {% elif elective.has_russian_kind and not elective.has_english_kind %}
+              <div class="col-3">{{ elective.text_teachers }}</div>
+            {% else %}
+              <div class="col-3"></div>
+            {% endif %}
+            {% if elective.has_not_fall %}
+              <div class="col-2"></div>
+            {% endif %}
+            {% for semester, kinds in semesters.items %}
+              <div class="col-2">
+                {% for kind, info in kinds.items %}
+                <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.id }}"
+                       value="{{ elective.short_name }}" class="checkbox-kind"
+                       onclick="change_kind({{ elective.id }}, {{ kind.id }})"
+                        {% if info.1.1 or info.0.1 %} checked {% endif %}>
+                <label for="button-{{ kind.short_name }}-{{ elective.id }}"
+                       class="semester-{{ kind.semester }} kind-button"
+                       title="{{ kind.long_name }}">
+                <div class="kind-inner-container">
+                <span class="kind-name">
+                  {% if language == 'ru' %}
+                    {{ kind.credit_units_name }}
+                  {% else %}
+                    {{ kind.credit_units_english_name }}
+                  {% endif %}
+                </span>
+                  <span class="statistic-container">
+                  <span id="statistic-{{ elective.id }}-{{ kind.id }}" class="statistic" title="Number of applications">
+                    {{ info.1.0 }}
+                  </span>
+                    <span id="statistic-maybe-{{ elective.id }}-{{ kind.id }}" class="statistic statistic-maybe"
+                          title='Number of "maybe" applications'>
+                    {{ info.0.0 }}
+                  </span>
+                  </span>
+                </div>
+                </label>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>

@@ -1,12 +1,17 @@
 .navbar-div {
-    background: #1A535C;
+  background: #1a535c;
 }
 
 .nav-link {
-    color: white;
+  padding-left: 1px;
+  padding-right: 10px;
+  color: rgba(255, 255, 255, .55);
+}
+.nav-link:hover {
+  color: rgba(255, 255, 255, .75);
 }
 
 #account-icon:hover {
-    fill: white;
-    cursor: pointer;
+  cursor: pointer;
+  fill: white;
 }

@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Elective, StudentOnElective, TeacherOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
-    MandatoryElectiveInStudentGroup
+from .models import Elective, StudentOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
+    MandatoryThematicInStudentGroup
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -8,28 +8,26 @@ class StudentOnElectiveInline(admin.TabularInline):
     extra = 2
 
 
-class TeacherOnElectiveInline(admin.TabularInline):
-    model = TeacherOnElective
-    extra = 1
-
-
 class KindOfElectiveInline(admin.TabularInline):
     model = KindOfElective
     extra = 1
 
 
-class MandatoryElectiveForStudentGroupInline(admin.TabularInline):
-    model = MandatoryElectiveInStudentGroup
+class MandatoryThematicInline(admin.TabularInline):
+    model = MandatoryThematicInStudentGroup
     extra = 1
 
 
 class ElectiveAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'codename', 'description', 'thematic', 'text_teachers']}),
+        (None, {'fields': ['name', 'english_name', 'codename', 'description',
+                           'english_description', 'thematic', 'text_teachers']}),
         ('Number of students', {'fields': ['min_number_students', 'max_number_students']}),
     ]
-    inlines = [KindOfElectiveInline, TeacherOnElectiveInline,
-               StudentOnElectiveInline, MandatoryElectiveForStudentGroupInline]
+    inlines = [
+        KindOfElectiveInline,
+        StudentOnElectiveInline,
+    ]
     list_display = ('name',)
     search_fields = ['name']
 
@@ -43,12 +41,22 @@ class ElectiveKindAdmin(admin.ModelAdmin):
 
 class ElectiveThematicAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name']}),
+        (None, {'fields': ['name', 'english_name']}),
     ]
-    list_display = ('name',)
+    inlines = [
+        MandatoryThematicInline,
+    ]
+    list_display = ('name', 'english_name')
+
+
+class ApplicationAdmin(admin.ModelAdmin):
+    fieldsets = [
+        (None, {'fields': ['student', 'elective', 'kind', 'with_examination', 'attached', 'priority']}),
+    ]
+    list_display = ('student', 'elective', 'kind', 'attached', 'priority')
 
 
 admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
 admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
-
+admin.site.register(StudentOnElective, ApplicationAdmin)

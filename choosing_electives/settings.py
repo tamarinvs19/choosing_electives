@@ -11,17 +11,22 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 env = Env(
     DEBUG=(True, bool),
 )
-env.read_env()
+env.read_env(file_name='.env')
 
-SECRET_KEY = os.environ.get('SECRET_KEY') or env['SECRET_KEY']
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or env['DJANGO_SECRET_KEY']
 
 DEBUG = env['DEBUG']
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    'ec27-45-93-133-191.ngrok.io',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Application definition
 
@@ -35,7 +40,32 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.slack',
 ]
+
+SITE_ID = 1
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'slack': {
+        'APP': {
+            'client_id': os.environ.get('SLACK_CLIENT_ID') or env['SLACK_CLIENT_ID'],
+            'secret': os.environ.get('SLACK_SECRET') or env['SLACK_SECRET'],
+        },
+        'SCOPE': ['identity.basic', 'identity.email', 'openid'],
+    }
+}
+LOGIN_URL = '/electives/accounts/login/'
+LOGIN_REDIRECT_URL = '/electives/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/electives/accounts/login/'
+ACCOUNT_SIGNUP_REDIRECT_URL = "/electives/account/post_registration/"
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
