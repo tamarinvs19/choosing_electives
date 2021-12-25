@@ -103,7 +103,7 @@ def change_elective_kind(request, **kwargs):
             'other_short_name': other_short_name,
             'current_short_names': current_short_names,
             'user_id': user.id,
-            'student_name': str(user),
+            'student_name': Person.__str__(user),
         })
     return HttpResponseBadRequest
 
