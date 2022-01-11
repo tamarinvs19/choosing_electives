@@ -20,6 +20,10 @@ ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 statistic = Statistic()
 # statistic = object
 
+def get_student_counts(elective: Elective) -> (int, int):
+    elective_data = statistic.data[elective.thematic][elective]
+    return elective_data.fall_count, elective_data.spring_count
+
 
 def get_electives_by_thematics(student: Person) -> object:
     return statistic.generate_view(student.id)

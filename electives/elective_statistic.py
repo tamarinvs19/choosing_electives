@@ -21,6 +21,9 @@ class BaseNode:
     def generate_view(self, student_id: int):
         return {item: inner_item.generate_view(student_id) for item, inner_item in self.items.items()}
 
+    def student_count(self, semester: int) -> int:
+        return sum(inner_item.student_count(semester) for inner_item in self.items.values())
+
 
 @dataclass
 class _MaybeCounter(BaseNode):
@@ -41,7 +44,6 @@ class _MaybeCounter(BaseNode):
                 self.items.pop(student_id, None)
 
     def remove_student_all(self, student_id: int):
-        # self.items[student_id] = 0
         self.items.pop(student_id, None)
 
     def generate_view(self, student_id: int):
@@ -57,6 +59,9 @@ class _ApplicationCounter(BaseNode):
             False: _MaybeCounter(elective, kind, False),
         }
         super().__init__(items)
+
+    def student_count(self, _: int) -> int:
+        return len(self.items[True].items.keys())
 
     def remove_student_all(self, student_id: int) -> None:
         for maybe_counter in self.items.values():
@@ -82,6 +87,11 @@ class _Language(BaseNode):
         }
         super().__init__(semesters)
 
+    def student_count(self, semester: int) -> int:
+        if semester in self.items:
+            return self.items[semester].student_count(semester)
+        return 0
+
 
 @dataclass
 class _Elective(BaseNode):
@@ -93,7 +103,6 @@ class _Elective(BaseNode):
         }
         super().__init__(languages)
 
-
 @dataclass
 class _Thematic(BaseNode):
     def __init__(self, thematic: ElectiveThematic):
@@ -102,6 +111,17 @@ class _Thematic(BaseNode):
             for elective in Elective.objects.filter(thematic=thematic)
         }
         super().__init__(electives)
+
+    def generate_view(self, student_id: int):
+        view_dict = {
+            item: (
+                inner_item.generate_view(student_id),
+                inner_item.student_count(1),
+                inner_item.student_count(2),
+            )
+            for item, inner_item in self.items.items()
+        }
+        return view_dict
 
 
 @dataclass

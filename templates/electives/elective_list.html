@@ -42,7 +42,7 @@
   {% endfor %}
   </div>
   <script>
-  function getCookie(name) {
+      function getCookie(name) {
           let cookieValue = null;
           if (document.cookie && document.cookie !== '') {
               const cookies = document.cookie.split(';');
@@ -80,6 +80,24 @@
               $('.accordion-collapse').removeClass('show');
           }
       }
+
+			function sortColumn(columnName, thematicId, direction = 1) {
+				if (columnName === "title") {
+					direction = -1;
+				}
+				const parent = $(`.thematic-${thematicId}`);
+				const items = parent.children(`.row-${thematicId}`).sort(function(a, b) {
+					let vA = a.dataset[columnName];
+					let vB = b.dataset[columnName];
+					if (columnName === "title") {
+						vA = parseInt(vA);
+						vB = parseInt(vB);
+					}
+					return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : 0);
+				});
+				console.log(parent);
+				parent.append(items);
+			}
 
   </script>
 {% endblock %}
