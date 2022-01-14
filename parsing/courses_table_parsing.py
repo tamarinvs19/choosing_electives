@@ -213,7 +213,7 @@ def main_electives():
             else:
                 elective = Elective.objects.create(
                     name=thematic_elective['fullname'],
-                    english_name=english_elective['name'],
+                    english_name=english_elective['fullname'],
                     codename=thematic_elective['codename'],
                     thematic=thematic,
                     text_teachers=thematic_elective['teachers'],
@@ -243,7 +243,6 @@ def main_electives():
                         kind=kind,
                     )
 
-    logger.info('Remove electives with ids: {0}'.format(elective_ids))
     Elective.objects.exclude(id__in=elective_ids).delete()
 
 
