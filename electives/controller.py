@@ -1,3 +1,4 @@
+import sys
 from collections import namedtuple, Counter, defaultdict
 from typing import Tuple, List, Dict, Optional
 
@@ -13,12 +14,14 @@ from users.models import Person
 
 
 KindWithSelectStatus = namedtuple('KindWithSelectStatus', ['kind', 'selected'])
-KindWithSelectStatusAndStatistic = namedtuple('KindWithSelectStatusAndStatistic',
-                                              ['kind', 'selected', 'statistic'])
-ElectiveWithKinds = namedtuple('ElectiveWithKinds', ['elective', 'kinds'])
 
-statistic = Statistic()
-# statistic = object
+if 'runserver' in sys.argv:
+    logger.info('Start statistic calculating')
+    statistic = Statistic()
+    logger.info('Finish statistic calculating')
+else:
+    statistic = object
+
 
 def get_student_counts(elective: Elective) -> (int, int):
     elective_data = statistic.data[elective.thematic][elective]
