@@ -33,9 +33,9 @@
         {% for elective, languages in electives.items %}
 					<div class="elective-row row table-row row-{{ thematic.id }}"
 						data-title={{ elective.id }}
-						data-fall={{ 0 }}
-						data-spring={{ 0 }}>
-          {% for language, semesters in languages.items %}
+						data-fall={{ languages.1.fall }}
+						data-spring={{ languages.1.spring }}>
+          {% for language, semesters in languages.0.items %}
           <div class="row">
             <div class="col-5">
               <a href={% url 'electives:elective_page' elective.id %}>

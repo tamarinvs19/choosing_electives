@@ -24,40 +24,46 @@ def generate_view_from_application_counters(student: Person):
                 kind=OuterRef('kind_id'),
             )
         )
-    ).order_by(
-        'thematic',
-        'elective',
-        'language',
-        'semester',
-        'credit_units',
-        'attached',
+    # ).order_by(
+    #     'thematic',
+    #     'elective',
+    #     'language',
+    #     'semester',
+    #     'credit_units',
+    #     'attached',
     )
 
     semester_counter = counter.values(
-        'thematic',
         'elective',
         'semester',
     ).annotate(
         num_applications=Sum('count_of_applications'),
     ).filter(
         attached=True,
-    ).order_by()
+    )
 
     dict_counter: dict = {}
     for row in counter:
         if row.thematic not in dict_counter:
             dict_counter[row.thematic] = {}
         if row.elective not in dict_counter[row.thematic]:
-            dict_counter[row.thematic][row.elective] = {}
-        if row.language not in dict_counter[row.thematic][row.elective]:
-            dict_counter[row.thematic][row.elective][row.language] = {}
-        if row.semester not in dict_counter[row.thematic][row.elective][row.language]:
-            dict_counter[row.thematic][row.elective][row.language][row.semester] = {}
-        if row.kind not in dict_counter[row.thematic][row.elective][row.language][row.semester]:
-            dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind] = {}
-        if row.attached not in dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind]:
-            dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind][row.attached] = {}
-        dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind][row.attached] = (row.count_of_applications, row.has_application)
+            fall = semester_counter.filter(elective=row.elective, semester=1)
+            fall = 0 if len(fall) == 0 else fall[0]['num_applications']
+            spring = semester_counter.filter(elective=row.elective, semester=2)
+            spring = 0 if len(spring) == 0 else spring[0]['num_applications']
+            dict_counter[row.thematic][row.elective] = ({}, {
+                'fall': fall,
+                'spring': spring,
+            })
+        if row.language not in dict_counter[row.thematic][row.elective][0]:
+            dict_counter[row.thematic][row.elective][0][row.language] = {}
+        if row.semester not in dict_counter[row.thematic][row.elective][0][row.language]:
+            dict_counter[row.thematic][row.elective][0][row.language][row.semester] = {}
+        if row.kind not in dict_counter[row.thematic][row.elective][0][row.language][row.semester]:
+            dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind] = {}
+        if row.attached not in dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind]:
+            dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = {}
+        dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = (row.count_of_applications, row.has_application)
     return dict_counter, semester_counter
 
 
