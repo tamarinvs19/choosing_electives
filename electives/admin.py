@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Elective, StudentOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
-    MandatoryThematicInStudentGroup
+    MandatoryThematicInStudentGroup, ApplicationCounter
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -56,7 +56,20 @@ class ApplicationAdmin(admin.ModelAdmin):
     list_display = ('student', 'elective', 'kind', 'attached', 'priority')
 
 
+class ApplicationCounterAdmin(admin.ModelAdmin):
+    list_display = (
+        'thematic',
+        'elective',
+        'language',
+        'semester',
+        'credit_units',
+        'attached',
+        'count_of_applications',
+    )
+
+
 admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
 admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
 admin.site.register(StudentOnElective, ApplicationAdmin)
+admin.site.register(ApplicationCounter, ApplicationCounterAdmin)

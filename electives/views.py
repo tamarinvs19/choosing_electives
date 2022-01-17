@@ -13,7 +13,7 @@ from loguru import logger
 from groups.models import Student
 from users.models import Person
 from . import controller
-from .models import Elective, StudentOnElective, ElectiveKind
+from .models import Elective, StudentOnElective, ElectiveKind, ApplicationCounter
 
 
 @login_required
@@ -21,10 +21,11 @@ def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
     if not Student.objects.filter(person=user).exists():
         return redirect('/electives/users/{0}/'.format(user.id))
-    groups = controller.get_electives_by_thematics(user)
+    groups, application_data = controller.get_electives_by_thematics(user)
 
     context = {
         'elective_groups': groups,
+        'application_data': application_data,
     }
     return render(request, 'electives/elective_list.html', context)
 
@@ -83,7 +84,7 @@ def change_elective_kind(request, **kwargs):
             for data in controller.get_student_elective_kinds(user, elective)
             if data.selected
         ))
-        logger.debug(current_short_names)
+
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
@@ -95,6 +96,7 @@ def change_elective_kind(request, **kwargs):
                 other_kind_counts = controller.get_statistics(elective, other_kind[0])
                 other_language_kind = other_kind[0].id
                 other_short_name = other_kind[0].short_name
+
         return JsonResponse({
             'move': application is not None,
             'students_count': students_count,

@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F
 
+from model_utils import FieldTracker
+
 from groups.models import StudentGroup
 from users.models import Person
 
@@ -36,6 +38,7 @@ SEMESTERS: dict[int, str] = {
     1: 'осенний',
     2: 'весенний',
 }
+
 ENGLISH_SEMESTERS: dict[int, str] = {
     1: 'fall',
     2: 'spring',
@@ -45,9 +48,9 @@ ENGLISH_SEMESTERS: dict[int, str] = {
 class ElectiveKind(models.Model):
     """Kind of elective: big/small/seminar + language"""
 
-    credit_units: int = models.PositiveSmallIntegerField(choices=KIND_NAMES.items(), default=4)
-    language: str = models.CharField(max_length=2, choices=LANG_NAMES.items(), default='ru')
-    semester: int = models.PositiveSmallIntegerField(choices=SEMESTERS.items(), default=1)
+    credit_units = models.PositiveSmallIntegerField(choices=KIND_NAMES.items(), default=4)
+    language = models.CharField(max_length=2, choices=LANG_NAMES.items(), default='ru')
+    semester = models.PositiveSmallIntegerField(choices=SEMESTERS.items(), default=1)
 
     def save(self, *args, **kwargs) -> None:
         """Save the current instance only if there are not the same."""
@@ -234,12 +237,14 @@ class KindOfElective(models.Model):
 
 
 class StudentOnElective(models.Model):
-    student = models.ForeignKey(Person, on_delete=models.CASCADE)
-    elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
+    student = models.ForeignKey(Person, on_delete=models.CASCADE, related_name='applications')
+    elective = models.ForeignKey(Elective, on_delete=models.CASCADE, related_name='applications')
     kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
     attached = models.BooleanField(default=False)
     priority = models.PositiveIntegerField(default=0)
+
+    tracker = FieldTracker(fields=['kind', 'attached'])
 
     def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         StudentOnElective.objects.filter(
@@ -297,3 +302,50 @@ class StudentOnElective(models.Model):
 class MandatoryThematicInStudentGroup(models.Model):
     thematic = models.ForeignKey(ElectiveThematic, on_delete=models.CASCADE, related_name='mandatory_thematics')
     student_group = models.ForeignKey(StudentGroup, on_delete=models.CASCADE, related_name='mandatory_thematics')
+
+
+class ApplicationCounter(models.Model):
+    thematic = models.ForeignKey(
+        'ElectiveThematic',
+        on_delete=models.CASCADE,
+        related_name='application_counters',
+    )
+    elective = models.ForeignKey(
+        'Elective',
+        on_delete=models.CASCADE,
+        related_name='application_counters',
+    )
+    kind = models.ForeignKey(
+        'ElectiveKind',
+        on_delete=models.CASCADE,
+    )
+    language = models.CharField(
+        max_length=2,
+        choices=LANG_NAMES.items(),
+        default='ru',
+    )
+    semester = models.PositiveSmallIntegerField(
+        choices=SEMESTERS.items(),
+        default=1,
+    )
+    credit_units = models.PositiveSmallIntegerField(
+        choices=KIND_NAMES.items(),
+        default=4,
+    )
+    attached = models.BooleanField(
+        default=False,
+    )
+    count_of_applications = models.PositiveIntegerField(
+        default=0,
+    )
+
+    def __repr__(self) -> str:
+        return '<ApplicationCounter: {0} {1} {2} {3} {4} {5}: {6}>'.format(
+            self.thematic,
+            self.elective,
+            self.language,
+            self.semester,
+            self.credit_units,
+            self.attached,
+            self.count_of_applications,
+        )

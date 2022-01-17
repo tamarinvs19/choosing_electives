@@ -30,12 +30,12 @@
 						{% include "electives/sort_button.html" with thematic_id=thematic.id column_name='spring' %}
           </div>
         </div>
-        {% for elective, langs_and_info in electives.items %}
+        {% for elective, languages in electives.items %}
 					<div class="elective-row row table-row row-{{ thematic.id }}"
 						data-title={{ elective.id }}
-						data-fall={{ langs_and_info.1 }}
-						data-spring={{ langs_and_info.2 }}>
-          {% for language, semesters in langs_and_info.0.items %}
+						data-fall={{ 0 }}
+						data-spring={{ 0 }}>
+          {% for language, semesters in languages.items %}
           <div class="row">
             <div class="col-5">
               <a href={% url 'electives:elective_page' elective.id %}>
@@ -62,7 +62,7 @@
                 <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.id }}"
                        value="{{ elective.short_name }}" class="checkbox-kind"
                        onclick="change_kind({{ elective.id }}, {{ kind.id }})"
-                        {% if info.1.1 or info.0.1 %} checked {% endif %}>
+                       {% if info.0.1 %} checked {% endif %}>
                 <label for="button-{{ kind.short_name }}-{{ elective.id }}"
                        class="semester-{{ kind.semester }} kind-button"
                        title="{{ kind.long_name }}">

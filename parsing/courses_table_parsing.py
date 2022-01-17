@@ -11,7 +11,7 @@ from loguru import logger
 
 from django.core.exceptions import ValidationError
 
-from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
+from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective, ApplicationCounter
 from groups.models import StudentGroup, Curriculum, YearOfEducation
 
 RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
@@ -318,6 +318,22 @@ def main_programs():
     StudentGroup.objects.exclude(id__in=group_ids).delete()
 
 
+def main_counter_of_applications():
+    for elective in Elective.objects.prefetch_related('thematic', 'kinds'):
+        for kind in elective.kinds.all():
+            for attached in (True, False):
+                ApplicationCounter.objects.get_or_create(
+                    thematic=elective.thematic,
+                    elective=elective,
+                    kind=kind,
+                    language=kind.language,
+                    semester=kind.semester,
+                    attached=attached,
+                    credit_units=kind.credit_units,
+                )
+
+
 if __name__ == '__main__':
     main_programs()
     main_electives()
+    main_counter_of_applications()

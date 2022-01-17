@@ -1,13 +1,64 @@
-from collections import Counter
+from collections import Counter, defaultdict
 from dataclasses import dataclass
 from typing import Optional
 
-from django.db.models import QuerySet
+from django.db.models import QuerySet, Sum, F, Q, OuterRef, Exists
 
 from loguru import logger
 
-from electives.models import ElectiveThematic, Elective, ElectiveKind, MandatoryThematicInStudentGroup
+from electives.models import ElectiveThematic, Elective, ElectiveKind, MandatoryThematicInStudentGroup, ApplicationCounter
 from groups.models import StudentGroup, Student
+from users.models import Person
+
+
+def generate_view_from_application_counters(student: Person):
+    student_applications = student.applications.values(
+        'elective',
+        'kind',
+    )
+
+    counter = ApplicationCounter.objects.annotate(
+        has_application=Exists(
+            student_applications.filter(
+                elective=OuterRef('elective_id'),
+                kind=OuterRef('kind_id'),
+            )
+        )
+    ).order_by(
+        'thematic',
+        'elective',
+        'language',
+        'semester',
+        'credit_units',
+        'attached',
+    )
+
+    semester_counter = counter.values(
+        'thematic',
+        'elective',
+        'semester',
+    ).annotate(
+        num_applications=Sum('count_of_applications'),
+    ).filter(
+        attached=True,
+    ).order_by()
+
+    dict_counter: dict = {}
+    for row in counter:
+        if row.thematic not in dict_counter:
+            dict_counter[row.thematic] = {}
+        if row.elective not in dict_counter[row.thematic]:
+            dict_counter[row.thematic][row.elective] = {}
+        if row.language not in dict_counter[row.thematic][row.elective]:
+            dict_counter[row.thematic][row.elective][row.language] = {}
+        if row.semester not in dict_counter[row.thematic][row.elective][row.language]:
+            dict_counter[row.thematic][row.elective][row.language][row.semester] = {}
+        if row.kind not in dict_counter[row.thematic][row.elective][row.language][row.semester]:
+            dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind] = {}
+        if row.attached not in dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind]:
+            dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind][row.attached] = {}
+        dict_counter[row.thematic][row.elective][row.language][row.semester][row.kind][row.attached] = (row.count_of_applications, row.has_application)
+    return dict_counter, semester_counter
 
 
 @dataclass
@@ -30,7 +81,7 @@ class _MaybeCounter(BaseNode):
     def __init__(self, elective: Elective, kind: ElectiveKind, attached: bool):
         items = Counter(
             sone.student.id
-            for sone in elective.studentonelective_set.filter(kind=kind, attached=attached)
+            for sone in elective.applications.filter(kind=kind, attached=attached)
         )
         super().__init__(items)
 

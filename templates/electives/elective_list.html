@@ -37,6 +37,7 @@
     </button>
   </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
+	{# {% regroup elective_groups by thematic as re_elective_groups %} #}
   {% for thematic, electives in elective_groups.items %}
     {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id %}
   {% endfor %}
