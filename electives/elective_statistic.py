@@ -24,13 +24,13 @@ def generate_view_from_application_counters(student: Person):
                 kind=OuterRef('kind_id'),
             )
         )
-    # ).order_by(
-    #     'thematic',
-    #     'elective',
-    #     'language',
-    #     'semester',
-    #     'credit_units',
-    #     'attached',
+    ).order_by(
+        'thematic',
+        'elective',
+        'language',
+        'semester',
+        'credit_units',
+        'attached',
     )
 
     semester_counter = counter.values(
@@ -42,11 +42,17 @@ def generate_view_from_application_counters(student: Person):
         attached=True,
     )
 
+    thematic = elective = language = semester = kind = attached = None
     dict_counter: dict = {}
+    logger.debug('Start')
     for row in counter:
-        if row.thematic not in dict_counter:
+        if row.thematic != thematic:
+            thematic = row.thematic
+            elective = language = semester = kind = attached = None
             dict_counter[row.thematic] = {}
-        if row.elective not in dict_counter[row.thematic]:
+        if row.elective != elective:
+            elective = row.elective
+            language = semester = kind = attached = None
             fall = semester_counter.filter(elective=row.elective, semester=1)
             fall = 0 if len(fall) == 0 else fall[0]['num_applications']
             spring = semester_counter.filter(elective=row.elective, semester=2)
@@ -55,15 +61,23 @@ def generate_view_from_application_counters(student: Person):
                 'fall': fall,
                 'spring': spring,
             })
-        if row.language not in dict_counter[row.thematic][row.elective][0]:
+        if row.language != language:
+            language = row.language
+            semester = kind = attached = None
             dict_counter[row.thematic][row.elective][0][row.language] = {}
-        if row.semester not in dict_counter[row.thematic][row.elective][0][row.language]:
+        if row.semester != semester:
+            semester = row.semester
+            kind = attached = None
             dict_counter[row.thematic][row.elective][0][row.language][row.semester] = {}
-        if row.kind not in dict_counter[row.thematic][row.elective][0][row.language][row.semester]:
+        if row.kind != kind:
+            kind = row.kind
+            attached = None
             dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind] = {}
-        if row.attached not in dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind]:
+        if row.attached != attached:
+            attached = row.attached
             dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = {}
         dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = (row.count_of_applications, row.has_application)
+    logger.debug('Finish')
     return dict_counter, semester_counter
 
 
