@@ -21,11 +21,13 @@ def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
     if not Student.objects.filter(person=user).exists():
         return redirect('/electives/users/{0}/'.format(user.id))
-    groups, application_data = controller.get_electives_by_thematics(user)
+
+    logger.debug('Start')
+    groups = controller.get_electives_by_thematics(user)
+    logger.debug('Finish')
 
     context = {
         'elective_groups': groups,
-        'application_data': application_data,
     }
     return render(request, 'electives/elective_list.html', context)
 

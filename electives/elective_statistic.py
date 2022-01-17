@@ -44,7 +44,6 @@ def generate_view_from_application_counters(student: Person):
 
     thematic = elective = language = semester = kind = attached = None
     dict_counter: dict = {}
-    logger.debug('Start')
     for row in counter:
         if row.thematic != thematic:
             thematic = row.thematic
@@ -77,8 +76,7 @@ def generate_view_from_application_counters(student: Person):
             attached = row.attached
             dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = {}
         dict_counter[row.thematic][row.elective][0][row.language][row.semester][row.kind][row.attached] = (row.count_of_applications, row.has_application)
-    logger.debug('Finish')
-    return dict_counter, semester_counter
+    return dict_counter
 
 
 @dataclass
