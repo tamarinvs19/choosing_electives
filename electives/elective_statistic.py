@@ -149,8 +149,17 @@ class _Data(BaseNode):
 
 @dataclass
 class Statistic(object):
-    def __init__(self):
-        self.data = _Data()
+    obj = None
+    data = None
+
+    @classmethod
+    def __new__(cls, *args):
+        if cls.obj is None:
+            cls.obj = object.__new__(cls)
+            logger.info('Start statistic calculating')
+            cls.data = _Data()
+            logger.info('Finish statistic calculating')
+        return cls.obj
 
     def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].add_student(student_id)

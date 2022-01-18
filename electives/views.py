@@ -83,7 +83,6 @@ def change_elective_kind(request, **kwargs):
             for data in controller.get_student_elective_kinds(user, elective)
             if data.selected
         ))
-        logger.debug(current_short_names)
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
