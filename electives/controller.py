@@ -33,11 +33,12 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
         kind=kind,
     )
     counts = {True: 0, False: 0}
-    students = set()
-    for soe in students_on_elective:
-        if soe.student not in students:
-            students.add(soe.student)
-            counts[soe.attached] += 1
+    students = {True: set(), False: set()}
+    for application in students_on_elective:
+        attached = application.attached
+        if application.student not in students[attached]:
+            students[attached].add(application.student)
+            counts[attached] += 1
     return counts
 
 

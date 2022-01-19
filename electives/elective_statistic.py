@@ -134,13 +134,13 @@ class _Data(BaseNode):
         super().__init__(thematics)
 
     def generate_view(self, student_id: int):
-        thematics = ElectiveThematic.objects.filter(
+        mandatory_thematics = ElectiveThematic.objects.filter(
             mandatory_thematics__student_group__students__person_id=student_id,
         ).all()
         return {
             item: inner_item.generate_view(student_id)
             for item, inner_item in self.items.items()
-            if item not in thematics
+            if item not in mandatory_thematics
         }
 
     def generate_view_thematic(self, student_id: int, thematic: ElectiveThematic):

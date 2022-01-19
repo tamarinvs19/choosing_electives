@@ -33,7 +33,9 @@
   <div class="switch-container">
     <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-      Options
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+				  <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+			</svg>
     </button>
   </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
@@ -63,6 +65,7 @@
           $.post("{% url 'electives:change_kind' %}",
               {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
               function(data) {
+									console.log(data);
                   $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
                   $(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
                   if (data['move'] !== null && data['other_language_kind'] !== null) {
