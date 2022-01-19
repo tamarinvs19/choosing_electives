@@ -12,8 +12,9 @@ from loguru import logger
 
 from groups.models import Student
 from users.models import Person
-from . import controller
-from .models import Elective, StudentOnElective, ElectiveKind
+from electives import controller
+from electives.elective_statistic import Statistic
+from electives.models import Elective, StudentOnElective, ElectiveKind
 
 
 @login_required
@@ -94,6 +95,7 @@ def change_elective_kind(request, **kwargs):
                 other_kind_counts = controller.get_statistics(elective, other_kind[0])
                 other_language_kind = other_kind[0].id
                 other_short_name = other_kind[0].short_name
+        statistic = Statistic()
         return JsonResponse({
             'move': application is not None,
             'students_count': students_count,
@@ -103,6 +105,9 @@ def change_elective_kind(request, **kwargs):
             'current_short_names': current_short_names,
             'user_id': user.id,
             'student_name': Person.__str__(user),
+            'thematic_id': elective.thematic.id,
+            'fall_count': statistic.data[elective.thematic][elective].student_count(1),
+            'spring_count': statistic.data[elective.thematic][elective].student_count(2),
         })
     return HttpResponseBadRequest
 

@@ -48,7 +48,7 @@ def add_application_to_counter(application):
     logger.info(f'ADD:  {application=}')
 
     statistic = Statistic()
-    statistic.remove_student(
+    statistic.add_student(
         application.elective,
         application.kind,
         application.student.id,
