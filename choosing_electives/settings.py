@@ -113,7 +113,7 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env['POSTGRES_DB'],
+        'NAME': env['POSTGRES_NAME'],
         'USER': env['POSTGRES_USER'],
         'PASSWORD': env['POSTGRES_PASSWORD'],
         'HOST': '127.0.0.1',
