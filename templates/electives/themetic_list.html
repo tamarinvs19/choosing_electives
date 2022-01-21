@@ -32,6 +32,7 @@
         </div>
         {% for elective, langs_and_info in electives.items %}
 					<div class="elective-row row table-row row-{{ thematic.id }}"
+						id="row-{{ elective.id }}"
 						data-title={{ elective.id }}
 						data-fall={{ langs_and_info.1 }}
 						data-spring={{ langs_and_info.2 }}>

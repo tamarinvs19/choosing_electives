@@ -9,3 +9,5 @@ bs4~=0.0.1
 django-allauth
 loguru
 xlsxwriter
+psycopg2
+django_model_utils

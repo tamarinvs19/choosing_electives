@@ -20,6 +20,7 @@ DEBUG = env['DEBUG']
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
+    'd3ca-45-93-133-191.ngrok.io',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -60,10 +61,18 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['identity.basic', 'identity.email', 'openid'],
     }
 }
+
 LOGIN_URL = '/electives/accounts/login/'
 LOGIN_REDIRECT_URL = '/electives/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/electives/accounts/login/'
-ACCOUNT_SIGNUP_REDIRECT_URL = "/electives/account/post_registration/"
+ACCOUNT_SIGNUP_REDIRECT_URL = '/electives/account/post_registration/'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') or env['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') or env['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
 
 
 MIDDLEWARE = [
@@ -103,8 +112,12 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env['POSTGRES_DB'],
+        'USER': env['POSTGRES_USER'],
+        'PASSWORD': env['POSTGRES_PASSWORD'],
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
     }
 }
 

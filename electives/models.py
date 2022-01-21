@@ -6,6 +6,8 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F
 
+from model_utils import FieldTracker
+
 from groups.models import StudentGroup
 from users.models import Person
 
@@ -240,6 +242,8 @@ class StudentOnElective(models.Model):
     with_examination = models.BooleanField(default=True)
     attached = models.BooleanField(default=False)
     priority = models.PositiveIntegerField(default=0)
+
+    tracker = FieldTracker(fields=['kind', 'attached'])
 
     def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         StudentOnElective.objects.filter(

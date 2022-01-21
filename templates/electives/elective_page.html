@@ -51,6 +51,10 @@
               {% if elective.description|length > 0 %}
                 <a href="{{ elective.description }}" target="_blank" class="description-link">Russian description</a>
               {% endif %}
+							{% if elective.description|length > 0 and elective.english_description|length > 0 %}
+							<br>
+							<br>
+							{% endif %}
               {% if elective.english_description|length > 0 %}
                 <a href="{{ elective.english_description }}" target="_blank" class="description-link">English description</a>
               {% endif %}
