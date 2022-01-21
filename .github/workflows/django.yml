@@ -29,7 +29,12 @@ jobs:
       shell: bash
       env: 
         DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
         SLACK_SECRET: ${{ secrets.SLACK_SECRET }}
         SLACK_CLIENT_ID: ${{ secrets.SLACK_CLIENT_ID }}
+        POSTGRES_NAME: ${{ secrets.POSTGRES_NAME }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |
         python manage.py test
