@@ -20,8 +20,6 @@ from electives.models import Elective, StudentOnElective, ElectiveKind
 @login_required
 def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
-    if not Student.objects.filter(person=user).exists():
-        return redirect('/electives/users/{0}/'.format(user.id))
     groups = controller.get_electives_by_thematics(user)
 
     context = {

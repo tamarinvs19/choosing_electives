@@ -1,6 +1,5 @@
-import sys
-from collections import namedtuple, Counter, defaultdict
-from typing import Tuple, List, Dict, Optional
+from collections import namedtuple, defaultdict
+from typing import List, Dict, Optional
 
 import xlsxwriter
 
@@ -16,18 +15,28 @@ from users.models import Person
 KindWithSelectStatus = namedtuple('KindWithSelectStatus', ['kind', 'selected'])
 
 
-def get_student_counts(elective: Elective) -> (int, int):
-    statistic = Statistic()
-    elective_data = statistic.data[elective.thematic][elective]
-    return elective_data.fall_count, elective_data.spring_count
-
-
 def get_electives_by_thematics(student: Person) -> object:
+    """
+    Generate information for creating the main page with the current student.
+
+    Returns:
+        Dict-tree-like structure for generating main page.
+    """
+
     statistic = Statistic()
     return statistic.generate_view(student.id)
 
 
 def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
+    """
+    Calculate the current number of applications to elective and kind.
+
+    Returns:
+        Dict[bool, int]
+            Key True: the number of attached applications
+            Key False: the number of no-attached applications
+    """
+
     students_on_elective = StudentOnElective.objects.filter(
         elective=elective,
         kind=kind,
@@ -43,6 +52,14 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
 
 
 def get_student_elective_kinds(student: Person, elective: Elective) -> List[KindWithSelectStatus]:
+    """
+    Generate a list of structures KindWithSelectStatus
+    for the current student and elective.
+
+    Returns:
+        List[KindWithSelectStatus] - list of namedtuples
+    """
+
     kinds_of_elective = KindOfElective.objects.filter(elective=elective).all().select_related('kind')
 
     def compare(self):
@@ -70,50 +87,62 @@ def get_student_elective_kinds(student: Person, elective: Elective) -> List[Kind
     ]
 
 
-def save_kinds(student: Person, elective: Elective, kind_short_names: List[str]):
-    selected_kinds = [kind for kind in ElectiveKind.objects.all() if kind.short_name in kind_short_names]
-    student_on_electives = StudentOnElective.objects.filter(student=student, elective=elective).all()
+def save_kinds(student: Person, elective: Elective, kind_short_names: List[str]) -> None:
+    """
+    Save the applications with selected kinds.
+    """
+
+    student_on_electives = StudentOnElective.objects.filter(
+        student=student,
+        elective=elective,
+    ).select_related(
+        'kind',
+    ).all()
     student_kinds = [
         student_on_elective.kind
-        for student_on_elective in student_on_electives.all()
+        for student_on_elective in student_on_electives
     ]
 
-    kinds_of_elective = KindOfElective.objects.filter(elective=elective).all()
-    kinds = [
+    elective_kinds = [
         kind_of_elective.kind
-        for kind_of_elective in kinds_of_elective.all()
+        for kind_of_elective in elective.kinds.all()
     ]
 
+    selected_kinds = [
+        kind for kind in ElectiveKind.objects.all()
+        if kind.short_name in kind_short_names
+    ]
+
+    # Add the applications with selected kinds
     for kind in selected_kinds:
-        if kind in kinds:
-            if kind not in student_kinds:
-                new_priority = StudentOnElective.objects.filter(
-                    student=student,
-                    elective=elective,
-                    kind__semester=kind.semester,
-                    attached=False,
-                ).aggregate(Max('priority'))['priority__max']
+        if kind in elective_kinds and kind not in student_kinds:
+            max_current_priority = StudentOnElective.objects.filter(
+                student=student,
+                elective=elective,
+                kind__semester=kind.semester,
+                attached=False,
+            ).aggregate(Max('priority'))['priority__max']
 
-                if new_priority is None:
-                    new_priority = 0
-                else:
-                    new_priority += 1
+            if max_current_priority is None:
+                new_priority = 0
+            else:
+                new_priority = max_current_priority + 1
 
-                StudentOnElective.objects.create(
-                    student=student,
-                    elective=elective,
-                    kind=kind,
-                    priority=new_priority,
-                )
+            StudentOnElective.objects.create(
+                student=student,
+                elective=elective,
+                kind=kind,
+                priority=new_priority,
+            )
+
+    # Remove the existing applications with unselected kinds
     for kind in student_kinds:
         if kind not in selected_kinds:
-            student_on_elective = StudentOnElective.objects.get(
+            StudentOnElective.objects.get(
                 elective=elective,
                 student=student,
                 kind=kind,
-            )
-
-            student_on_elective.delete()
+            ).delete()
 
 
 def change_kinds(student: Person, elective_id: int, kind_id: int) -> Optional[StudentOnElective]:
@@ -370,7 +399,9 @@ def generate_summary_table():
             ).aggregate(
                 count=Count('student__id', distinct=True)
             )['count']
-        number_of_students = elective.studentonelective_set.aggregate(
+        number_of_students = elective.studentonelective_set.filter(
+            attached=True,
+        ).aggregate(
             count=Count('student__id', distinct=True)
         )['count']
         new_row = [

@@ -9,7 +9,7 @@ from electives.elective_statistic import Statistic
 
 @receiver(pre_save, sender=StudentOnElective)
 def pre_save_application(sender, instance, **kwargs):
-    logger.info(f'PRE_SAVE:  {sender=}, {instance=}')
+    # logger.info(f'PRE_SAVE:  {sender=}, {instance=}')
     changed_fields = instance.tracker.changed()
     if len(changed_fields) != 0:
         remove_application_from_counter(instance, changed_fields)
@@ -18,12 +18,12 @@ def pre_save_application(sender, instance, **kwargs):
 
 @receiver(pre_delete, sender=StudentOnElective)
 def pre_delete_application(sender, instance, **kwargs):
-    logger.info(f'PRE_DELETE:  {sender=}, {instance=}')
+    # logger.info(f'PRE_DELETE:  {sender=}, {instance=}')
     remove_application_from_counter(instance, {})
 
 
 def remove_application_from_counter(application, changed_fields):
-    logger.info(f'REMOVE:  {application=}, {changed_fields=}')
+    # logger.info(f'REMOVE:  {application=}, {changed_fields=}')
 
     changed_fields = {
         key: value
@@ -45,7 +45,7 @@ def remove_application_from_counter(application, changed_fields):
 
 
 def add_application_to_counter(application):
-    logger.info(f'ADD:  {application=}')
+    # logger.info(f'ADD:  {application=}')
 
     statistic = Statistic()
     statistic.add_student(

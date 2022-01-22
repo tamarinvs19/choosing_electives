@@ -6,8 +6,8 @@ from django.db.models import QuerySet
 
 from loguru import logger
 
-from electives.models import ElectiveThematic, Elective, ElectiveKind, MandatoryThematicInStudentGroup
-from groups.models import StudentGroup, Student
+from electives.models import ElectiveThematic, Elective, ElectiveKind
+from groups.models import Student
 
 
 @dataclass
@@ -103,6 +103,7 @@ class _Elective(BaseNode):
         }
         super().__init__(languages)
 
+
 @dataclass
 class _Thematic(BaseNode):
     def __init__(self, thematic: ElectiveThematic):
@@ -134,9 +135,13 @@ class _Data(BaseNode):
         super().__init__(thematics)
 
     def generate_view(self, student_id: int):
-        mandatory_thematics = ElectiveThematic.objects.filter(
-            mandatory_thematics__student_group__students__person_id=student_id,
-        ).all()
+        if Student.objects.filter(person_id=student_id).exists():
+            mandatory_thematics = ElectiveThematic.objects.filter(
+                mandatory_thematics__student_group__students__person_id=student_id,
+            ).all()
+        else:
+            mandatory_thematics = []
+
         return {
             item: inner_item.generate_view(student_id)
             for item, inner_item in self.items.items()
