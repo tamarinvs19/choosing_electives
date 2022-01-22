@@ -87,64 +87,6 @@ def get_student_elective_kinds(student: Person, elective: Elective) -> List[Kind
     ]
 
 
-def save_kinds(student: Person, elective: Elective, kind_short_names: List[str]) -> None:
-    """
-    Save the applications with selected kinds.
-    """
-
-    student_on_electives = StudentOnElective.objects.filter(
-        student=student,
-        elective=elective,
-    ).select_related(
-        'kind',
-    ).all()
-    student_kinds = [
-        student_on_elective.kind
-        for student_on_elective in student_on_electives
-    ]
-
-    elective_kinds = [
-        kind_of_elective.kind
-        for kind_of_elective in elective.kinds.all()
-    ]
-
-    selected_kinds = [
-        kind for kind in ElectiveKind.objects.all()
-        if kind.short_name in kind_short_names
-    ]
-
-    # Add the applications with selected kinds
-    for kind in selected_kinds:
-        if kind in elective_kinds and kind not in student_kinds:
-            max_current_priority = StudentOnElective.objects.filter(
-                student=student,
-                elective=elective,
-                kind__semester=kind.semester,
-                attached=False,
-            ).aggregate(Max('priority'))['priority__max']
-
-            if max_current_priority is None:
-                new_priority = 0
-            else:
-                new_priority = max_current_priority + 1
-
-            StudentOnElective.objects.create(
-                student=student,
-                elective=elective,
-                kind=kind,
-                priority=new_priority,
-            )
-
-    # Remove the existing applications with unselected kinds
-    for kind in student_kinds:
-        if kind not in selected_kinds:
-            StudentOnElective.objects.get(
-                elective=elective,
-                student=student,
-                kind=kind,
-            ).delete()
-
-
 def change_kinds(student: Person, elective_id: int, kind_id: int) -> Optional[StudentOnElective]:
     """
     Если у студента есть заявления на этот курс, они удаляются,

@@ -53,17 +53,6 @@ def open_elective_page(request, elective_id, **kwargs):
 
 @login_required
 @require_POST
-def save_elective_kinds(request, elective_id, **kwargs):
-    elective = Elective.objects.get(id=elective_id)
-    user = cast(Person, request.user)
-    kinds = request.POST.getlist('kinds', [])
-    controller.save_kinds(user, elective, kinds)
-
-    return HttpResponse(json.dumps({'OK': True}))
-
-
-@login_required
-@require_POST
 def change_elective_kind(request, **kwargs):
     user = cast(Person, request.user)
     kind_id = request.POST.get('kind_id', None)
