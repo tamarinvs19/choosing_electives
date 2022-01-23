@@ -20,7 +20,7 @@ DEBUG = env['DEBUG']
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '71ee-45-93-133-191.ngrok.io',
+    '6ff9-45-93-133-191.ngrok.io',
 ]
 
 AUTHENTICATION_BACKENDS = [

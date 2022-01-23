@@ -57,11 +57,13 @@ def change_elective_kind(request, **kwargs):
     user = cast(Person, request.user)
     kind_id = request.POST.get('kind_id', None)
     elective_id = request.POST.get('elective_id', None)
+
     if kind_id is not None and elective_id is not None:
         elective_id, kind_id = int(elective_id), int(kind_id)
-        application = controller.change_kinds(user, elective_id, kind_id)
+
         elective = Elective.objects.get(id=elective_id)
         kind = ElectiveKind.objects.get(id=kind_id)
+        application = controller.change_kinds(user, elective, kind)
         students_count = controller.get_statistics(elective, kind)
         other_language_kind = None
         other_kind_counts = None
@@ -105,7 +107,8 @@ def change_application_exam(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     if student_on_elective_id is not None:
         student_on_elective_id = int(student_on_elective_id)
-        student_on_elective = controller.change_exam(student_on_elective_id)
+        student_on_elective = StudentOnElective.objects.get(pk=student_on_elective_id)
+        student_on_elective = controller.change_exam(student_on_elective)
         if student_on_elective is not None:
             return JsonResponse({
                 'with_exam': student_on_elective.with_examination,
@@ -114,7 +117,7 @@ def change_application_exam(request, **kwargs):
             })
         else:
             return JsonResponse({
-                'message': 'There are not any applications with received id.',
+                'message': 'There are any applications with received id.',
                 'OK': False,
             })
     return HttpResponseBadRequest
@@ -127,7 +130,9 @@ def change_application_kind(request, **kwargs):
     kind_id = request.POST.get('kind_id', None)
     if student_on_elective_id is not None and kind_id is not None:
         student_on_elective_id, kind_id = int(student_on_elective_id), int(kind_id)
-        student_on_elective = controller.change_kind(student_on_elective_id, kind_id)
+        student_on_elective = StudentOnElective.objects.get(pk=student_on_elective_id)
+        kind = ElectiveKind.objects.get(pk=kind_id)
+        student_on_elective = controller.change_kind(student_on_elective, kind)
         all_applications = StudentOnElective.objects.filter(
             student=student_on_elective.student,
             elective=student_on_elective.elective,
