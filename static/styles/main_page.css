@@ -140,7 +140,7 @@ input:checked + .slider:before {
 }
 
 .switch-container {
-  margin: 5px 0 5px calc(100% - 100px);
+  margin: 5px 0 5px calc(100% - 72px);
   width: 100px;
   text-align: center;
 }

@@ -140,15 +140,14 @@ Selected electives
 </div>
 <script>
   function copyCodes(semester) {
-    let $tmp = $("<input>");
-    let codes = $(`#codes-${semester}`);
-    $("body").append($tmp);
-    $tmp.val(codes.text()).select();
-
-    document.execCommand("copy");
-    $tmp.remove();
-
-    // message about copy
+      const codes = $(`.codes-${semester}`)[0].innerText;
+      navigator.clipboard.writeText(codes)
+          .then(() => {
+              addToast('Copied', codes);
+          })
+          .catch(err => {
+              console.log('Something went wrong', err);
+      });
   }
 
   let currentDrag;
