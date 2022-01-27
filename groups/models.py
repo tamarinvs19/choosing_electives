@@ -60,6 +60,9 @@ class StudentGroup(models.Model):
     def __str__(self):
         return '{0}: {1}'.format(str(self.curriculum), str(self.course_value))
 
+    def __le__(self, other) -> bool:
+        return str(self) < str(other)
+
     def save(self, *args, **kwargs) -> None:
         """Save the current instance only if there are not the same."""
         existing_groups = StudentGroup.objects.filter(

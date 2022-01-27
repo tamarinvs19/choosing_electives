@@ -163,7 +163,8 @@ def attach_application(request, **kwargs):
     target = request.POST.get('target', None)
     new_index = request.POST.get('new_index', None)
     if student_on_elective_id is not None and target is not None and new_index is not None:
-        sone = controller.attach_application(int(student_on_elective_id), target, new_index)
+        student_on_elective = StudentOnElective.objects.get(pk=int(student_on_elective_id))
+        sone = controller.attach_application(student_on_elective, target, int(new_index))
         if sone is None:
             response = {
                 'OK': False,

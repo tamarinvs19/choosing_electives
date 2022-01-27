@@ -37,7 +37,7 @@ class Parser(object):
 
     def parse_limitations(self) -> list[dict[str, str]]:
         soup = BeautifulSoup(self._content, 'lxml')
-        lim_table = soup.find(string=re.compile('Число з.е.')).parent.parent.parent
+        lim_table = soup.find(string=re.compile('# of credit units')).parent.parent.parent
         columns = ['student_group', '', 'credits', 'exams', 'light_credits', 'cs_courses']
         table = []
         for tr in lim_table.find_all('tr')[1:]:
@@ -70,10 +70,10 @@ class Parser(object):
 
     @staticmethod
     def _parse_interval(str_interval: str) -> tuple[int, int] | tuple[int, float]:
-        pattern1 = r'^от (\d+) до (\d+)$'
+        pattern1 = r'^from (\d+) to (\d+)$'
         pattern2 = r'^(\d+)$'
-        pattern3 = r'^без ограничений$'
-        pattern4 = r'^не более (\d+)$'
+        pattern3 = r'^no restrictions$'
+        pattern4 = r'^at most (\d+)$'
 
         match1 = re.search(pattern1, str_interval)
         match2 = re.search(pattern2, str_interval)
@@ -247,7 +247,7 @@ def main_electives():
 
 
 def main_programs():
-    parser = Parser(RUSSIAN_URL)
+    parser = Parser(ENGLISH_URL)
     parser.load_page()
     student_groups = parser.generate_student_groups()
     codenames = []
@@ -320,4 +320,4 @@ def main_programs():
 
 if __name__ == '__main__':
     main_programs()
-    main_electives()
+    # main_electives()

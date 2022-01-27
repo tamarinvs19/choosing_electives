@@ -10,6 +10,7 @@
 
   {% block extra_head %} {% endblock %}
 
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -42,24 +43,26 @@
   <div class="toast-container position-fixed p-3 bottom-0 end-0">
   </div>
   <script>
-    function addToast(toastHead, toastText) {
-        const toastContainer = $('.toast-container')[0];
-        toastContainer.innerHTML += `
-          <div id="currentToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
-              <div class="toast-header">
-                <img src="{% static 'favicon-mkn.png' %}" class="rounded me-2 toast-logo" alt="mkn-logo">
-                <strong class="me-auto"> ${toastHead} </strong>
-                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-              </div>
-              <div class="toast-body">
-                ${toastText}
-              </div>
-          </div>
-        `;
-        const toastTag = document.getElementById('currentToast');
-        const toast = new bootstrap.Toast(toastTag);
-        toast.show();
-    }
+      const csrftoken = Cookies.get('csrftoken');
+
+      function addToast(toastHead, toastText) {
+          const toastContainer = $('.toast-container')[0];
+          toastContainer.innerHTML += `
+            <div id="currentToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                  <img src="{% static 'favicon-mkn.png' %}" class="rounded me-2 toast-logo" alt="mkn-logo">
+                  <strong class="me-auto"> ${toastHead} </strong>
+                  <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                  ${toastText}
+                </div>
+            </div>
+          `;
+          const toastTag = document.getElementById('currentToast');
+          const toast = new bootstrap.Toast(toastTag);
+          toast.show();
+      }
   </script>
 
 </div>

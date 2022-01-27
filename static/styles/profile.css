@@ -1,0 +1,26 @@
+.icon {
+    display: block;
+    float: left;
+    position: relative;
+    width: min-content;
+
+    margin-right: 40px;
+}
+
+.edit-form {
+    display: none;
+}
+
+.profile {
+    margin-top: 20px;
+}
+
+.edit-profile-button {
+    float: right;
+    position: relative;
+    display: block;
+}
+
+.username {
+    margin-bottom: 20px;
+}
