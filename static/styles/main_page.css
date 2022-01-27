@@ -169,3 +169,7 @@ input:checked + .slider:before {
 .sort-electives {
   display: none;
 }
+
+.switch-button {
+  border: none;
+}

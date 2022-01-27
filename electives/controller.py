@@ -114,7 +114,7 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
     if len(similar_application) >= 1:
         similar_application.delete()
     else:
-        if kind not in elective.kinds:
+        if kind not in elective.kinds.all():
             return None
 
         max_priority = StudentOnElective.objects.filter(
@@ -171,7 +171,7 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
     @return: modified application or None if this kind is not correct
     """
 
-    if kind not in application.elective.kinds:
+    if kind not in application.elective.kinds.all():
         return None
 
     similar_applications = StudentOnElective.objects.filter(
@@ -179,30 +179,35 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
         elective=application.elective,
         kind__semester=kind.semester,
         kind__credit_units=kind.credit_units,
+    ).exclude(
+        id=application.id,
     )
-    for application in similar_applications:
-        if application.kind.language != kind.language:
-            application.kind = kind
-            application.save()
+    for similar_application in similar_applications:
+        logger.debug([1, similar_application, similar_application.with_examination])
+        if similar_application.kind.language != kind.language:
+            similar_application.kind = kind
+            similar_application.save()
+        logger.debug([2, similar_application, similar_application.with_examination])
 
-    StudentOnElective.objects.filter(
-        student=application.student,
-        attached=application.attached,
-        kind__semester=application.kind.semester,
-        priority__gt=application.priority,
-    ).update(priority=F('priority') - 1)
+    if application.kind.semester != kind.semester:
+        StudentOnElective.objects.filter(
+            student=application.student,
+            attached=application.attached,
+            kind__semester=application.kind.semester,
+            priority__gt=application.priority,
+        ).update(priority=F('priority') - 1)
 
-    StudentOnElective.objects.filter(
-        student=application.student,
-        attached=application.attached,
-        kind__semester=kind.semester,
-        priority__gt=application.priority,
-    ).update(priority=F('priority') + 1)
+        StudentOnElective.objects.filter(
+            student=application.student,
+            attached=application.attached,
+            kind__semester=kind.semester,
+            priority__gt=application.priority,
+        ).update(priority=F('priority') + 1)
 
     application.kind = kind
-
     if kind.is_seminar:
         application.with_examination = False
+
     application.save()
 
     return application
