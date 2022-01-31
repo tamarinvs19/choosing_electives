@@ -51,11 +51,12 @@
           Examination
           <input type="checkbox"
                  onclick="changeExam({{ application.id }})"
-                  {% if application.is_seminar %}
-                 disabled
-                  {% else %}
-                    {% if application.with_examination %} checked {% endif %}
-                  {% endif %}
+                 {% if not application.kind_of_elective.changing_exam_is_possible %}
+                   disabled
+                 {% endif %}
+                 {% if application.with_examination %}
+                   checked
+                 {% endif %}
                  id="exam-{{ application.id }}"
                  class="exam-input">
           <span class="checkmark"></span>

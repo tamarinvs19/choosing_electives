@@ -33,8 +33,10 @@ def open_elective_page(request, elective_id, **kwargs):
     user = cast(Person, request.user)
     elective = Elective.objects.get(id=elective_id)
     students = defaultdict(set)
-    for sone in StudentOnElective.objects.filter(elective=elective).select_related('student').only('student'):
-        students[sone.student].add(sone.kind.short_name)
+    for application in StudentOnElective.objects.filter(
+        elective=elective,
+    ).select_related('student').only('student'):
+        students[application.student].add(application.kind.short_name)
     statistic = {
         kind: controller.get_statistics(elective, kind)
         for kind in elective.kinds.all()
@@ -60,11 +62,12 @@ def change_elective_kind(request, **kwargs):
 
     if kind_id is not None and elective_id is not None:
         elective_id, kind_id = int(elective_id), int(kind_id)
-
         elective = Elective.objects.get(id=elective_id)
         kind = ElectiveKind.objects.get(id=kind_id)
+
         application = controller.change_kinds(user, elective, kind)
         students_count = controller.get_statistics(elective, kind)
+
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
@@ -76,7 +79,7 @@ def change_elective_kind(request, **kwargs):
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
-                credit_units=application.kind.credit_units,
+                credit_units_kind__credit_units=application.kind.credit_units,
             ).exclude(
                 language=application.kind.language,
             ).all()
@@ -107,7 +110,9 @@ def change_application_exam(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     if student_on_elective_id is not None:
         student_on_elective_id = int(student_on_elective_id)
-        student_on_elective = StudentOnElective.objects.get(pk=student_on_elective_id)
+        student_on_elective = StudentOnElective.objects.get(
+            pk=student_on_elective_id
+        )
         student_on_elective = controller.change_exam(student_on_elective)
         if student_on_elective is not None:
             return JsonResponse({
@@ -130,7 +135,9 @@ def change_application_kind(request, **kwargs):
     kind_id = request.POST.get('kind_id', None)
     if student_on_elective_id is not None and kind_id is not None:
         student_on_elective_id, kind_id = int(student_on_elective_id), int(kind_id)
-        student_on_elective = StudentOnElective.objects.get(pk=student_on_elective_id)
+        student_on_elective = StudentOnElective.objects.get(
+            pk=student_on_elective_id,
+        )
         kind = ElectiveKind.objects.get(pk=kind_id)
         student_on_elective = controller.change_kind(student_on_elective, kind)
         all_applications = StudentOnElective.objects.filter(
@@ -144,7 +151,8 @@ def change_application_kind(request, **kwargs):
                 'full_kind': student_on_elective.kind.middle_name,
                 'credit_units': student_on_elective.credit_units,
                 'with_exam': student_on_elective.with_examination,
-                'is_seminar': student_on_elective.is_seminar,
+                'only_without_exam': student_on_elective.kind_of_elective.only_without_exam,
+                'only_with_exam': student_on_elective.kind_of_elective.only_with_exam,
                 'semester': student_on_elective.kind.semester,
                 'OK': True,
             })

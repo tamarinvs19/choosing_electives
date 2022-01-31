@@ -283,9 +283,11 @@ Selected electives
                       if (updatedApplicationId === applicationId) {
                           examTag.checked = data['with_exam'];
                       }
-                      examTag.disabled = data['is_seminar'] === true;
-                      if (data['is_seminar']) {
+                      examTag.disabled = data['only_without_exam'] === true || data['only_with_exam'] === true;
+                      if (data['only_without_exam']) {
                           examTag.checked = false;
+                      } else if (data['only_with_exam']) {
+                          examTag.checked = true;
                       }
                   }
                   updateCodes();

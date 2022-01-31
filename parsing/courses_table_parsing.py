@@ -1,7 +1,6 @@
 """Model for parsing HTML page with the list of courses"""
 import itertools
 import math
-from collections import defaultdict
 
 from bs4 import BeautifulSoup
 import requests
@@ -9,9 +8,8 @@ import re
 
 from loguru import logger
 
-from django.core.exceptions import ValidationError
-
-from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective
+from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective, \
+    CreditUnitsKind, ExamPossibility
 from groups.models import StudentGroup, Curriculum, YearOfEducation
 
 RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
@@ -170,6 +168,30 @@ class Parser(object):
         return thematic_table
 
 
+def create_default_kinds():
+    CreditUnitsKind.objects.get_or_create(
+        credit_units=2,
+        russian_name='Семинар',
+        english_name='Seminar',
+        short_name='s',
+        default_exam_possibility=ExamPossibility.ONLY_WITHOUT_EXAM
+    )
+    CreditUnitsKind.objects.get_or_create(
+        credit_units=3,
+        russian_name='Малый',
+        english_name='Small',
+        short_name='1',
+        default_exam_possibility=ExamPossibility.DEFAULT
+    )
+    CreditUnitsKind.objects.get_or_create(
+        credit_units=4,
+        russian_name='Большой',
+        english_name='Large',
+        short_name='2',
+        default_exam_possibility=ExamPossibility.DEFAULT
+    )
+
+
 def main_electives():
     parser = Parser(RUSSIAN_URL)
     parser.load_page()
@@ -225,23 +247,22 @@ def main_electives():
 
             for elective_type, semester in itertools.product(
                     thematic_elective['credit_type'], thematic_elective['semesters']):
-                try:
-                    kind = ElectiveKind.objects.create(
-                        credit_units=elective_type[0],
-                        language=elective_type[1],
-                        semester=semester,
-                    )
-                except ValidationError:
-                    kind = ElectiveKind.objects.get(
-                        credit_units=elective_type[0],
-                        language=elective_type[1],
-                        semester=semester,
-                    )
-                if not KindOfElective.objects.filter(elective=elective, kind=kind).exists():
-                    KindOfElective.objects.create(
-                        elective=elective,
-                        kind=kind,
-                    )
+                # Now whe get the first of kinds with credit_units
+                # Next time it will be read in the parsing table
+                credit_units_kind = CreditUnitsKind.objects.filter(
+                    credit_units=elective_type[0],
+                ).all()[0]
+
+                kind, _ = ElectiveKind.objects.get_or_create(
+                    credit_units_kind=credit_units_kind,
+                    language=elective_type[1],
+                    semester=semester,
+                )
+                kind_of_elective, _ = KindOfElective.objects.get_or_create(
+                    elective=elective,
+                    kind=kind,
+                )
+                kind_of_elective.exam_possibility = kind.credit_units_kind.default_exam_possibility
 
     Elective.objects.exclude(id__in=elective_ids).delete()
 
@@ -319,5 +340,6 @@ def main_programs():
 
 
 if __name__ == '__main__':
+    create_default_kinds()
     main_programs()
-    # main_electives()
+    main_electives()

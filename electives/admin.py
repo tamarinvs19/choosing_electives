@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Elective, StudentOnElective, KindOfElective, ElectiveKind, ElectiveThematic, \
-    MandatoryThematicInStudentGroup
+    MandatoryThematicInStudentGroup, CreditUnitsKind
 
 
 class StudentOnElectiveInline(admin.TabularInline):
@@ -16,6 +16,16 @@ class KindOfElectiveInline(admin.TabularInline):
 class MandatoryThematicInline(admin.TabularInline):
     model = MandatoryThematicInStudentGroup
     extra = 1
+
+
+class CreditUnitsKindAdmin(admin.ModelAdmin):
+    fields = [
+        'credit_units',
+        'russian_name',
+        'english_name',
+        'short_name',
+        'default_exam_possibility'
+    ]
 
 
 class ElectiveAdmin(admin.ModelAdmin):
@@ -34,7 +44,7 @@ class ElectiveAdmin(admin.ModelAdmin):
 
 class ElectiveKindAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['credit_units', 'language', 'semester']}),
+        (None, {'fields': ['credit_units_kind', 'language', 'semester']}),
     ]
     list_display = ('show_name',)
 
@@ -60,3 +70,4 @@ admin.site.register(Elective, ElectiveAdmin)
 admin.site.register(ElectiveKind, ElectiveKindAdmin)
 admin.site.register(ElectiveThematic, ElectiveThematicAdmin)
 admin.site.register(StudentOnElective, ApplicationAdmin)
+admin.site.register(CreditUnitsKind, CreditUnitsKindAdmin)

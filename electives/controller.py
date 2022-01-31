@@ -62,7 +62,9 @@ def get_student_elective_kinds(student: Person, elective: Elective) -> List[Kind
     @return: List[KindWithSelectStatus] - list of namedtuples
     """
 
-    kinds_of_elective = KindOfElective.objects.filter(elective=elective).all().select_related('kind')
+    kinds_of_elective = KindOfElective.objects.filter(
+        elective=elective
+    ).all().select_related('kind')
 
     def compare(self):
         return self.language, self.semester, self.credit_units
@@ -105,14 +107,14 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
     @return: return new application or None in the first condition
     """
 
-    similar_application = StudentOnElective.objects.filter(
+    kind_similar_application = StudentOnElective.objects.filter(
         student=student,
         elective=elective,
         kind=kind,
     ).all()
 
-    if len(similar_application) >= 1:
-        similar_application.delete()
+    if len(kind_similar_application) >= 1:
+        kind_similar_application.delete()
     else:
         if kind not in elective.kinds.all():
             return None
@@ -125,34 +127,44 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
 
         new_priority = 0 if max_priority is None else max_priority + 1
 
-        similar_application = StudentOnElective.objects.filter(
+        similar_applications = StudentOnElective.objects.filter(
             student=student,
             elective=elective,
             kind__semester=kind.semester,
-            kind__credit_units=kind.credit_units,
+            kind__credit_units_kind__credit_units=kind.credit_units,
         )
-        for application in similar_application:
-            if application.kind.language != kind.language:
-                application.kind = kind
-                application.save()
+        kind_of_elective = KindOfElective.objects.get(
+            elective=elective,
+            kind=kind,
+        )
+        for similar_application in similar_applications:
+            if similar_application.kind.language != kind.language:
+                if similar_application.with_examination and kind_of_elective.only_without_exam:
+                    similar_application.with_examination = False
+                if not similar_application.with_examination and kind_of_elective.only_with_exam:
+                    similar_application.with_examination = True
+                similar_application.kind = kind
+                similar_application.save()
 
         new_application = StudentOnElective.objects.create(
             student=student,
             elective=elective,
             kind=kind,
-            priority=new_priority
+            priority=new_priority,
+            with_examination=kind_of_elective.exam_is_possible,
         )
         return new_application
 
 
 def change_exam(application: StudentOnElective) -> StudentOnElective:
     """
-    Invert value with_examination if it is not a seminar.
+    Invert value with_examination if it is possible.
 
     @param application: the application
     @return: updated application
     """
-    if not application.is_seminar:
+    kind_of_elective = application.kind_of_elective
+    if kind_of_elective.changing_exam_is_possible:
         application.with_examination = not application.with_examination
         application.save()
     return application
@@ -178,16 +190,24 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
         student=application.student,
         elective=application.elective,
         kind__semester=kind.semester,
-        kind__credit_units=kind.credit_units,
+        kind__credit_units_kind__credit_units=kind.credit_units,
     ).exclude(
         id=application.id,
     )
+
+    kind_of_elective = KindOfElective.objects.get(
+        elective=application.elective,
+        kind=kind,
+    )
+
     for similar_application in similar_applications:
-        logger.debug([1, similar_application, similar_application.with_examination])
         if similar_application.kind.language != kind.language:
+            if similar_application.with_examination and kind_of_elective.only_without_exam:
+                similar_application.with_examination = False
+            if not similar_application.with_examination and kind_of_elective.only_with_exam:
+                similar_application.with_examination = True
             similar_application.kind = kind
             similar_application.save()
-        logger.debug([2, similar_application, similar_application.with_examination])
 
     if application.kind.semester != kind.semester:
         StudentOnElective.objects.filter(
@@ -205,8 +225,11 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
         ).update(priority=F('priority') + 1)
 
     application.kind = kind
-    if kind.is_seminar:
+
+    if kind_of_elective.only_without_exam:
         application.with_examination = False
+    elif kind_of_elective.only_with_exam:
+        application.with_examination = True
 
     application.save()
 
@@ -230,24 +253,23 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
 
     semester = kind.semester
     attached = application.attached
-    match target:
-        case 'maybeFall':
-            attached = False
-            semester = 1
-        case 'maybeSpring':
-            attached = False
-            semester = 2
-        case 'fall':
-            attached = True
-            semester = 1
-        case 'spring':
-            attached = True
-            semester = 2
+    if target == 'maybeFall':
+        attached = False
+        semester = 1
+    elif target == 'maybeSpring':
+        attached = False
+        semester = 2
+    elif target == 'fall':
+        attached = True
+        semester = 1
+    elif target == 'spring':
+        attached = True
+        semester = 2
     try:
         new_kind = possible_kinds.get(
-                credit_units=kind.credit_units,
-                language=kind.language,
-                semester=semester,
+            credit_units_kind__credit_units=kind.credit_units,
+            language=kind.language,
+            semester=semester,
         )
     except ElectiveKind.DoesNotExist as _:
         return None
@@ -266,16 +288,23 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
         priority__gte=new_index,
     ).update(priority=F('priority') + 1)
 
+    kind_of_elective = KindOfElective.objects.get(
+        elective=elective,
+        kind=new_kind,
+    )
     application.priority = new_index
     application.kind = new_kind
     application.attached = attached
+    application.with_examination = kind_of_elective.only_with_exam
     application.save()
 
     return application
 
 
 def remove_application(application_id: int) -> None:
-    student_on_elective = StudentOnElective.objects.get(id=application_id)
+    student_on_elective = StudentOnElective.objects.get(
+        id=application_id,
+    )
     student_on_elective.delete()
 
 
@@ -304,7 +333,9 @@ def calc_sum_credit_units(student: Person, semester: int, attached: bool = True)
 
 
 def duplicate_application(application_id: int) -> StudentOnElective:
-    student_on_elective = StudentOnElective.objects.get(id=application_id)
+    student_on_elective = StudentOnElective.objects.get(
+        id=application_id,
+    )
 
     StudentOnElective.objects.filter(
         student=student_on_elective.student,
@@ -329,7 +360,10 @@ def generate_summary_table():
     workbook = xlsxwriter.Workbook(workbook_name)
     worksheet = workbook.add_worksheet()
 
-    kinds = sorted(ElectiveKind.objects.all(), key=lambda kind: (kind.semester, kind.credit_units, kind.language))
+    kinds = sorted(
+        ElectiveKind.objects.all(),
+        key=lambda kind: (kind.semester, kind.credit_units, kind.language)
+    )
     headers = [
         'Codename',
         'Elective russian name',
