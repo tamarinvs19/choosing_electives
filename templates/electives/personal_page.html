@@ -33,6 +33,38 @@ Profile
         <h6 class="course-info">{{ current_group.course_value }}</h6>
       {% endif %}
     </div>
+    <div class="conditions">
+      <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Semester</th>
+      <th scope="col">Min c.u.</th>
+      <th scope="col">Max c.u.</th>
+      <th scope="col">Min exams</th>
+      <th scope="col">Max exams</th>
+      <th scope="col">Max c.u. in reduced form</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Fall</th>
+      <td>{{ current_group.min_credit_unit_fall }}</td>
+      <td>{{ current_group.max_credit_unit_fall }}</td>
+      <td>{{ current_group.min_number_of_exams_fall }}</td>
+      <td>{{ current_group.max_number_of_exams_fall }}</td>
+      <td>{{ current_group.max_light_credit_unit_fall }}</td>
+    </tr>
+    <tr>
+      <th scope="row">Spring</th>
+      <td>{{ current_group.min_credit_unit_spring }}</td>
+      <td>{{ current_group.max_credit_unit_spring }}</td>
+      <td>{{ current_group.min_number_of_exams_spring }}</td>
+      <td>{{ current_group.max_number_of_exams_spring }}</td>
+      <td>{{ current_group.max_light_credit_unit_spring }}</td>
+    </tr>
+  </tbody>
+</table>
+    </div>
   </div>
 </div>
 {% endblock %}

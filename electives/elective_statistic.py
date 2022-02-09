@@ -6,6 +6,8 @@ from django.db.models import QuerySet
 
 from loguru import logger
 
+from constance import config as cfg
+
 from electives.models import ElectiveThematic, Elective, ElectiveKind
 from groups.models import Student
 
@@ -121,6 +123,7 @@ class _Thematic(BaseNode):
                 inner_item.student_count(2),
             )
             for item, inner_item in self.items.items()
+            if not cfg.BLOCK_FALL or (cfg.BLOCK_FALL and item.has_spring)
         }
         return view_dict
 

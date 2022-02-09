@@ -330,3 +330,7 @@
     margin: 5px calc((50% - 285px) / 2);
   }
 }
+
+.google-form-url {
+  border-width: 0;
+}

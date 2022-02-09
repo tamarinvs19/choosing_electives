@@ -9,11 +9,12 @@ import re
 from loguru import logger
 
 from electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective, \
-    CreditUnitsKind, ExamPossibility
+    CreditUnitsKind, ExamPossibility, MandatoryThematicInStudentGroup
 from groups.models import StudentGroup, Curriculum, YearOfEducation
 
-RUSSIAN_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html'
-ENGLISH_URL = 'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html'
+from constance import config as cfg
+
+
 NO_ENGLISH_MARKER = '(no English name)'
 
 
@@ -192,12 +193,22 @@ def create_default_kinds():
     )
 
 
+def create_default_mandatory_thematics():
+    sp_mandatory_thematics = ElectiveThematic.objects.filter(name__contains='обязательные курсы СП')
+    sps = StudentGroup.objects.filter(curriculum__name__contains='Modern Programming')
+    for thematic, sp in itertools.product(sp_mandatory_thematics, sps):
+        MandatoryThematicInStudentGroup.objects.get_or_create(
+            thematic=thematic,
+            student_group=sp,
+        )
+
+
 def main_electives():
-    parser = Parser(RUSSIAN_URL)
+    parser = Parser(cfg.RUSSIAN_URL)
     parser.load_page()
     electives = parser.parse_electives()
 
-    english_parser = Parser(ENGLISH_URL)
+    english_parser = Parser(cfg.ENGLISH_URL)
     english_parser.load_page()
     english_electives = english_parser.parse_electives()
 
@@ -268,7 +279,7 @@ def main_electives():
 
 
 def main_programs():
-    parser = Parser(ENGLISH_URL)
+    parser = Parser(cfg.ENGLISH_URL)
     parser.load_page()
     student_groups = parser.generate_student_groups()
     codenames = []
@@ -343,3 +354,4 @@ if __name__ == '__main__':
     create_default_kinds()
     main_programs()
     main_electives()
+    create_default_mandatory_thematics()

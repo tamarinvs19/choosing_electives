@@ -301,14 +301,24 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     return application
 
 
-def remove_application(application_id: int) -> None:
-    student_on_elective = StudentOnElective.objects.get(
-        id=application_id,
-    )
-    student_on_elective.delete()
+def remove_application(application: StudentOnElective) -> None:
+    """
+    Remove application to target column with new_index.
+
+    @param application: removing application
+    """
+    application.delete()
 
 
 def generate_application_row(student: Person, semester: int) -> str:
+    """
+    Generate an application row for this student and this semester.
+
+    @param student: Person object
+    @param semester: the number of semester, 1 is fall, 2 if spring
+
+    @return applications code
+    """
     return ' '.join(
         [
             application.short_name
@@ -322,6 +332,15 @@ def generate_application_row(student: Person, semester: int) -> str:
 
 
 def calc_sum_credit_units(student: Person, semester: int, attached: bool = True) -> int:
+    """
+    Calculate the count of credit units.
+
+    @param student: Person object
+    @param semester: the number of semester, 1 is fall, 2 if spring
+    @param attached: which applications we need to calc
+
+    @return count of credit units
+    """
     return sum(
         application.credit_units
         for application in StudentOnElective.objects.filter(
@@ -332,30 +351,40 @@ def calc_sum_credit_units(student: Person, semester: int, attached: bool = True)
     )
 
 
-def duplicate_application(application_id: int) -> StudentOnElective:
-    student_on_elective = StudentOnElective.objects.get(
-        id=application_id,
-    )
+def duplicate_application(application: StudentOnElective) -> StudentOnElective:
+    """
+    Create a copy of this application
+
+    @param application: application for creating copy
+
+    @return new application
+    """
 
     StudentOnElective.objects.filter(
-        student=student_on_elective.student,
-        attached=student_on_elective.attached,
-        kind__semester=student_on_elective.kind.semester,
-        priority__gt=student_on_elective.priority,
+        student=application.student,
+        attached=application.attached,
+        kind__semester=application.kind.semester,
+        priority__gt=application.priority,
     ).update(priority=F('priority') + 1)
 
     new_student_on_elective = StudentOnElective.objects.create(
-        student=student_on_elective.student,
-        elective=student_on_elective.elective,
-        kind=student_on_elective.kind,
-        with_examination=student_on_elective.with_examination,
-        attached=student_on_elective.attached,
-        priority=student_on_elective.priority + 1
+        student=application.student,
+        elective=application.elective,
+        kind=application.kind,
+        with_examination=application.with_examination,
+        attached=application.attached,
+        priority=application.priority + 1
     )
     return new_student_on_elective
 
 
-def generate_summary_table():
+def generate_summary_table() -> str:
+    """
+    Create a summary table for downloading.
+
+    @return file name
+    """
+
     workbook_name = 'tables.xlsx'
     workbook = xlsxwriter.Workbook(workbook_name)
     worksheet = workbook.add_worksheet()

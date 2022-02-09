@@ -1,29 +1,33 @@
-import json
 from collections import defaultdict
 from typing import cast
 
 from django.template.loader import render_to_string
 from django.contrib.auth.decorators import login_required
-from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest, FileResponse
+from django.http import JsonResponse, HttpResponseBadRequest, FileResponse
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST, require_GET
 
 from loguru import logger
 
+from constance import config as cfg
+
 from groups.models import Student
 from users.models import Person
-from electives import controller
+from electives import logic
 from electives.elective_statistic import Statistic
 from electives.models import Elective, StudentOnElective, ElectiveKind
+
+from constance import config as cfg
 
 
 @login_required
 def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
-    groups = controller.get_electives_by_thematics(user)
+    groups = logic.get_electives_by_thematics(user)
 
     context = {
         'elective_groups': groups,
+        'block_fall': cfg.BLOCK_FALL,
     }
     return render(request, 'electives/elective_list.html', context)
 
@@ -38,7 +42,7 @@ def open_elective_page(request, elective_id, **kwargs):
     ).select_related('student').only('student'):
         students[application.student].add(application.kind.short_name)
     statistic = {
-        kind: controller.get_statistics(elective, kind)
+        kind: logic.get_statistics(elective, kind)
         for kind in elective.kinds.all()
     }
     context = {
@@ -47,7 +51,7 @@ def open_elective_page(request, elective_id, **kwargs):
         'students_count': len(students),
         'kinds': [
             (data, statistic[data.kind])
-            for data in controller.get_student_elective_kinds(user, elective)
+            for data in logic.get_student_elective_kinds(user, elective)
         ]
     }
     return render(request, 'electives/elective_page.html', context)
@@ -65,15 +69,15 @@ def change_elective_kind(request, **kwargs):
         elective = Elective.objects.get(id=elective_id)
         kind = ElectiveKind.objects.get(id=kind_id)
 
-        application = controller.change_kinds(user, elective, kind)
-        students_count = controller.get_statistics(elective, kind)
+        application = logic.change_kinds(user, elective, kind)
+        students_count = logic.get_statistics(elective, kind)
 
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
         current_short_names = list(set(
             data.kind.short_name
-            for data in controller.get_student_elective_kinds(user, elective)
+            for data in logic.get_student_elective_kinds(user, elective)
             if data.selected
         ))
         if application is not None:
@@ -84,7 +88,7 @@ def change_elective_kind(request, **kwargs):
                 language=application.kind.language,
             ).all()
             if len(other_kind) == 1:
-                other_kind_counts = controller.get_statistics(elective, other_kind[0])
+                other_kind_counts = logic.get_statistics(elective, other_kind[0])
                 other_language_kind = other_kind[0].id
                 other_short_name = other_kind[0].short_name
         statistic = Statistic()
@@ -113,7 +117,7 @@ def change_application_exam(request, **kwargs):
         student_on_elective = StudentOnElective.objects.get(
             pk=student_on_elective_id
         )
-        student_on_elective = controller.change_exam(student_on_elective)
+        student_on_elective = logic.change_exam(student_on_elective)
         if student_on_elective is not None:
             return JsonResponse({
                 'with_exam': student_on_elective.with_examination,
@@ -139,7 +143,7 @@ def change_application_kind(request, **kwargs):
             pk=student_on_elective_id,
         )
         kind = ElectiveKind.objects.get(pk=kind_id)
-        student_on_elective = controller.change_kind(student_on_elective, kind)
+        student_on_elective = logic.change_kind(student_on_elective, kind)
         all_applications = StudentOnElective.objects.filter(
             student=student_on_elective.student,
             elective=student_on_elective.elective,
@@ -172,7 +176,7 @@ def attach_application(request, **kwargs):
     new_index = request.POST.get('new_index', None)
     if student_on_elective_id is not None and target is not None and new_index is not None:
         student_on_elective = StudentOnElective.objects.get(pk=int(student_on_elective_id))
-        sone = controller.attach_application(student_on_elective, target, int(new_index))
+        sone = logic.attach_application(student_on_elective, target, int(new_index))
         if sone is None:
             response = {
                 'OK': False,
@@ -191,7 +195,8 @@ def attach_application(request, **kwargs):
 def remove_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     if student_on_elective_id is not None:
-        controller.remove_application(int(student_on_elective_id))
+        application = StudentOnElective.objects.get(pk=int(student_on_elective_id))
+        logic.remove_application(application)
         return JsonResponse({
             'OK': True,
         })
@@ -203,19 +208,19 @@ def remove_application(request, **kwargs):
 def get_application_rows(request, **kwargs):
     student = cast(Person, request.user)
     return JsonResponse({
-        'codes_fall': controller.generate_application_row(student, 1),
-        'codes_spring': controller.generate_application_row(student, 2),
+        'codes_fall': logic.generate_application_row(student, 1),
+        'codes_spring': logic.generate_application_row(student, 2),
         'credit_units_fall': {
-            'sum': controller.calc_sum_credit_units(student, 1),
+            'sum': logic.calc_sum_credit_units(student, 1),
         },
         'credit_units_spring': {
-            'sum': controller.calc_sum_credit_units(student, 2),
+            'sum': logic.calc_sum_credit_units(student, 2),
         },
         'credit_units_maybe_fall': {
-            'sum': controller.calc_sum_credit_units(student, 1, False),
+            'sum': logic.calc_sum_credit_units(student, 1, False),
         },
         'credit_units_maybe_spring': {
-            'sum': controller.calc_sum_credit_units(student, 2, False),
+            'sum': logic.calc_sum_credit_units(student, 2, False),
         },
     })
 
@@ -225,7 +230,8 @@ def get_application_rows(request, **kwargs):
 def duplicate_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     if student_on_elective_id is not None:
-        new_application = controller.duplicate_application(int(student_on_elective_id))
+        application = StudentOnElective.objects.get(pk=int(student_on_elective_id))
+        new_application = logic.duplicate_application(application)
         prev_id = '#application-{0}-{1}{2}'.format(
             student_on_elective_id,
             1 if new_application.elective.has_fall else '',
@@ -247,7 +253,7 @@ def duplicate_application(request, **kwargs):
 @login_required
 @require_GET
 def download_table(request, **kwargs):
-    workbook_name = controller.generate_summary_table()
+    workbook_name = logic.generate_summary_table()
     return FileResponse(open(workbook_name, 'rb'))
 
 
@@ -277,28 +283,30 @@ def open_sorting_page(request, user_id, **kwargs):
         kind__semester=2,
         attached=True,
     ).order_by('priority').all()
+    logger.debug(cfg.GOOGLE_FORM_URL)
     context = {
         'applications_fall': applications_fall,
         'applications_spring': applications_spring,
         'applications_fall_attached': applications_fall_attached,
         'applications_spring_attached': applications_spring_attached,
-        'fall_code_row': controller.generate_application_row(student=user_id, semester=1),
-        'spring_code_row': controller.generate_application_row(student=user_id, semester=2),
+        'fall_code_row': logic.generate_application_row(student=user_id, semester=1),
+        'spring_code_row': logic.generate_application_row(student=user_id, semester=2),
         'credit_units_fall': {
             'max': person.student_data.student_group.max_credit_unit_fall,
             'min': person.student_data.student_group.min_credit_unit_fall,
-            'sum': controller.calc_sum_credit_units(person, 1),
+            'sum': logic.calc_sum_credit_units(person, 1),
         },
         'credit_units_maybe_fall': {
-            'sum': controller.calc_sum_credit_units(person, 1, False),
+            'sum': logic.calc_sum_credit_units(person, 1, False),
         },
         'credit_units_maybe_spring': {
-            'sum': controller.calc_sum_credit_units(person, 2, False),
+            'sum': logic.calc_sum_credit_units(person, 2, False),
         },
         'credit_units_spring': {
             'max': person.student_data.student_group.max_credit_unit_spring,
             'min': person.student_data.student_group.min_credit_unit_spring,
-            'sum': controller.calc_sum_credit_units(person, 2),
+            'sum': logic.calc_sum_credit_units(person, 2),
         },
+        'google_form_url': cfg.GOOGLE_FORM_URL,
     }
     return render(request, 'electives/sort_electives.html', context)

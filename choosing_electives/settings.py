@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.slack',
+
+    'constance',
 ]
 
 SITE_ID = 1
@@ -58,14 +60,14 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': os.environ.get('SLACK_CLIENT_ID') or env['SLACK_CLIENT_ID'],
             'secret': os.environ.get('SLACK_SECRET') or env['SLACK_SECRET'],
         },
-        'SCOPE': ['identity.basic', 'identity.email', 'openid'],
+        'SCOPE': ['identify', 'identity.basic', 'identity.email', 'openid', 'profile', 'user:read', 'user.profile:read'],
     }
 }
 
 LOGIN_URL = '/electives/accounts/login/'
 LOGIN_REDIRECT_URL = '/electives/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/electives/accounts/login/'
-ACCOUNT_SIGNUP_REDIRECT_URL = '/electives/account/post_registration/'
+ACCOUNT_SIGNUP_REDIRECT_URL = '/electives/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -173,3 +175,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CONSTANCE_CONFIG = {
+    'RUSSIAN_URL': (
+        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html',
+        'The url address of the russian tables'
+    ),
+    'ENGLISH_URL': (
+        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html',
+        'The url address of the english tables',
+    ),
+    'GOOGLE_FORM_URL': ('', 'The google form url'),
+    'BLOCK_FALL': (False, 'Show only spring electives'),
+}
