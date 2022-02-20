@@ -6,7 +6,7 @@
   <meta name='viewport' content='width=device-width, initial-scale=1'>
 
   <title>{% block head_title %}{% endblock %}</title>
-  <link rel="shortcut icon" type="image/png" href="{% static 'favicon-mkn.png' %}"/>
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon-mkn.png' %}"/>
 
   {% block extra_head %} {% endblock %}
 
@@ -19,9 +19,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/49d11f2271.js" crossorigin="anonymous"></script>
 
-  <link href="{% static 'favicon-mkn.png' %}" type="image/x-icon">
-  <link rel="stylesheet" type="text/css" href="{% static 'styles/main.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'styles/navbar.css' %}">
+  <link href="{% static 'images/favicon-mkn.png' %}" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'css/navbar.css' %}">
 
   {% block extra_styles %} {% endblock %}
 
@@ -50,7 +50,7 @@
           toastContainer.innerHTML += `
             <div id="currentToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
                 <div class="toast-header">
-                  <img src="{% static 'favicon-mkn.png' %}" class="rounded me-2 toast-logo" alt="mkn-logo">
+                  <img src="{% static 'images/favicon-mkn.png' %}" class="rounded me-2 toast-logo" alt="mkn-logo">
                   <strong class="me-auto"> ${toastHead} </strong>
                   <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>

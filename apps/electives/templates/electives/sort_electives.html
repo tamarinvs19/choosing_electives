@@ -1,0 +1,403 @@
+{% extends "base.html" %}
+{% load static %}
+{% block head_title %}
+Selected electives
+{% endblock %}
+{% block extra_styles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'electives/css/applications.css' %}">
+  <script src="https://SortableJS.github.io/Sortable/Sortable.js"></script>
+{% endblock %}
+
+{% block body %}
+<div class="container-lg application-container">
+{#<div class="row application-row navigation-row">#}
+{#  <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='currentColor'/%3E%3C/svg%3E&#34;);"#}
+{#       aria-label="breadcrumb">#}
+{#    <ol class="breadcrumb">#}
+{#      <li class="breadcrumb-item">#}
+{#        <a href="{% url 'electives:elective_list' %}">#}
+{#          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"#}
+{#               class="bi bi-house-door-fill" viewBox="0 0 16 16">#}
+{#            <path d="M6.5 14.5v-3.505c0-.245.25-.495.5-.495h2c.25 0 .5.25.5.5v3.5a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5z"/>#}
+{#          </svg>#}
+{#        </a>#}
+{#      </li>#}
+{#      <li class="breadcrumb-item active">Your applications</li>#}
+{#    </ol>#}
+{#  </nav>#}
+{#</div>#}
+  <div class="row title-row">
+    <h2>Your applications</h2>
+  </div>
+  <div class="row application-row">
+    <div class="col-2 title-codes">
+      <span>Fall request</span>
+    </div>
+    <div class="col-10 code-container">
+      <span class="copy-codes" onclick="copyCodes('fall')">
+				<i class="fas fa-copy"></i>
+			</span>
+      <div class="codes codes-fall">
+        {{ fall_code_row }}
+      </div>
+    </div>
+  </div>
+  <div class="row application-row">
+    <div class="col-2 title-codes">
+      <span>Spring request</span>
+    </div>
+    <div class="col-10">
+      <span class="copy-codes" onclick="copyCodes('spring')">
+				<i class="fas fa-copy"></i>
+			</span>
+      <div class="codes codes-spring">
+        {{ spring_code_row }}
+      </div>
+    </div>
+  </div>
+  <div class="row application-row">
+    <div class="col-2 title-codes">
+      <span>Google Form</span>
+    </div>
+    <div class="col-10">
+      <div class="codes google-form-url">
+        <a href="{{ google_form_url }}">{{ google_form_url }}</a>
+      </div>
+    </div>
+  </div>
+  <div class="row canvas">
+    <div class="col-xl-3 col-6 fall-column column">
+      <div class="title">
+        <h5 class="column-title">Fall</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content fall-credits">
+              {{ credit_units_fall.sum }}
+            </span>
+          </div>
+          <div class="min-credit-units credit-units-value">
+            <span class="credit-units-title">
+              /
+            </span>
+            <span class="credit-units-content">
+              {{ credit_units_fall.min }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="inner-column" id="fall">
+        {% for application in applications_fall_attached %}
+          {% include "electives/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-xl-3 col-6 maybe-fall-column column">
+      <div class="title">
+        <h5 class="column-title">Maybe Fall</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content maybe-fall-credits">
+              {{ credit_units_maybe_fall.sum }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="inner-column" id="maybeFall">
+        {% for application in applications_fall %}
+          {% include "electives/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-xl-3 col-6 maybe-spring-column column">
+      <div class="title">
+        <h5 class="column-title">Maybe Spring</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content maybe-spring-credits">
+              {{ credit_units_maybe_spring.sum }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="inner-column" id="maybeSpring">
+        {% for application in applications_spring %}
+          {% include "electives/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-xl-3 col-6 spring-column column">
+      <div class="title">
+        <h5 class="column-title">Spring</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content spring-credits">
+              {{ credit_units_spring.sum }}
+            </span>
+          </div>
+          <div class="min-credit-units credit-units-value">
+            <span class="credit-units-title">
+              /
+            </span>
+            <span class="credit-units-content">
+              {{ credit_units_spring.min }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="inner-column" id="spring">
+        {% for application in applications_spring_attached %}
+          {% include "electives/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function copyCodes(semester) {
+      const codes = $(`.codes-${semester}`)[0].innerText;
+      navigator.clipboard.writeText(codes)
+          .then(() => {
+              addToast('Copied', codes);
+          })
+          .catch(err => {
+              console.log('Something went wrong', err);
+      });
+  }
+
+  let currentDrag;
+  let maybeFallSortable = new Sortable(maybeFall, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '2';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (evt) {
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+  });
+  let fallSortable = new Sortable(fall, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '2';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (evt) {
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+  });
+  let maybeSpringSortable = new Sortable(maybeSpring, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '1';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (evt) {
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+  });
+  let springSortable = new Sortable(spring, {
+      group: {
+          name: 'electives',
+          put: function (_) {
+              const applicationSemesters = currentDrag.id.split('-')[2];
+              return currentDrag !== undefined && applicationSemesters !== '1';
+          },
+      },
+      animation: 150,
+      onStart: function (evt) {
+          currentDrag = evt.item;
+      },
+      onEnd: function (evt) {
+          attachApplication(currentDrag, evt.to.id, evt.newIndex);
+          currentDrag = undefined;
+      },
+      onClone: function (evt) {
+          let origEl = evt.item;
+          $(origEl).css('background', '#fdeaa8');
+      },
+      onUnchoose: function (evt) {
+          let application = evt.item;
+          $(application).css('background', 'white');
+      },
+  });
+
+  function changeExam(applicationId) {
+      $.post("{% url 'electives:change_application_exam' %}",
+          {'student_on_elective_id': applicationId, 'csrfmiddlewaretoken': csrftoken},
+          function(data) {
+              if (data['OK'] === true) {
+                  $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
+                  updateCodes();
+              }
+              if (data['message']) {
+                  addToast('', data['message'])
+              }
+          }
+      );
+  }
+
+  function changeKind(applicationId, kindId) {
+      $.post("{% url 'electives:change_application_kind' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'kind_id': kindId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+              if (data['OK'] === true) {
+                  for (let updatedApplicationId of data['all_applications']) {
+                      let examTag = $(`#exam-${updatedApplicationId}`)[0];
+                      $(`#kind-${updatedApplicationId}`)[0].innerHTML = data['full_kind'];
+                      $(`#credits-${updatedApplicationId}`)[0].innerHTML = data['credit_units'];
+                      if (updatedApplicationId === applicationId) {
+                          examTag.checked = data['with_exam'];
+                      }
+                      examTag.disabled = data['only_without_exam'] === true || data['only_with_exam'] === true;
+                      if (data['only_without_exam']) {
+                          examTag.checked = false;
+                      } else if (data['only_with_exam']) {
+                          examTag.checked = true;
+                      }
+                  }
+                  updateCodes();
+              }
+              if (data['message']) {
+                  addToast('', data['message'])
+              }
+          }
+      );
+  }
+
+  function attachApplication(application, target, newIndex) {
+      const applicationId = application.id.split('-')[1];
+      console.log(applicationId, target, newIndex);
+      $.post("{% url 'electives:attach_application' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'target': target,
+              'new_index': newIndex,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+              if (data['OK'] === true) {
+                  if (data['semester'] === 1) {
+                      $('.fall-kind').css('display', 'list-item');
+                      $('.spring-kind').css('display', 'none');
+                  } else {
+                      $('.spring-kind').css('display', 'list-item');
+                      $('.fall-kind').css('display', 'none');
+                  }
+                  updateCodes();
+              } else {
+                  return false;
+              }
+              //show message
+          }
+      );
+  }
+
+  function removeApplication(applicationId) {
+      $.post("{% url 'electives:remove_application' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+            if (data['OK'] === true) {
+                $(`#application-${applicationId}-1`).remove()
+                $(`#application-${applicationId}-12`).remove()
+                $(`#application-${applicationId}-2`).remove()
+                updateCodes();
+            }
+          }
+      );
+  }
+
+  function updateCodes() {
+      $.get("{% url 'electives:get_application_rows' %}",
+          {},
+          function (data) {
+              $('.codes-fall').html(data['codes_fall']);
+              $('.codes-spring').html(data['codes_spring']);
+              $('.fall-credits').html(data['credit_units_fall']['sum']);
+              $('.spring-credits').html(data['credit_units_spring']['sum']);
+              $('.maybe-fall-credits').html(data['credit_units_maybe_fall']['sum']);
+              $('.maybe-spring-credits').html(data['credit_units_maybe_spring']['sum']);
+          }
+      );
+  }
+
+  function duplicateApplication(applicationId) {
+      $.post("{% url 'electives:duplicate_application' %}",
+          {
+              'student_on_elective_id': applicationId,
+              'csrfmiddlewaretoken': csrftoken,
+          },
+          function(data) {
+              if (data['OK'] === true) {
+                  let application = data['application'];
+                  $(data['prev_id']).after(application);
+                  updateCodes();
+              }
+          }
+      );
+  }
+</script>
+{% endblock %}

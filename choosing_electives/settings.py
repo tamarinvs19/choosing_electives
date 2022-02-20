@@ -20,7 +20,6 @@ DEBUG = env['DEBUG']
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '6ff9-45-93-133-191.ngrok.io',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -31,10 +30,13 @@ AUTHENTICATION_BACKENDS = [
 # Application definition
 
 INSTALLED_APPS = [
-    'electives.apps.ElectivesConfig',
-    'groups.apps.GroupsConfig',
-    'users.apps.UsersConfig',
+    'apps.electives',
+    'apps.groups',
+    'apps.users',
+    'apps.parsing',
+
     'django.contrib.admin',
+    'django.contrib.admindocs',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -112,18 +114,29 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
-        'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
+            'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+            'CONN_MAX_AGE': 60,
+            'OPTIONS': {
+                'connect_timeout': 10,
+                'options': '-c statement_timeout=15000ms',
+            },
+        }
+    }
 
 
 # Password validation
@@ -162,10 +175,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/electives/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
