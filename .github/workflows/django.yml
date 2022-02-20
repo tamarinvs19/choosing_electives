@@ -37,4 +37,5 @@ jobs:
         POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
         POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
       run: |
+        python manage.py migrate
         python manage.py test
