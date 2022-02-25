@@ -172,6 +172,11 @@ class Statistic(object):
             logger.info('Finish statistic calculating')
         return cls.obj
 
+    def restart(self):
+        logger.info('ReStart statistic calculating')
+        self.data = _Data()
+        logger.info('Finish statistic calculating')
+
     def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.last_modified = dt.datetime.now()
         self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].add_student(student_id)

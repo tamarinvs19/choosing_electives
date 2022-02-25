@@ -1,5 +1,6 @@
 from typing import cast
 
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
@@ -15,6 +16,9 @@ from apps.parsing import courses_table_parsing
 
 @login_required
 def parsing_page(request, **kwargs):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
     person = cast(Person, request.user)
 
     if request.method == 'POST':

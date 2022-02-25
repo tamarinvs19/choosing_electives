@@ -20,7 +20,32 @@
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
-        <a href="{% url 'parsing:parsing' %}"><h2>{% translate 'Go to parsing page' %}</h2></a>
+          <a href="{% url 'parsing:parsing' %}">
+            <div class="button">{% translate 'Go to parsing page' %}</div>
+          </a>
+
+        <div class="button" onclick="restart_counter()">{% translate 'Restart elective counter' %}</div>
+
+        <script type="text/javascript">
+            function restart_counter() {
+                console.log('restart')
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', '{% url 'electives:restart_counter' %}');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        alert('Counter restarted');
+                    }
+                    else {
+                        alert('Request failed.  Returned status of ' + xhr.status);
+                    }
+                };
+                xhr.send();
+            }
+            {#$('.button').click(function () {#}
+            {#    $.ajax({type: 'GET', url: '{% url 'electives:restart_counter' %}'});#}
+            {#});#}
+        </script>
+
         <h2>{% translate 'Recent actions' %}</h2>
         <h3>{% translate 'My actions' %}</h3>
             {% load log %}
@@ -49,3 +74,17 @@
     </div>
 </div>
 {% endblock %}
+
+<style>
+    .button {
+        display: block;
+        margin: 5%;
+        width: 90%;
+        height: 75px;
+        color: #fff;
+        background: #000;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+    }
+</style>

@@ -41,7 +41,6 @@ def profile_edit(request, **kwargs):
             student.student_group_id = int(form.cleaned_data['student_group'])
             student.save()
 
-            logger.debug(student)
             return redirect('/electives/users/{0}/'.format(student.id))
 
     else:
@@ -56,7 +55,10 @@ def profile_edit(request, **kwargs):
         else:
             initial['email'] = person.email
 
-        if Student.objects.filter(person=person).exists():
+        student, _ = Student.objects.get_or_create(
+            person=person,
+        )
+        if student.student_group is not None:
             student_group = person.student_data.student_group
             initial['student_group'] = (student_group.id, student_group)
 

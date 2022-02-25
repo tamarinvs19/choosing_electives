@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import cast
 
 from django.template.loader import render_to_string
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseBadRequest, FileResponse
 from django.shortcuts import render, redirect
@@ -16,7 +17,6 @@ from apps.electives.elective_statistic import Statistic
 from apps.electives.models import Elective, StudentOnElective, ElectiveKind
 
 from constance import config as cfg
-import datetime as dt
 
 
 def last_modified_func(request, **kwargs):
@@ -313,3 +313,14 @@ def open_sorting_page(request, user_id, **kwargs):
         'google_form_url': cfg.GOOGLE_FORM_URL,
     }
     return render(request, 'electives/sort_electives.html', context)
+
+
+@login_required
+@require_GET
+def restart_counter(request, **kwargs):
+    if not request.user.is_superuser:
+        return PermissionDenied
+
+    statistic = Statistic()
+    statistic.restart()
+    return JsonResponse({'status': 'OK'})
