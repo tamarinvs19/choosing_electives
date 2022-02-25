@@ -183,11 +183,17 @@ class Statistic(object):
 
     def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.last_modified = dt.datetime.now()
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
+        try:
+            self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
+        except KeyError:
+            self.restart()
 
     def remove_student_all(self, elective: Elective, kind: ElectiveKind, student_id: int):
         self.last_modified = dt.datetime.now()
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)
+        try:
+            self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)
+        except KeyError:
+            self.restart()
 
     def generate_view(self, student_id: int, thematic: Optional[ElectiveThematic] = None):
         if thematic is None:
