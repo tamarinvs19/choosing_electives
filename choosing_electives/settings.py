@@ -114,29 +114,21 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
+        'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 60,
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'options': '-c statement_timeout=15000ms',
+        },
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
-            'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
-            'HOST': '127.0.0.1',
-            'PORT': '5432',
-            'CONN_MAX_AGE': 60,
-            'OPTIONS': {
-                'connect_timeout': 10,
-                'options': '-c statement_timeout=15000ms',
-            },
-        }
-    }
+}
 
 
 # Password validation
