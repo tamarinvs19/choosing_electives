@@ -199,3 +199,5 @@ CONSTANCE_CONFIG = {
     'GOOGLE_FORM_URL': ('', 'The google form url'),
     'BLOCK_FALL': (False, 'Show only spring electives'),
 }
+
+CONSTANCE_BACKEND = 'constance.backends.memory.MemoryBackend'
