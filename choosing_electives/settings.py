@@ -187,17 +187,17 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-CONSTANCE_CONFIG = {
-    'RUSSIAN_URL': (
-        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html',
-        'The url address of the russian tables'
-    ),
-    'ENGLISH_URL': (
-        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html',
-        'The url address of the english tables',
-    ),
-    'GOOGLE_FORM_URL': ('', 'The google form url'),
-    'BLOCK_FALL': (False, 'Show only spring electives'),
-}
-
-CONSTANCE_BACKEND = 'constance.backends.memory.MemoryBackend'
+# CONSTANCE_CONFIG = {
+#     'RUSSIAN_URL': (
+#         'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html',
+#         'The url address of the russian tables'
+#     ),
+#     'ENGLISH_URL': (
+#         'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html',
+#         'The url address of the english tables',
+#     ),
+#     'GOOGLE_FORM_URL': ('', 'The google form url'),
+#     'BLOCK_FALL': (False, 'Show only spring electives'),
+# }
+#
+# CONSTANCE_BACKEND = 'constance.backends.memory.MemoryBackend'
