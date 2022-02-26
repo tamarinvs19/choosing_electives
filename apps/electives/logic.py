@@ -5,6 +5,8 @@ import xlsxwriter
 
 from django.db.models import F, Max, Count
 
+from loguru import logger
+
 from apps.electives.elective_statistic import Statistic
 from apps.electives.models import KindOfElective, Elective, StudentOnElective, ElectiveKind
 from apps.users.models import Person
@@ -293,7 +295,7 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     application.priority = new_index
     application.kind = new_kind
     application.attached = attached
-    application.with_examination = kind_of_elective.only_with_exam
+    application.with_examination = kind_of_elective.exam_is_possible and application.with_examination
     application.save()
 
     return application
