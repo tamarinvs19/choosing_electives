@@ -183,7 +183,6 @@ class Elective(models.Model):
 
     :name:                 |  The name of this elective
     :english_name:         |  The english name of this elective
-    :credit_unit:          |  The credit_unit of this elective
     :description:          |  The description of this elective
     :english_description:  |  The english description of this elective
     :max_number_students:  |  Maximum of number of students on this elective
