@@ -6,12 +6,11 @@ from django.shortcuts import render
 
 from loguru import logger
 
-from constance import config as cfg
-
+from apps.electives.elective_statistic import Statistic
 from apps.parsing.forms import ParsingForm
-from apps.users.models import Person
 
 from apps.parsing import courses_table_parsing
+from apps.parsing.models import ConfigModel
 
 
 @login_required
@@ -19,27 +18,31 @@ def parsing_page(request, **kwargs):
     if not request.user.is_superuser:
         raise PermissionDenied
 
-    person = cast(Person, request.user)
-
     if request.method == 'POST':
         form = ParsingForm(request.POST)
         if form.is_valid():
-            cfg.RUSSIAN_URL = form.cleaned_data['russian_url']
-            cfg.ENGLISH_URL = form.cleaned_data['english_url']
-            cfg.GOOGLE_FORM_URL = form.cleaned_data['google_form_url']
-            cfg.BLOCK_FALL = form.cleaned_data['block_fall']
+            config, _ = ConfigModel.objects.get_or_create()
+            config.google_form_url = form.cleaned_data['google_form_url']
+            config.block_fall = form.cleaned_data['block_fall']
+            config.russian_url = form.cleaned_data['russian_url']
+            config.english_url = form.cleaned_data['english_url']
+            config.save()
 
             courses_table_parsing.create_default_kinds()
             courses_table_parsing.main_programs()
             courses_table_parsing.main_electives()
             courses_table_parsing.create_default_mandatory_thematics()
 
+            statistic = Statistic()
+            statistic.restart()
+
     else:
+        config, _ = ConfigModel.objects.get_or_create()
         initial = {
-            'russian_url': cfg.RUSSIAN_URL,
-            'english_url': cfg.ENGLISH_URL,
-            'google_form_url': cfg.GOOGLE_FORM_URL,
-            'block_fall': cfg.BLOCK_FALL,
+            'russian_url': config.russian_url,
+            'english_url': config.english_url,
+            'google_form_url': config.google_form_url,
+            'block_fall': config.block_fall,
         }
         form = ParsingForm(initial=initial)
 
