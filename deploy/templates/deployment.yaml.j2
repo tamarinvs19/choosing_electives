@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ app_name }}
+spec:
+  replicas: {{ replicas_count }}
+  revisionHistoryLimit: {{ revision_history_limit | default('3') }}
+  selector:
+    matchLabels:
+      app: {{ app_name }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: {{ max_unavailable | default('0') }}
+      maxSurge: {{ max_surge | default('1') }}
+  template:
+    metadata:
+      labels:
+        app: {{ app_name }}
+    spec:
+      terminationGracePeriodSeconds: {{ termination_grace_period_seconds | default('60') }}
+      containers:
+        - name: {{ app_name }}
+          image: {{ image_path }}:{{ image_version }}
+          ports:
+            - containerPort: {{ app_port }}
+          readinessProbe:
+            httpGet:
+              path: /electives
+              port: {{ app_port }}
+            initialDelaySeconds: 5
+            timeoutSeconds: 30
+          lifecycle:
+            preStop: # preStop hook for zero downtime deployment
+              exec:
+                command: ["/bin/sh", "-c", "sleep 5"]
+          env:
+            - name: POSTGRES_NAME
+              valueFrom:
+                secretKeyRef:
+                  key: name
+                  name: { { database_secret } }
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: { { database_secret } }
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  key: host
+                  name: {{ database_secret }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ database_secret }}
+            - name: DJANGO_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  key: django_secret_key
+                  name: {{ app_name }}
+            - name: SLACK_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  key: slack_client_id
+                  name: {{ app_name }}
+            - name: SLACK_SECRET
+              valueFrom:
+                secretKeyRef:
+                  key: slack_secret
+                  name: {{ app_name }}
+            - name: EMAIL_HOST_USER
+              valueFrom:
+                secretKeyRef:
+                  key: email_host_user
+                  name: {{ app_name }}
+            - name: EMAIL_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: email_host_password
+                  name: {{ app_name }}

@@ -1,0 +1,28 @@
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/acme-challenge-type: dns01
+    cert-manager.io/acme-dns01-provider: clouddns
+    cert-manager.io/cluster-issuer: letsencrypt-europe-north1-gke-intellij-net
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    kubernetes.io/ingress.class: nginx
+    prometheus.io/probe: "false" # Change to true if you want to enable alerts
+  labels:
+    app: {{ app_name }}
+    # pager: active # Enable only if you want to SRE team react 24/7 on your service failures
+  name: {{ app_name }}
+spec:
+  tls:
+    - hosts:
+        - {{ app_name }}.europe-north1-gke.intellij.net
+      secretName: {{ app_name }}-europe-north1-gke-intellij-net-tls
+  rules:
+      - host: {{ app_name }}.europe-north1-gke.intellij.net
+        http:
+          paths:
+              - backend:
+                serviceName: {{ app_name }}
+                servicePort: 80
+                path: /
