@@ -14,5 +14,7 @@ europe-north1:
 
   database_secret: emkn-prod-creds
 
+  replicas_count: 1
+
   templates:
     - template: .*.yaml.j2
