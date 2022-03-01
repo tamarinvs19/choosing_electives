@@ -38,12 +38,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: name
-                  name: { { database_secret } }
+                  name: {{ database_secret }}
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
                   key: username
-                  name: { { database_secret } }
+                  name: {{ database_secret }}
             - name: POSTGRES_HOST
               valueFrom:
                 secretKeyRef:
