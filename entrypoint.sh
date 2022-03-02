@@ -4,4 +4,4 @@ set -e
 cd /opt/emkn/
 
 python manage.py migrate --skip-checks
-exec gunicorn choosing_electives.wsgi:application
+exec gunicorn --bind 0.0.0.0:${PORT:-8000} choosing_electives.wsgi:application
