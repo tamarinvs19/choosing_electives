@@ -18,6 +18,9 @@ spec:
         app: {{ app_name }}
     spec:
       terminationGracePeriodSeconds: {{ termination_grace_period_seconds | default('60') }}
+      volumes:
+        - name: compressed-static
+          emptyDir: { }
       containers:
         - name: {{ app_name }}
           image: {{ image_path }}:{{ image_version }}
@@ -79,3 +82,6 @@ spec:
                 secretKeyRef:
                   key: email_host_password
                   name: {{ app_name }}
+          volumeMounts:
+            - name: compressed-static
+              mountPath: /opt/emkn/compressed_static
