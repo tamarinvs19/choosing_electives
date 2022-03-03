@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ app_name }}-static
 spec:
-  replicas: 3
+  replicas: 1
   revisionHistoryLimit: {{ revision_history_limit | default('3') }}
   selector:
     matchLabels:
