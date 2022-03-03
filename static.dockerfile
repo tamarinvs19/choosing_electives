@@ -1,5 +1,7 @@
 FROM python:3.10.1 as build
 
+ENV DJANGO_SECRET_KEY=qwe
+
 RUN groupadd --gid 1024 emkn \
     && useradd \
         --uid 1024 \
