@@ -151,10 +151,8 @@ Selected electives
 <script>
   function copyCodes(semester) {
       const codes = $(`.codes-${semester}`)[0].innerText;
-      console.log(codes)
       navigator.clipboard.writeText(codes)
           .then(() => {
-              console.log(codes)
               navigator.clipboard.writeText(codes);
               addToast('Copied', codes);
           })
