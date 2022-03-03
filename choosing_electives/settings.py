@@ -20,7 +20,6 @@ DEBUG = env['DEBUG']
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '34.240.249.188',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -63,7 +62,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': os.environ.get('SLACK_CLIENT_ID') or env['SLACK_CLIENT_ID'],
             'secret': os.environ.get('SLACK_SECRET') or env['SLACK_SECRET'],
         },
-        'SCOPE': ['identify', 'identity.basic', 'identity.email', 'openid', 'profile', 'user:read', 'user.profile:read'],
+        'SCOPE': ['identity.basic', 'openid', 'profile', 'email'],
     }
 }
 
