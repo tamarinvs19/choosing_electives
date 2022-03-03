@@ -23,6 +23,8 @@ RUN chown -R emkn:emkn /opt/emkn/*
 
 RUN python manage.py collectstatic --no-input
 
+#RUN ls -la compressed_static
+
 FROM nginx:1.21.5
-COPY --from=build /opt/emkn/static /usr/share/nginx/html/static/electives/static/
+COPY --from=build /opt/emkn/compressed_static /usr/share/nginx/html/static/electives/static/
 COPY nginx.conf /etc/nginx/nginx.conf
