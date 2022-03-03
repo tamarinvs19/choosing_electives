@@ -12,9 +12,14 @@ europe-north1:
   image_path: europe-north1-docker.pkg.dev/itk8s-208609/emkn/server
   image_version: "{{ env='BUILD_NUMBER' }}"
 
+  static_image_path: europe-north1-docker.pkg.dev/itk8s-208609/emkn/static
+  static_image_version: "{{ env='BUILD_NUMBER' }}"
+
   database_secret: emkn-prod-creds
 
   replicas_count: 1
 
   templates:
-    - template: .*.yaml.j2
+    - template: ^server/.*.yaml.j2
+    - template: ^static/.*.yaml.j2
+    - template: ^ingress.yaml.j2

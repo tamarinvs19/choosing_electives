@@ -26,3 +26,7 @@ spec:
                   serviceName: {{ app_name }}
                   servicePort: 80
                 path: /
+              - backend:
+                  serviceName: {{ app_name }}-static
+                  servicePort: 80
+                path: /electives/static/
