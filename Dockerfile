@@ -1,5 +1,7 @@
 FROM python:3.10.1
 
+ENV DJANDO_SUPERUSER_PASSWORD=qweqwe
+
 RUN groupadd --gid 1024 emkn \
     && useradd \
         --uid 1024 \
