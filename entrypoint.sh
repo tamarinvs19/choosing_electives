@@ -9,12 +9,12 @@ fail_deploy() {
     exit 1  # proceed no further!
 }
 
-set -e
+#set -e
 
 cd /opt/emkn/
 
 
-MIGRATIONS_OUTPUT=$(python manage.py migrate --skip-checks 2>&1)
+python manage.py migrate --skip-checks
 
 SUPERUSER_EXISTS_MSG="CommandError: Error: That username is already taken."
 SUPERUSER_OUTPUT=$(python manage.py createsuperuser --email test@test.com --username superuser --noinput 2>&1)
@@ -32,6 +32,7 @@ if [ $SUPERUSER_STATUS -ne 0 ]; then
       echo "Superuser already exists"
     else
       # The message in stderr was not SUPERUSER_EXISTS_MSG, so we stop.
+      echo "Unknown error"
       fail_deploy "Create Superuser Failed"
     fi
 fi
