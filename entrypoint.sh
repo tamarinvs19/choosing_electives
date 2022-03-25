@@ -14,7 +14,7 @@ set -e
 cd /opt/emkn/
 
 
-python manage.py migrate --skip-checks
+MIGRATIONS_OUTPUT=$(python manage.py migrate --skip-checks 2>&1)
 
 SUPERUSER_EXISTS_MSG="CommandError: Error: That username is already taken."
 SUPERUSER_OUTPUT=$(python manage.py createsuperuser --email test@test.com --username superuser --noinput 2>&1)
