@@ -9,7 +9,7 @@ from my_environ import Env
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = Env(
-    DEBUG=(False, bool),
+    DEBUG=(True, bool),
 )
 env.read_env(file_name='.env')
 
@@ -115,15 +115,7 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-else:
-    DATABASES = {
+DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
@@ -137,7 +129,7 @@ else:
                 'options': '-c statement_timeout=15000ms',
             },
         }
-    }
+}
 
 
 # Password validation
