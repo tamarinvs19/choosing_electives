@@ -121,7 +121,7 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
         'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
-        'HOST': '127.0.0.1',
+        'HOST': os.environ.get('POSTGRES_HOST') or env['POSTGRES_HOST'],
         'PORT': '5432',
         'CONN_MAX_AGE': 60,
         'OPTIONS': {
