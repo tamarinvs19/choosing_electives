@@ -37,4 +37,4 @@ if [ $SUPERUSER_STATUS -ne 0 ]; then
     fi
 fi
 
-exec gunicorn --bind 0.0.0.0:${PORT:-8000} --capture-output choosing_electives.wsgi:application
+exec gunicorn --bind 0.0.0.0:${PORT:-8000} --capture-output --timeout 120 choosing_electives.wsgi:application
