@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.slack',
-
-    'constance',
 ]
 
 SITE_ID = 1
