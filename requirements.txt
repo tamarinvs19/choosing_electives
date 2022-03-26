@@ -10,5 +10,5 @@ loguru
 xlsxwriter
 psycopg2
 django_model_utils
-constance
+django-constance
 gunicorn==20.1.0
