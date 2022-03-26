@@ -2,6 +2,7 @@ from collections import defaultdict
 from typing import cast
 
 from django.template.loader import render_to_string
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponseBadRequest, FileResponse
 from django.shortcuts import render, redirect
@@ -10,13 +11,11 @@ from django.views.decorators.http import require_POST, require_GET, last_modifie
 from loguru import logger
 
 from apps.groups.models import Student
+from apps.parsing.models import ConfigModel
 from apps.users.models import Person
 from apps.electives import logic
 from apps.electives.elective_statistic import Statistic
 from apps.electives.models import Elective, StudentOnElective, ElectiveKind
-
-from constance import config as cfg
-import datetime as dt
 
 
 def last_modified_func(request, **kwargs):
@@ -28,10 +27,11 @@ def last_modified_func(request, **kwargs):
 def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
     groups = logic.get_electives_by_thematics(user)
+    config, _ = ConfigModel.objects.get_or_create()
 
     context = {
         'elective_groups': groups,
-        'block_fall': cfg.BLOCK_FALL,
+        'block_fall': config.block_fall,
     }
     return render(request, 'electives/elective_list.html', context)
 
@@ -265,8 +265,12 @@ def download_table(request, **kwargs):
 @require_GET
 def open_sorting_page(request, user_id, **kwargs):
     person = Person.objects.get(id=user_id)
+
     if not Student.objects.filter(person=person).exists():
         return redirect('/electives/users/{0}/'.format(person.id))
+
+    config, _ = ConfigModel.objects.get_or_create()
+
     applications_fall = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=1,
@@ -310,6 +314,17 @@ def open_sorting_page(request, user_id, **kwargs):
             'min': person.student_data.student_group.min_credit_unit_spring,
             'sum': logic.calc_sum_credit_units(person, 2),
         },
-        'google_form_url': cfg.GOOGLE_FORM_URL,
+        'google_form_url': config.google_form_url,
     }
     return render(request, 'electives/sort_electives.html', context)
+
+
+@login_required
+@require_GET
+def restart_counter(request, **kwargs):
+    if not request.user.is_superuser:
+        return PermissionDenied
+
+    statistic = Statistic()
+    statistic.restart()
+    return JsonResponse({'status': 'OK'})

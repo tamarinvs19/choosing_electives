@@ -9,9 +9,7 @@ import re
 from apps.electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective, \
     CreditUnitsKind, ExamPossibility, MandatoryThematicInStudentGroup
 from apps.groups.models import StudentGroup, Curriculum, YearOfEducation
-
-from constance import config as cfg
-
+from apps.parsing.models import ConfigModel
 
 NO_ENGLISH_MARKER = '(no English name)'
 
@@ -92,7 +90,7 @@ class Parser(object):
         thematics = [title.a.text for title in titles]
         tables = [title.find_next_sibling('table') for title in titles]
         tables = list(map(self.parse_one_thematic_table, tables))
-        thematic_tables = dict(zip(thematics, tables))
+        thematic_tables = list(zip(thematics, tables))
         return thematic_tables
 
     @staticmethod
@@ -202,24 +200,30 @@ def create_default_mandatory_thematics():
 
 
 def main_electives():
-    parser = Parser(cfg.RUSSIAN_URL)
+    config, _ = ConfigModel.objects.get_or_create()
+
+    parser = Parser(config.russian_url)
     parser.load_page()
     electives = parser.parse_electives()
 
-    english_parser = Parser(cfg.ENGLISH_URL)
+    english_parser = Parser(config.english_url)
     english_parser.load_page()
     english_electives = english_parser.parse_electives()
 
     elective_ids = []
+    thematic_ids = []
 
     for (thematic_name, thematic_electives), (english_name, thematic_english_electives) in zip(
-            electives.items(), english_electives.items()):
+            electives, english_electives):
         if ElectiveThematic.objects.filter(name=thematic_name).exists():
             thematic = ElectiveThematic.objects.get(name=thematic_name)
             thematic.english_name = english_name
             thematic.save()
         else:
             thematic = ElectiveThematic.objects.create(name=thematic_name, english_name=english_name)
+
+        thematic_ids.append(thematic.id)
+
         for thematic_elective, english_elective in zip(thematic_electives, thematic_english_electives):
 
             description, english_description = '', ''
@@ -254,6 +258,7 @@ def main_electives():
 
             elective_ids.append(elective.id)
 
+            kind_of_elective_ids = []
             for elective_type, semester in itertools.product(
                     thematic_elective['credit_type'], thematic_elective['semesters']):
                 # Now whe get the first of kinds with credit_units
@@ -272,12 +277,22 @@ def main_electives():
                     kind=kind,
                 )
                 kind_of_elective.exam_possibility = kind.credit_units_kind.default_exam_possibility
+                kind_of_elective_ids.append(kind_of_elective.id)
 
+            KindOfElective.objects.filter(elective=elective).exclude(id__in=kind_of_elective_ids).delete()
+            if config.block_fall:
+                KindOfElective.objects.filter(
+                    elective=elective,
+                    kind__semester=1,
+                ).delete()
+
+    ElectiveThematic.objects.exclude(id__in=thematic_ids).delete()
     Elective.objects.exclude(id__in=elective_ids).delete()
 
 
 def main_programs():
-    parser = Parser(cfg.ENGLISH_URL)
+    config, _ = ConfigModel.objects.get_or_create()
+    parser = Parser(config.english_url)
     parser.load_page()
     student_groups = parser.generate_student_groups()
     codenames = []

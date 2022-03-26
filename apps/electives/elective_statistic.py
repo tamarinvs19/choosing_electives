@@ -7,10 +7,9 @@ from django.db.models import QuerySet
 
 from loguru import logger
 
-from constance import config as cfg
-
 from apps.electives.models import ElectiveThematic, Elective, ElectiveKind
 from apps.groups.models import Student
+from apps.parsing.models import ConfigModel
 
 
 @dataclass
@@ -112,11 +111,12 @@ class _Thematic(BaseNode):
     def __init__(self, thematic: ElectiveThematic):
         electives = {
             elective: _Elective(elective)
-            for elective in Elective.objects.filter(thematic=thematic)
+            for elective in Elective.objects.filter(thematic=thematic).order_by('codename')
         }
         super().__init__(electives)
 
     def generate_view(self, student_id: int):
+        config, _ = ConfigModel.objects.get_or_create()
         view_dict = {
             item: (
                 inner_item.generate_view(student_id),
@@ -124,7 +124,7 @@ class _Thematic(BaseNode):
                 inner_item.student_count(2),
             )
             for item, inner_item in self.items.items()
-            if not cfg.BLOCK_FALL or (cfg.BLOCK_FALL and item.has_spring)
+            if not config.block_fall or (config.block_fall and item.has_spring)
         }
         return view_dict
 
@@ -134,7 +134,7 @@ class _Data(BaseNode):
     def __init__(self):
         thematics = {
             thematic: _Thematic(thematic)
-            for thematic in ElectiveThematic.objects.all()
+            for thematic in ElectiveThematic.objects.order_by('name').all()
         }
         super().__init__(thematics)
 
@@ -172,17 +172,29 @@ class Statistic(object):
             logger.info('Finish statistic calculating')
         return cls.obj
 
+    def restart(self):
+        logger.info('ReStart statistic calculating')
+        self.last_modified = dt.datetime.now()
+        self.data = _Data()
+        logger.info('Finish statistic calculating')
+
     def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.last_modified = dt.datetime.now()
         self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].add_student(student_id)
 
     def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
         self.last_modified = dt.datetime.now()
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
+        try:
+            self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
+        except KeyError:
+            self.restart()
 
     def remove_student_all(self, elective: Elective, kind: ElectiveKind, student_id: int):
         self.last_modified = dt.datetime.now()
-        self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)
+        try:
+            self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)
+        except KeyError:
+            self.restart()
 
     def generate_view(self, student_id: int, thematic: Optional[ElectiveThematic] = None):
         if thematic is None:

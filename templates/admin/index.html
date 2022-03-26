@@ -16,11 +16,41 @@
   {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
 </div>
 {% endblock %}
+<style>
+    .my-button {
+        margin: 5px;
+    }
+</style>
 
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
-        <a href="{% url 'parsing:parsing' %}"><h2>{% translate 'Go to parsing page' %}</h2></a>
+          <a href="{% url 'parsing:parsing' %}">
+            <div class="my-button button" style="margin: 5px">{% translate 'Go to parsing page' %}</div>
+          </a>
+
+        <div style="margin: 5px" class="my-button button" onclick="restart_counter()">{% translate 'Restart elective counter' %}</div>
+
+        <script type="text/javascript">
+            function restart_counter() {
+                console.log('restart')
+                let xhr = new XMLHttpRequest();
+                xhr.open('GET', '{% url 'electives:restart_counter' %}');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        alert('Counter restarted');
+                    }
+                    else {
+                        alert('Request failed.  Returned status of ' + xhr.status);
+                    }
+                };
+                xhr.send();
+            }
+            {#$('.button').click(function () {#}
+            {#    $.ajax({type: 'GET', url: '{% url 'electives:restart_counter' %}'});#}
+            {#});#}
+        </script>
+
         <h2>{% translate 'Recent actions' %}</h2>
         <h3>{% translate 'My actions' %}</h3>
             {% load log %}
@@ -49,3 +79,4 @@
     </div>
 </div>
 {% endblock %}
+

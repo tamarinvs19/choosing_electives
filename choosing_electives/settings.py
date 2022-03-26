@@ -63,7 +63,7 @@ SOCIALACCOUNT_PROVIDERS = {
             'client_id': os.environ.get('SLACK_CLIENT_ID') or env['SLACK_CLIENT_ID'],
             'secret': os.environ.get('SLACK_SECRET') or env['SLACK_SECRET'],
         },
-        'SCOPE': ['identify', 'identity.basic', 'identity.email', 'openid', 'profile', 'user:read', 'user.profile:read'],
+        'SCOPE': ['identity.basic', 'openid', 'profile', 'email'],
     }
 }
 
@@ -116,19 +116,19 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
-            'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
-            'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
-            'HOST': os.environ.get('POSTGRES_HOST') or env['POSTGRES_HOST'],
-            'PORT': '5432',
-            'CONN_MAX_AGE': 60,
-            'OPTIONS': {
-                'connect_timeout': 10,
-                'options': '-c statement_timeout=15000ms',
-            },
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
+        'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+        'CONN_MAX_AGE': 60,
+        'OPTIONS': {
+            'connect_timeout': 10,
+            'options': '-c statement_timeout=15000ms',
+        },
+    }
 }
 
 
@@ -172,8 +172,11 @@ STATIC_URL = '/electives/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-#    'django.contrib.staticfiles.finders.FileSystemFinder',
-#    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
@@ -183,16 +186,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-CONSTANCE_CONFIG = {
-    'RUSSIAN_URL': (
-        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021.html',
-        'The url address of the russian tables'
-    ),
-    'ENGLISH_URL': (
-        'https://users.math-cs.spbu.ru/~okhotin/course_process/course_announcement_autumn2021_en.html',
-        'The url address of the english tables',
-    ),
-    'GOOGLE_FORM_URL': ('', 'The google form url'),
-    'BLOCK_FALL': (False, 'Show only spring electives'),
-}
