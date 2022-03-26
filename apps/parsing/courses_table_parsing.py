@@ -5,6 +5,7 @@ import math
 from bs4 import BeautifulSoup
 import requests
 import re
+from loguru import logger
 
 from apps.electives.models import ElectiveThematic, Elective, ElectiveKind, KindOfElective, \
     CreditUnitsKind, ExamPossibility, MandatoryThematicInStudentGroup
@@ -363,8 +364,18 @@ def main_programs():
     StudentGroup.objects.exclude(id__in=group_ids).delete()
 
 
-if __name__ == '__main__':
+def run_parsing():
+    logger.info('Start parsing')
     create_default_kinds()
+    logger.info('Kind parsing is completed')
     main_programs()
+    logger.info('Program parsing is completed')
     main_electives()
+    logger.info('Elective parsing is completed')
     create_default_mandatory_thematics()
+    logger.info('Mandatory thematic parsing is completed')
+    logger.info('Finish parsing')
+
+
+if __name__ == '__main__':
+    run_parsing()
