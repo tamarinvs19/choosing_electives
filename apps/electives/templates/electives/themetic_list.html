@@ -12,11 +12,11 @@
     <div id="panelsStayOpen-collapse{{ forloop.counter }}"
          class="accordion-collapse collapse "
          aria-labelledby="panelsStayOpen-{{ forloop.counter }}">
-			<div class="accordion-body thematic-{{ thematic.id }}">
+			<div class="accordion-body thematic-{{ thematic.pk }}">
         <div class="row title-row">
           <div class="col-5">
             Title
-						{% include "electives/sort_button.html" with thematic_id=thematic.id column_name='title' %}
+						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='title' %}
           </div>
           <div class="col-3">
             Teachers
@@ -24,24 +24,24 @@
           <div class="col-2">
             Fall
             {% if not block_fall %}
-            {% include "electives/sort_button.html" with thematic_id=thematic.id column_name='fall' %}
+            {% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='fall' %}
             {% endif %}
           </div>
           <div class="col-2">
             Spring
-						{% include "electives/sort_button.html" with thematic_id=thematic.id column_name='spring' %}
+						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='spring' %}
           </div>
         </div>
-        {% for elective, langs_and_info in electives.items %}
-					<div class="elective-row row table-row row-{{ thematic.id }}"
-						id="row-{{ elective.id }}"
-						data-title={{ elective.id }}
-						data-fall={{ langs_and_info.1 }}
-						data-spring={{ langs_and_info.2 }}>
-          {% for language, semesters in langs_and_info.0.items %}
+        {% for elective, languages, info_fall, info_spring in electives %}
+					<div class="elective-row row table-row row-{{ thematic.pk }}"
+						id="row-{{ elective.pk }}"
+						data-title={{ elective.pk }}
+						data-fall={{ info_fall }}
+						data-spring={{ info_spring }}>
+          {% for language, semesters in languages %}
           <div class="row">
             <div class="col-5">
-              <a href={% url 'electives:elective_page' elective.id %}>
+              <a href={% url 'electives:elective_page' elective.pk %}>
                 {% if language == 'ru' %}
                   {{ elective.name }}
                 {% else %}
@@ -59,15 +59,15 @@
             {% if elective.has_not_fall %}
               <div class="col-2"></div>
             {% endif %}
-            {% for semester, kinds in semesters.items %}
+            {% for semester, kinds in semesters %}
               <div class="col-2">
               {% if not block_fall or semester == 2 %}
-                {% for kind, info in kinds.items %}
-                <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.id }}"
-                       value="{{ elective.short_name }}" class="checkbox-kind"
-                       onclick="change_kind({{ elective.id }}, {{ kind.id }})"
+                {% for kind, info in kinds %}
+                <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.pk }}"
+                       value="{{ elective.codename }}" class="checkbox-kind"
+                       onclick="change_kind({{ elective.pk }}, {{ kind.pk }})"
                         {% if info.1.1 or info.0.1 %} checked {% endif %}>
-                <label for="button-{{ kind.short_name }}-{{ elective.id }}"
+                <label for="button-{{ kind.short_name }}-{{ elective.pk }}"
                        class="semester-{{ kind.semester }} kind-button"
                        title="{{ kind.long_name }}">
                   <div class="kind-inner-container">
@@ -79,10 +79,10 @@
                       {% endif %}
                     </span>
                     <span class="statistic-container">
-                    <span id="statistic-{{ elective.id }}-{{ kind.id }}" class="statistic" title="Number of applications">
+                    <span id="statistic-{{ elective.pk }}-{{ kind.pk }}" class="statistic" title="Number of applications">
                       {{ info.1.0 }}
                     </span>
-                      <span id="statistic-maybe-{{ elective.id }}-{{ kind.id }}" class="statistic statistic-maybe"
+                      <span id="statistic-maybe-{{ elective.pk }}-{{ kind.pk }}" class="statistic statistic-maybe"
                             title='Number of "maybe" applications'>
                       {{ info.0.0 }}
                     </span>
