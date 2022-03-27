@@ -4,7 +4,6 @@ from typing import Optional
 import datetime as dt
 
 from django.db.models import QuerySet
-
 from loguru import logger
 
 from apps.electives.models import ElectiveThematic, Elective, ElectiveKind
@@ -21,10 +20,16 @@ class BaseNode:
         return self.items[item]
 
     def generate_view(self, student_id: int):
-        return {item: inner_item.generate_view(student_id) for item, inner_item in self.items.items()}
+        return {
+            item: inner_item.generate_view(student_id)
+            for item, inner_item in self.items.items()
+        }
 
     def student_count(self, semester: int) -> int:
-        return sum(inner_item.student_count(semester) for inner_item in self.items.values())
+        return sum(
+            inner_item.student_count(semester)
+            for inner_item in self.items.values()
+        )
 
 
 @dataclass
@@ -32,7 +37,10 @@ class _MaybeCounter(BaseNode):
     def __init__(self, elective: Elective, kind: ElectiveKind, attached: bool):
         items = Counter(
             sone.student.id
-            for sone in elective.studentonelective_set.filter(kind=kind, attached=attached)
+            for sone in elective.studentonelective_set.filter(
+                kind=kind,
+                attached=attached,
+            )
         )
         super().__init__(items)
 
@@ -100,7 +108,10 @@ class _Elective(BaseNode):
     def __init__(self, elective: Elective):
         kinds = elective.kinds.all()
         languages = {
-            kind.language: _Language(elective, kinds.filter(language=kind.language))
+            kind.language: _Language(
+                elective,
+                kinds.filter(language=kind.language),
+            )
             for kind in kinds
         }
         super().__init__(languages)
@@ -111,7 +122,9 @@ class _Thematic(BaseNode):
     def __init__(self, thematic: ElectiveThematic):
         electives = {
             elective: _Elective(elective)
-            for elective in Elective.objects.filter(thematic=thematic).order_by('codename')
+            for elective in Elective.objects.filter(
+                thematic=thematic,
+            ).order_by('codename')
         }
         super().__init__(electives)
 
@@ -178,25 +191,46 @@ class Statistic(object):
         self.data = _Data()
         logger.info('Finish statistic calculating')
 
-    def add_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
+    def add_student(
+        self,
+        elective: Elective,
+        kind: ElectiveKind,
+        student_id: int,
+        attached: bool,
+    ):
         self.last_modified = dt.datetime.now()
         self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].add_student(student_id)
 
-    def remove_student(self, elective: Elective, kind: ElectiveKind, student_id: int, attached: bool):
+    def remove_student(
+        self,
+        elective: Elective,
+        kind: ElectiveKind,
+        student_id: int,
+        attached: bool,
+    ):
         self.last_modified = dt.datetime.now()
         try:
             self.data[elective.thematic][elective][kind.language][kind.semester][kind][attached].remove_student(student_id)
         except KeyError:
             self.restart()
 
-    def remove_student_all(self, elective: Elective, kind: ElectiveKind, student_id: int):
+    def remove_student_all(
+        self,
+        elective: Elective,
+        kind: ElectiveKind,
+        student_id: int,
+    ):
         self.last_modified = dt.datetime.now()
         try:
             self.data[elective.thematic][elective][kind.language][kind.semester][kind].remove_student_all(student_id)
         except KeyError:
             self.restart()
 
-    def generate_view(self, student_id: int, thematic: Optional[ElectiveThematic] = None):
+    def generate_view(
+        self,
+        student_id: int,
+        thematic: Optional[ElectiveThematic] = None,
+    ):
         if thematic is None:
             return self.data.generate_view(student_id)
         else:
