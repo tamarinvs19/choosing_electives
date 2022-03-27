@@ -60,5 +60,5 @@ jobs:
     - name: Run Tests
       shell: bash
       run: |
-        python manage.py migrate
+        python manage.py migrate --skip-checks
         python manage.py test
