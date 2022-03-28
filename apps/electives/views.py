@@ -106,8 +106,8 @@ def change_elective_kind(request, **kwargs):
             'user_id': user.id,
             'student_name': Person.__str__(user),
             'thematic_id': elective.thematic.id,
-            'fall_count': statistic.data[elective.thematic][elective].student_count(1),
-            'spring_count': statistic.data[elective.thematic][elective].student_count(2),
+            'fall_count': statistic.data[elective.thematic.pk][elective.pk].student_count(1),
+            'spring_count': statistic.data[elective.thematic.pk][elective.pk].student_count(2),
         })
     return HttpResponseBadRequest
 
