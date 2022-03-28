@@ -65,3 +65,9 @@ def profile_edit(request, **kwargs):
         form = ProfileForm(initial=initial)
 
     return render(request, 'users/profile_edit.html', {'form': form})
+
+
+@login_required
+def redirect_to_personal_page(request):
+    user_id = request.user.id
+    return redirect('/electives/users/{0}'.format(user_id))

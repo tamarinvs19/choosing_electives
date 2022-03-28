@@ -19,6 +19,8 @@
     float: right;
     position: relative;
     display: block;
+    width: 60px;
+    color: #1b1b1b;
 }
 
 .username {
@@ -28,3 +30,16 @@
 .warning {
     color: #a41515;
 }
+
+@media screen and (max-width: 420px) {
+    .course-info .max-cu {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 335px) {
+    .course-info .exams {
+        display: none;
+    }
+}
+
