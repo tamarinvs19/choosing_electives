@@ -68,3 +68,11 @@ footer {
 .primaryAction {
     margin-top: 10px;
 }
+
+.errorlist li {
+    list-style-type: circle;
+    font-style: italic;
+    font-size: x-small;
+    color: #993300;
+}
+

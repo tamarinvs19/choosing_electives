@@ -21,7 +21,6 @@ class BaseNode:
         return self.items[item]
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         view = (
             self.properties, [
                 inner_item.generate_view(student_id)
@@ -40,7 +39,6 @@ class BaseNode:
 @dataclass
 class _MaybeCounter(BaseNode):
     def __init__(self, elective: Elective, kind: ElectiveKind, attached: bool):
-        logger.debug(f'Init: {self.__class__.__name__}, {attached}')
         items = Counter(
             sone.student.id
             for sone in elective.studentonelective_set.filter(
@@ -63,7 +61,6 @@ class _MaybeCounter(BaseNode):
         self.items.pop(student_id, None)
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         ids = self.items.keys()
         return len(ids), student_id in ids
 
@@ -71,7 +68,6 @@ class _MaybeCounter(BaseNode):
 @dataclass
 class _ApplicationCounter(BaseNode):
     def __init__(self, elective: Elective, kind: ElectiveKind):
-        logger.debug(f'Init: {self.__class__.__name__} {kind.pk}')
         items = {
             True: _MaybeCounter(elective, kind, True),
             False: _MaybeCounter(elective, kind, False),
@@ -94,7 +90,6 @@ class _ApplicationCounter(BaseNode):
             maybe_counter.remove_student_all(student_id)
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         view = (
             self.properties, {
                 item: inner_item.generate_view(student_id)
@@ -107,7 +102,6 @@ class _ApplicationCounter(BaseNode):
 @dataclass
 class _Semester(BaseNode):
     def __init__(self, elective: Elective, kinds: QuerySet[ElectiveKind], semester: int):
-        logger.debug(f'Init: {self.__class__.__name__} {semester}')
         kinds = {
             kind_semester: _ApplicationCounter(elective, kind_semester)
             for kind_semester in kinds
@@ -119,7 +113,6 @@ class _Semester(BaseNode):
 @dataclass
 class _Language(BaseNode):
     def __init__(self, elective: Elective, kinds: QuerySet[ElectiveKind], language: str):
-        logger.debug(f'Init: {self.__class__.__name__}, {language}')
         kind_semesters = set(kinds.values_list('semester', flat=True))
         semesters = {
             int(semester): _Semester(
@@ -141,7 +134,6 @@ class _Language(BaseNode):
 @dataclass
 class _Elective(BaseNode):
     def __init__(self, elective: Elective):
-        logger.debug(f'Init: {self.__class__.__name__}, {elective.pk}')
         kinds = elective.kinds.all()
         kind_languages = set(kinds.values_list('language', flat=True))
         languages = {
@@ -166,7 +158,6 @@ class _Elective(BaseNode):
         }
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         view = (
             self.properties,
             [
@@ -182,7 +173,6 @@ class _Elective(BaseNode):
 @dataclass
 class _Thematic(BaseNode):
     def __init__(self, thematic: ElectiveThematic):
-        logger.debug(f'Init: {self.__class__.__name__}, {thematic.pk}')
         electives = {
             elective.pk: _Elective(elective)
             for elective in Elective.objects.filter(
@@ -197,7 +187,6 @@ class _Thematic(BaseNode):
         }
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         # TODO: Этот запрос можно вынести, чтобы производить один раз?
         config, _ = ConfigModel.objects.get_or_create()
         view = (
@@ -215,7 +204,6 @@ class _Thematic(BaseNode):
 @dataclass
 class _Data(BaseNode):
     def __init__(self):
-        logger.debug(f'Init: {self.__class__.__name__}')
         thematics = {
             thematic.pk: _Thematic(thematic)
             for thematic in ElectiveThematic.objects.order_by('name').all()
@@ -223,7 +211,6 @@ class _Data(BaseNode):
         super().__init__(thematics)
 
     def generate_view(self, student_id: int):
-        logger.debug(self.__class__.__name__)
         # TODO: Убрать этот запрос к DB тоже?
         if Student.objects.filter(person_id=student_id).exists():
             mandatory_thematics = ElectiveThematic.objects.filter(

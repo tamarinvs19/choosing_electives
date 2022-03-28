@@ -1,0 +1,11 @@
+.helptext {
+    color: #666;
+    font-style: italic;
+    display: none;
+}
+
+ul {
+    color: #333333;
+    font-style: italic;
+    font-size: 11pt;
+}

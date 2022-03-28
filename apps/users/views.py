@@ -1,13 +1,17 @@
 from typing import cast
 
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 from django.shortcuts import render, redirect
+from django.utils import timezone
+from django.views.decorators.http import require_GET
 
 from loguru import logger
 
 from apps.groups.models import Student
-from apps.users.forms import ProfileForm
-from apps.users.models import Person
+from apps.users.forms import ProfileForm, SignUpForm
+from apps.users.models import Person, Invitation
 
 
 @login_required
@@ -65,3 +69,57 @@ def profile_edit(request, **kwargs):
         form = ProfileForm(initial=initial)
 
     return render(request, 'users/profile_edit.html', {'form': form})
+
+
+@login_required
+def redirect_to_personal_page(request):
+    user_id = request.user.id
+    return redirect('/electives/users/{0}'.format(user_id))
+
+
+# @require_GET
+# def invite(request):
+#     intitaion_key = request.GET.get('key', None)
+#     if intitaion_key is not None:
+#         if Invitation.objects.filter(
+#             invitation_key=intitaion_key,
+#             deadline__gt=timezone.now(),
+#         ).exists():
+#             return redirect('account_signup')
+#     raise Http404
+
+
+def signup_view(request):
+    invitation_key = request.GET.get('key', None)
+    if invitation_key is None or not Invitation.objects.filter(
+            invitation_key=invitation_key,
+            deadline__gt=timezone.now(),
+    ).exists():
+        raise Http404
+
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
+            raw_password = form.cleaned_data.get('password1')
+            student_group_id = int(form.cleaned_data['student_group'])
+
+            person = authenticate(
+                username=username,
+                password=raw_password,
+            )
+
+            Student.objects.create(
+                person=person,
+                student_group_id=student_group_id,
+            )
+
+            login(request, person)
+
+            return redirect('account:personal_page', user_id=person.pk)
+    else:
+        form = SignUpForm()
+
+    return render(request, 'users/signup.html', {'form': form, 'key': invitation_key})
