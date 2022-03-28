@@ -28,10 +28,7 @@ def parsing_page(request, **kwargs):
             config.english_url = form.cleaned_data['english_url']
             config.save()
 
-            courses_table_parsing.create_default_kinds()
-            courses_table_parsing.main_programs()
-            courses_table_parsing.main_electives()
-            courses_table_parsing.create_default_mandatory_thematics()
+            courses_table_parsing.run_parsing()
 
             statistic = Statistic()
             statistic.restart()

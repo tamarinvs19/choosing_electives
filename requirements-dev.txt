@@ -32,3 +32,4 @@ django-extensions
 pygraphviz~=1.7
 django-allauth
 loguru
+django-debug-toolbar

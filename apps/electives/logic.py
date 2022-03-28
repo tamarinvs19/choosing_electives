@@ -4,7 +4,6 @@ from typing import List, Dict, Optional
 import xlsxwriter
 
 from django.db.models import F, Max, Count
-
 from loguru import logger
 
 from apps.electives.elective_statistic import Statistic
@@ -24,7 +23,7 @@ def get_electives_by_thematics(student: Person) -> object:
     """
 
     statistic = Statistic()
-    return statistic.generate_view(student.id)
+    return statistic.generate_view(student.pk)
 
 
 def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
@@ -43,7 +42,7 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
         kind=kind,
     )
     counts = {True: 0, False: 0}
-    students = {True: set(), False: set()}
+    students: dict[bool, set[Person]] = {True: set(), False: set()}
     for application in students_on_elective:
         attached = application.attached
         if application.student not in students[attached]:
@@ -52,7 +51,10 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
     return counts
 
 
-def get_student_elective_kinds(student: Person, elective: Elective) -> List[KindWithSelectStatus]:
+def get_student_elective_kinds(
+    student: Person,
+    elective: Elective,
+) -> List[KindWithSelectStatus]:
     """
     Generate a list of structures KindWithSelectStatus
     for the current student and elective.
