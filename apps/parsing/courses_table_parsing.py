@@ -342,13 +342,13 @@ def main_programs():
             student_group.max_number_of_exams_spring = None
 
         if fall_data['light_credits'][1] != math.inf:
-            student_group.light_credit_unit_fall = fall_data['light_credits'][1]
+            student_group.max_light_credit_unit_fall = fall_data['light_credits'][1]
         else:
-            student_group.light_credit_unit_fall = None
+            student_group.max_light_credit_unit_fall = None
         if spring_data['light_credits'][1] != math.inf:
-            student_group.light_credit_unit_spring = spring_data['light_credits'][1]
+            student_group.max_light_credit_unit_spring = spring_data['light_credits'][1]
         else:
-            student_group.light_credit_unit_spring = None
+            student_group.max_light_credit_unit_spring = None
 
         if fall_data['cs_courses'][1] != math.inf:
             student_group.max_cs_courses_fall = fall_data['cs_courses'][1]
