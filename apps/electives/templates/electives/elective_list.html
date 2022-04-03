@@ -48,7 +48,6 @@
           $.post("{% url 'electives:change_kind' %}",
               {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
               function(data) {
-									console.log(data);
                   $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
                   $(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
                   if (data['move'] !== null && data['other_language_kind'] !== null) {
@@ -79,12 +78,11 @@
 					let vA = a.dataset[columnName];
 					let vB = b.dataset[columnName];
 					if (columnName === "title") {
-						vA = parseInt(vA);
-						vB = parseInt(vB);
-					}
+              vA = parseInt(vA);
+              vB = parseInt(vB);
+          }
 					return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : 0);
 				});
-				console.log(parent);
 				parent.append(items);
 			}
 
