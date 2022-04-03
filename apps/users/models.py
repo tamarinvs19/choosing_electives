@@ -40,7 +40,6 @@ class Invitation(models.Model):
     @property
     def link(self):
         current_site = Site.objects.get_current()
-        print(current_site)
         return 'https://{domen}/electives/users/invite/?key={key}'.format(
             domen=current_site,
             key=self.invitation_key,

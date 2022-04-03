@@ -3,7 +3,7 @@ from .models import Person, Invitation
 
 
 class InvitationAdmin(admin.ModelAdmin):
-    list_display = ('link', 'deadline')
+    list_display = ('deadline', 'link')
 
 
 admin.site.register(Person)

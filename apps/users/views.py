@@ -5,9 +5,6 @@ from django.contrib.auth.decorators import login_required
 from django.http import Http404
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.views.decorators.http import require_GET
-
-from loguru import logger
 
 from apps.groups.models import Student
 from apps.users.forms import ProfileForm, SignUpForm
@@ -75,18 +72,6 @@ def profile_edit(request, **kwargs):
 def redirect_to_personal_page(request):
     user_id = request.user.id
     return redirect('/electives/users/{0}'.format(user_id))
-
-
-# @require_GET
-# def invite(request):
-#     intitaion_key = request.GET.get('key', None)
-#     if intitaion_key is not None:
-#         if Invitation.objects.filter(
-#             invitation_key=intitaion_key,
-#             deadline__gt=timezone.now(),
-#         ).exists():
-#             return redirect('account_signup')
-#     raise Http404
 
 
 def signup_view(request):
