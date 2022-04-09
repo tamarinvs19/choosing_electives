@@ -1,6 +1,8 @@
 # Choosing electives
 Веб-интерфейс для организации выбора элективов. Создается для повышения удоства этого процесса и упрощения обмена текущей информацией об элективах.
 
+[Репозиторий с UI тестами](https://github.com/tamarinvs19/choosing_electives_ui_tests)
+
 ### Текущие возможности
 #### Для студентов
 * Удобный просмотр курсов, их описаний и обсуждений
@@ -31,3 +33,26 @@ python manage.py runserver
 ```
 
 Для развертывания в Kubernets смотреть ветку [k8s-deploy](https://github.com/tamarinvs19/choosing_electives/tree/k8s-deploy)
+
+### Конфигурация
+Конфигурационные ключи должны располагаться в файле `.env` в корне проекта. Образец можно найти в `.env-template`. 
+
+#### Slack регистрация
+В проекте предполагется возможность регистрации через Slack с помощью модуля `django-allauth`, для этого необходимо [создать](https://slack.com/help/articles/115005265703-%D0%A1%D0%BE%D0%B7%D0%B4%D0%B0%D0%BD%D0%B8%D0%B5-%D0%B1%D0%BE%D1%82%D0%B0-%D0%B4%D0%BB%D1%8F-%D1%80%D0%B0%D0%B1%D0%BE%D1%87%D0%B5%D0%B3%D0%BE-%D0%BF%D1%80%D0%BE%D1%81%D1%82%D1%80%D0%B0%D0%BD%D1%81%D1%82%D0%B2%D0%B0) и задать
+1. Redirect url, согласно [документации allauth](https://django-allauth.readthedocs.io/en/latest/providers.html#slack) 
+2. Permissions, согласно настройкам в `choosing_electives/settings.py`. На данный момент это 
+```python
+    'SCOPE': ['identity.basic', 'openid', 'profile', 'email']
+```
+
+#### Invite
+Кроме регистрации через слак можно создавать ссылки-приглашения на странице администрации. Для создания корректной ссылки должен быть указан правильный domen-name сервера.
+
+#### SMTP
+Также для подтверждения почты, восстановления пароля необходимо задать адрес и пароль для smtp сервера google, либо для любого другого.
+
+#### Postgres
+После установки Postgres необходимо создать пользователя и пустую базу данных, данные о которых необходимо указать в конфигурационном файле.
+
+## Bug-reports
+Все вопросы, предложения, информацию о багах пришите в [Issues](https://github.com/tamarinvs19/choosing_electives/issues)
