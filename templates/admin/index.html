@@ -29,7 +29,12 @@
             <div class="my-button button" style="margin: 5px">{% translate 'Go to parsing page' %}</div>
           </a>
 
+        <a href="{% url 'electives:download_table' %}" download>
+            <div class="my-button button" style="margin: 5px">{% translate 'Download summary table' %}</div>
+        </a>
+
         <div style="margin: 5px" class="my-button button" onclick="restart_counter()">{% translate 'Restart elective counter' %}</div>
+      </div>
 
         <script type="text/javascript">
             function restart_counter() {
