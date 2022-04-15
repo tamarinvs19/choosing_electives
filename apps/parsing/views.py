@@ -2,14 +2,14 @@ from typing import cast
 
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from loguru import logger
 
 from apps.electives.elective_statistic import Statistic
-from apps.parsing.forms import ParsingForm
+from apps.parsing.forms import ParsingForm, TableParsingForm
 
-from apps.parsing import courses_table_parsing
+from apps.parsing import courses_table_parsing, table_parsing
 from apps.parsing.models import ConfigModel
 
 
@@ -33,6 +33,8 @@ def parsing_page(request, **kwargs):
             statistic = Statistic()
             statistic.restart()
 
+            return redirect('/electives/admin/')
+
     else:
         config, _ = ConfigModel.objects.get_or_create()
         initial = {
@@ -44,3 +46,25 @@ def parsing_page(request, **kwargs):
         form = ParsingForm(initial=initial)
 
     return render(request, 'parsing/parsing_page.html', {'form': form})
+
+
+@login_required
+def table_parsing_page(request, **kwargs):
+    if not request.user.is_superuser:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = TableParsingForm(request.POST, request.FILES)
+        if form.is_valid():
+            if form.cleaned_data['create_thematic_keys']:
+                table_parsing.create_default_thematic_keys()
+            table = form.cleaned_data['table']
+            data = [line.decode() for line in table]
+            table_parsing.parse_elective_table(data)
+
+            return redirect('/electives/admin/')
+
+    else:
+        form = TableParsingForm()
+
+    return render(request, 'parsing/table_parsing_page.html', {'form': form})

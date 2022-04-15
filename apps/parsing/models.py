@@ -1,6 +1,17 @@
 from django.db import models
 
 
+class ThematicKey(models.Model):
+    key = models.CharField(max_length=8, unique=True)
+    value = models.TextField()
+
+    def __str__(self):
+        return '<ThematicKey: key={key}, value={value}'.format(
+            key=self.key,
+            value=self.value,
+        )
+
+
 class ConfigModel(models.Model):
     obj = None
 

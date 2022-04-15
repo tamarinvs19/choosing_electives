@@ -19,3 +19,15 @@ class ParsingForm(forms.Form):
         label='Google form URL',
         initial='',
     )
+
+
+class TableParsingForm(forms.Form):
+    table = forms.FileField(
+        label='CSV-table',
+        required=True,
+    )
+    create_thematic_keys = forms.BooleanField(
+        label='Create default thematic keys',
+        initial=False,
+        required=False,
+    )

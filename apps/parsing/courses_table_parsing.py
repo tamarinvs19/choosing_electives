@@ -188,6 +188,13 @@ def create_default_kinds():
         short_name='2',
         default_exam_possibility=ExamPossibility.DEFAULT
     )
+    CreditUnitsKind.objects.get_or_create(
+        credit_units=5,
+        russian_name='Сверхбольшой',
+        english_name='Extra large',
+        short_name='3',
+        default_exam_possibility=ExamPossibility.DEFAULT
+    )
 
 
 def create_default_mandatory_thematics():
