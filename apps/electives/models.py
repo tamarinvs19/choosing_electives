@@ -16,12 +16,14 @@ KIND_NAMES: dict[int, str] = {
     2: 'Семинар',
     3: 'Малый',
     4: 'Большой',
+    5: 'Свехбольшой',
 }
 
 ENGLISH_KIND_NAMES: dict[int, str] = {
     2: 'Seminar',
     3: 'Small',
     4: 'Large',
+    5: 'Extra large',
 }
 
 LANG_NAMES: dict[str, str] = {
@@ -54,7 +56,9 @@ class CreditUnitsKind(models.Model):
     credit_units = models.PositiveSmallIntegerField(default=4)
     russian_name = models.CharField(max_length=50)
     english_name = models.CharField(max_length=50)
-    short_name = models.CharField(max_length=1)
+
+    # Здесь можно писать вместо <s 1 2 3>, например, <с м б сб>, тогда можно избавиться от перевода при парсинге из таблицы
+    short_name = models.CharField(max_length=1)  
 
     default_exam_possibility = models.CharField(
         max_length=2,
@@ -63,7 +67,7 @@ class CreditUnitsKind(models.Model):
     )
 
     def __str__(self):
-        return '{0}: {1}'.format(
+        return '<CreditUnitsKind: name={0}, credit_units={1}>'.format(
             self.russian_name,
             self.credit_units,
         )
@@ -238,16 +242,17 @@ class Elective(models.Model):
     @property
     def translated_name(self) -> str:
         if self.has_english_kind:
-            return self.english_name
+            if len(self.english_name) > 0:
+                return self.english_name
         return self.name
 
     @property
-    def text_kinds(self) -> list[(str, str, str)]:
+    def text_kinds(self) -> list[Tuple[str, str, str]]:
         """Generate the list of kinds as tuple (short_form, long_form, semester)."""
         return [(kind.short_name, kind.long_name, kind.semester) for kind in self.kinds.all()]
 
     @property
-    def text_kinds_with_ids(self) -> list[(str, int)]:
+    def text_kinds_with_ids(self) -> list[Tuple[str, int]]:
         """Generate the list of kinds as tuple (long_form, id)."""
         return [(kind.long_name, kind.id) for kind in self.kinds.all()]
 
