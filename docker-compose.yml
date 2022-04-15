@@ -1,0 +1,39 @@
+version: '3'
+services:
+  server:
+    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      POSTGRES_NAME: emkn
+      POSTGRES_USER: emkn
+      POSTGRES_PASSWORD: emkn
+      POSTGRES_HOST: localhost
+      DJANGO_SECRET_KEY: emkn
+      SLACK_CLIENT_ID: qweqwe
+      SLACK_SECRET: qweqwe
+      EMAIL_HOST_USER: qweqwe
+      EMAIL_HOST_PASSWORD: qweqwe
+    image: ${IT_DOCKER_REGISTRY:-europe-north1-docker.pkg.dev/itk8s-208609/emkn}/server:${BUILD_NUMBER:-latest}
+    restart: always
+    depends_on:
+      - postgres
+  static:
+    build:
+      context: .
+      dockerfile: static.dockerfile
+    image: ${IT_DOCKER_REGISTRY:-europe-north1-docker.pkg.dev/itk8s-208609/emkn}/static:${BUILD_NUMBER:-latest}
+    user: nginx
+    volumes:
+      - "/tmp/:/tmp/"
+    ports:
+      - '8080:8080'
+  postgres:
+    image: postgres:12.9
+    environment:
+      POSTGRES_USER: emkn 
+      POSTGRES_PASSWORD: emkn
+      POSTGRES_DB: emkn
+    ports:
+      - '5432:5432'

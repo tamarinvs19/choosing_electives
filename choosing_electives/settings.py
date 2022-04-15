@@ -18,6 +18,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY') or env['DJANGO_SECRET_KEY']
 DEBUG = env['DEBUG']
 
 ALLOWED_HOSTS = [
+    '*',
     'localhost',
     '127.0.0.1',
 ]
@@ -121,7 +122,7 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
         'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD') or env['POSTGRES_PASSWORD'],
-        'HOST': '127.0.0.1',
+        'HOST': os.environ.get('POSTGRES_HOST') or env['POSTGRES_HOST'],
         'PORT': '5432',
         'CONN_MAX_AGE': 60,
         'OPTIONS': {
@@ -186,3 +187,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'compressed_static')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CONSTANCE_BACKEND = 'constance.backends.memory.MemoryBackend'
