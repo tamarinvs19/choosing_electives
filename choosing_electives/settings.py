@@ -69,6 +69,9 @@ LOGIN_REDIRECT_URL = '/electives/'
 ACCOUNT_LOGOUT_REDIRECT_URL = '/electives/accounts/login/'
 ACCOUNT_SIGNUP_REDIRECT_URL = '/electives/'
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') or env['EMAIL_HOST_USER']
