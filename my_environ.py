@@ -27,4 +27,3 @@ class Env(object):
     def __getitem__(self, key):
         if key in self.VARS:
             return self.VARS[key]
-        #raise KeyError('Key {0} did not exists in the environment'.format(key))
