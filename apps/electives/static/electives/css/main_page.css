@@ -172,3 +172,12 @@ input:checked + .slider:before {
 .switch-button {
   border: none;
 }
+
+.collapsed {
+  background-color: #f8ffff;
+  color: #01579b;
+}
+
+.statistic {
+  cursor: help;
+}

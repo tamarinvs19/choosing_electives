@@ -70,3 +70,7 @@ ul.description-table li:first-child {
         height: 80px;
     }
 }
+
+.statistic {
+	cursor: help;
+}
