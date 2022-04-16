@@ -35,6 +35,9 @@
         {% for elective, languages, info_fall, info_spring in electives %}
 					<div class="elective-row row table-row row-{{ thematic.pk }}"
 						id="row-{{ elective.pk }}"
+            data-russian-name="{{ elective.name }}"
+            data-english-name="{{ elective.english_name }}"
+            data-teachers="{{ elective.text_teachers }}"
 						data-title={{ elective.codename }}
 						data-fall={{ info_fall }}
 						data-spring={{ info_spring }}>

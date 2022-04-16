@@ -22,6 +22,15 @@
         </label>
         </span>
       </div>
+			<hr>
+      <div class="row">
+				<div class="col-md-9">
+					<input id="filterInput" class="form-control me-2" type="search" placeholder="Filter" aria-label="Filter">
+				</div>
+				<div class="col-md-3">
+					<button class="btn btn-outline-success" type="submit" onclick="filterElectives()">Filter</button>
+				</div>
+      </div>
     </div>
   </div>
   <div class="switch-container">
@@ -76,6 +85,23 @@
 					return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : 0);
 				});
 				parent.append(items);
+			}
+
+			function filterElectives() {
+          const filter = document.getElementById('filterInput').value.toLowerCase();
+          const parents = $('.accordion-body');
+          for (let parent of parents) {
+              const items = $(parent).children('.elective-row');
+              items.map(function(number, elective) {
+                  const dataset = elective.dataset;
+                  let include = dataset['title'].toLowerCase().includes(filter) || dataset['russianName'].toLowerCase().includes(filter) || dataset['englishName'].toLowerCase().includes(filter) || dataset['teachers'].toLowerCase().includes(filter);
+                  if (include) {
+                      $(elective).show();
+                  } else {
+                      $(elective).removeAttr("style").hide();
+                  }
+              });
+          }
 			}
 
   </script>
