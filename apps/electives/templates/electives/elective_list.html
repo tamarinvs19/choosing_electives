@@ -66,17 +66,13 @@
       }
 
 			function sortColumn(columnName, thematicId, direction = 1) {
-				if (columnName === "title") {
+				if (columnName === 'title') {
 					direction = -1;
 				}
 				const parent = $(`.thematic-${thematicId}`);
 				const items = parent.children(`.row-${thematicId}`).sort(function(a, b) {
 					let vA = a.dataset[columnName];
 					let vB = b.dataset[columnName];
-					if (columnName === "title") {
-              vA = parseInt(vA);
-              vB = parseInt(vB);
-          }
 					return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : 0);
 				});
 				parent.append(items);

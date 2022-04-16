@@ -16,7 +16,7 @@
         <div class="row title-row">
           <div class="col-5">
             Title
-						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='title' %}
+						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='title' is_active=1%}
           </div>
           <div class="col-3">
             Teachers
@@ -35,7 +35,7 @@
         {% for elective, languages, info_fall, info_spring in electives %}
 					<div class="elective-row row table-row row-{{ thematic.pk }}"
 						id="row-{{ elective.pk }}"
-						data-title={{ elective.pk }}
+						data-title={{ elective.codename }}
 						data-fall={{ info_fall }}
 						data-spring={{ info_spring }}>
           {% for language, semesters in languages %}
@@ -49,9 +49,9 @@
                 {% endif %}
               </a>
             </div>
-            {% if elective.has_russian_kind and language == 'ru' %}
+            {% if elective.has_english_kind and language == 'en' %}
               <div class="col-3">{{ elective.text_teachers }}</div>
-            {% elif elective.has_english_kind and not elective.has_russian_kind %}
+            {% elif elective.has_russian_kind and not elective.has_english_kind %}
               <div class="col-3">{{ elective.text_teachers }}</div>
             {% else %}
               <div class="col-3"></div>

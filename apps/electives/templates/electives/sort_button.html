@@ -1,5 +1,6 @@
 <input id="sort-{{ column_name }}-{{ thematic_id }}" class="sort-electives"
-			 type="radio" name="sortElectives-{{ thematic_id }}"
+			 type="radio" name="sortElectives-{{ thematic_id }}" 
+			 {% if is_active %} checked {% endif %}
 			 onclick="sortColumn('{{ column_name }}', {{ thematic_id }})">
 <span class="sort">
 	<label for="sort-{{ column_name }}-{{ thematic_id }}" class="sort-electives-label">

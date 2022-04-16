@@ -189,14 +189,17 @@ class _Thematic(BaseNode):
     def generate_view(self, student_id: int):
         # TODO: Этот запрос можно вынести, чтобы производить один раз?
         config, _ = ConfigModel.objects.get_or_create()
+        electives_list = [
+            inner_item.generate_view(student_id)
+            for inner_item in self.items.values()
+            if not config.block_fall or (
+                    config.block_fall and inner_item.properties['has_spring']
+            )
+        ]
+        electives_list.sort(key=lambda elective: elective[0]['codename'])
         view = (
-            self.properties, [
-                inner_item.generate_view(student_id)
-                for inner_item in self.items.values()
-                if not config.block_fall or (
-                        config.block_fall and inner_item.properties['has_spring']
-                )
-            ]
+            self.properties,
+            electives_list,
         )
         return view
 
