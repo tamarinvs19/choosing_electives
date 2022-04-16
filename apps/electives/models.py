@@ -12,20 +12,6 @@ from apps.groups.models import StudentGroup
 from apps.users.models import Person
 
 
-KIND_NAMES: dict[int, str] = {
-    2: 'Семинар',
-    3: 'Малый',
-    4: 'Большой',
-    5: 'Свехбольшой',
-}
-
-ENGLISH_KIND_NAMES: dict[int, str] = {
-    2: 'Seminar',
-    3: 'Small',
-    4: 'Large',
-    5: 'Extra large',
-}
-
 LANG_NAMES: dict[str, str] = {
     'ru': 'на русском',
     'en': 'на английском',
@@ -56,9 +42,7 @@ class CreditUnitsKind(models.Model):
     credit_units = models.PositiveSmallIntegerField(default=4)
     russian_name = models.CharField(max_length=50)
     english_name = models.CharField(max_length=50)
-
-    # Здесь можно писать вместо <s 1 2 3>, например, <с м б сб>, тогда можно избавиться от перевода при парсинге из таблицы
-    short_name = models.CharField(max_length=1)  
+    short_name = models.CharField(max_length=2)  
 
     default_exam_possibility = models.CharField(
         max_length=2,
@@ -171,6 +155,7 @@ class ElectiveThematic(models.Model):
 
     name = models.CharField(max_length=200, unique=True)
     english_name = models.CharField(max_length=200, unique=True)
+    short_name = models.CharField(max_length=10, default=None, null=True)
 
     def __str__(self) -> str:
         return str(self.name)
@@ -325,7 +310,7 @@ class StudentOnElective(models.Model):
 
     @property
     def credit_units(self) -> int:
-        if self.with_examination:
+        if self.with_examination or self.kind_of_elective.only_without_exam:
             return self.kind.credit_units
         else:
             return self.kind.credit_units - 1
