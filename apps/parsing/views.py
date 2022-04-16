@@ -57,14 +57,24 @@ def table_parsing_page(request, **kwargs):
         form = TableParsingForm(request.POST, request.FILES)
         if form.is_valid():
             if form.cleaned_data['create_thematic_keys']:
-                table_parsing.create_default_thematic_keys()
+                table_parsing.create_short_thematic_keys()
             table = form.cleaned_data['table']
             data = [line.decode() for line in table]
-            table_parsing.parse_elective_table(data)
+            report = table_parsing.parse_elective_table(data)
 
-            return redirect('/electives/admin/')
+            return render(
+                request,
+                'parsing/report_page.html',
+                {'report': report},
+            )
 
     else:
         form = TableParsingForm()
 
     return render(request, 'parsing/table_parsing_page.html', {'form': form})
+
+
+@login_required
+def parsing_report_page(request, **kwargs):
+    if not request.user.is_superuser:
+        raise PermissionDenied

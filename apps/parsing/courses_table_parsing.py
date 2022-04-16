@@ -171,28 +171,28 @@ def create_default_kinds():
         credit_units=2,
         russian_name='Семинар',
         english_name='Seminar',
-        short_name='s',
+        short_name='c',
         default_exam_possibility=ExamPossibility.ONLY_WITHOUT_EXAM
     )
     CreditUnitsKind.objects.get_or_create(
         credit_units=3,
         russian_name='Малый',
         english_name='Small',
-        short_name='1',
+        short_name='м',
         default_exam_possibility=ExamPossibility.DEFAULT
     )
     CreditUnitsKind.objects.get_or_create(
         credit_units=4,
         russian_name='Большой',
         english_name='Large',
-        short_name='2',
+        short_name='б',
         default_exam_possibility=ExamPossibility.DEFAULT
     )
     CreditUnitsKind.objects.get_or_create(
         credit_units=5,
         russian_name='Сверхбольшой',
         english_name='Extra large',
-        short_name='3',
+        short_name='сб',
         default_exam_possibility=ExamPossibility.DEFAULT
     )
 
@@ -285,6 +285,7 @@ def main_electives():
                     kind=kind,
                 )
                 kind_of_elective.exam_possibility = kind.credit_units_kind.default_exam_possibility
+                kind_of_elective.save()
                 kind_of_elective_ids.append(kind_of_elective.id)
 
             KindOfElective.objects.filter(elective=elective).exclude(id__in=kind_of_elective_ids).delete()

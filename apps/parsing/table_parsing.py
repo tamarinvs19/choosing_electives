@@ -1,21 +1,20 @@
 import csv
+import functools
 from itertools import product
 import re
+import random
+import string
 
 from loguru import logger
 
 from apps.electives.models import ElectiveThematic, Elective, ElectiveKind, CreditUnitsKind, KindOfElective
-from apps.parsing.models import ThematicKey
 
-# Если добавить такое поле в модель, то можно будет убрать
-KIND_KEYS = {
-    'с': 's',
-    'м': '1',
-    'б': '2',
-    'сб': '3',
-}
 
-def create_default_thematic_keys():
+def generate_random_error_name():
+    return 'ErrorName___' + ''.join(random.choices(string.ascii_letters, k=6))
+
+
+def create_short_thematic_keys():
     thematic_keys = {
         'А': 'Aлгебра',
         'АД': 'Анализ данных',
@@ -32,21 +31,19 @@ def create_default_thematic_keys():
         'ТИ': 'Теоретическая информатика',
     }
     for key, value in thematic_keys.items():
-        ThematicKey.objects.get_or_create(
-            key=key,
-            value=value,
+        thematic, created = ElectiveThematic.objects.get_or_create(
+            name=value,
         )
-
-
-def get_thematic(key: str) -> str:
-    thematic_key = ThematicKey.objects.get(key=key)
-    return thematic_key.value
+        thematic.short_name = key
+        if created:
+            thematic.english_name = generate_random_error_name()
+        thematic.save()
 
 
 def parse_credit_types(type_row: str):
     type_row = type_row.replace(' ', '')
     kind_codes = type_row.split(',')
-    return [KIND_KEYS[code] for code in kind_codes]
+    return kind_codes
 
 
 def parse_semesters(text_semesters: str):
@@ -91,10 +88,12 @@ def parse_row(row):
     english_name = row['Title']
     kinds = parse_credit_types(row['Тип курса'])
     text_teachers = row['Предлагает в 2022/23']
+    authors = row['Автор программы']
+    if text_teachers == '':
+        text_teachers = authors
     semesters = parse_semesters(row['Для кого в 21/22 и семестры'])
 
-    # Что делать если несколько тематик? Сейчас беру первый элемент
-    thematic_name = get_thematic(row['Раздел'].replace(' ', '').split(',')[0])
+    thematic_name = row['Раздел'].replace(' ', '').split(',')[0]
 
     languages = [
         lang for lang in row['Язык'].replace(' ', '').split(',')
@@ -104,17 +103,23 @@ def parse_row(row):
     english_description = row['Abstract']
 
     if len(languages) == 0 or len(semesters) == 0 or len(kinds) == 0 or len(codename) == 0:
-        logger.error(f'Missed important fields in {row}')
-        return
+        message = f'Incorrect row:\n {row}'
+        # logger.error(message)
+        return None, message
 
-    if len(row['предлагаем? (если "да", то пустое место)']) == 0:
-        logger.warning(f'This course is not presenting {row}')
-        return
+    if len(row['предлагаем? (если "да", то пустое место)']) != 0:
+        message = f'This course is not presenting {row}'
+        # logger.warning(message)
+        return None, ''
 
-    thematic, _ = ElectiveThematic.objects.get_or_create(
-        name=thematic_name,
+
+    thematic, created = ElectiveThematic.objects.get_or_create(
+        short_name=thematic_name,
     )
-    thematic.english_name = english_name
+    if created:
+        thematic.name = generate_random_error_name()
+        thematic.english_name = generate_random_error_name()
+    thematic.save()
 
     elective, _ = Elective.objects.get_or_create(
         codename=codename,
@@ -141,8 +146,9 @@ def parse_row(row):
             kind=elective_kind,
         )
         kind_of_elective.exam_possibility = credit_units_kind.default_exam_possibility
+        kind_of_elective.save()
 
-    return elective
+    return elective, ''
 
 
 def delete_old_electives(updated_codenames: list[str]):
@@ -153,12 +159,15 @@ def parse_elective_table(fin):
     reader = csv.DictReader(fin)
 
     codenames: list[str] = []
+    report = []
     for row in reader:
-        elective = parse_row(row)
+        elective, report_messages = parse_row(row)
+        if report_messages != '':
+            report.append(report_messages)
         if elective is not None:
             codenames.append(elective.codename)
-
     delete_old_electives(codenames)
+    return report
 
 
 def run_with_local_table(path: str):

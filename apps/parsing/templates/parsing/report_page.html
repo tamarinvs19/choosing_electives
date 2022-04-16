@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+{% block title %}
+Parsing report
+{% endblock %}
+{% block extrastyle %}
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/css/changelists.css' %}" />
+  <link rel="stylesheet" type="text/css" href="{% static 'admin/css/forms.css' %}" />
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.1/dist/js.cookie.min.js"></script>
+{#  <link rel="stylesheet" type="text/css" href="{% static 'parsing/css/parsing_page.css' %}">#}
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+		<code class="report">
+			{% for report_line in report %}
+				<pre> {{report_line}} </pre>
+			{% endfor %}
+		</div>
+  </div>
+
+  <script>
+      const csrftoken = Cookies.get('csrftoken');
+  </script>
+{% endblock %}
