@@ -1,10 +1,10 @@
   <div id="accordionPanelsStayOpen{{ forloop.counter }}"
-       class="div-electives col-md-8 offset-md-2 accordion accordion-item">
+       class="div-electives col-md-8 offset-md-2 accordion-item">
     <h3 class="thematic-name accordion-header"
         id="panelsStayOpen-heading{{ forloop.counter }}">
-      <button class="accordion-button" type="button" data-bs-toggle="collapse"
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
               data-bs-target="#panelsStayOpen-collapse{{ forloop.counter }}"
-              aria-expanded="true"
+              aria-expanded="false"
               aria-controls="panelsStayOpen-collapse{{ forloop.counter }}">
         {{ thematic.name }} / {{ thematic.english_name }}
       </button>
@@ -49,9 +49,9 @@
                 {% endif %}
               </a>
             </div>
-            {% if elective.has_english_kind and language == 'en' %}
+            {% if elective.has_russian_kind and language == 'ru' %}
               <div class="col-3">{{ elective.text_teachers }}</div>
-            {% elif elective.has_russian_kind and not elective.has_english_kind %}
+            {% elif elective.has_english_kind and not elective.has_russian_kind %}
               <div class="col-3">{{ elective.text_teachers }}</div>
             {% else %}
               <div class="col-3"></div>
@@ -64,7 +64,7 @@
               {% if not block_fall or semester == 2 %}
                 {% for kind, info in kinds %}
                 <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.pk }}"
-                       value="{{ elective.codename }}" class="checkbox-kind"
+                       value="{{ elective.pk }}" class="checkbox-kind"
                        onclick="change_kind({{ elective.pk }}, {{ kind.pk }})"
                         {% if info.1.1 or info.0.1 %} checked {% endif %}>
                 <label for="button-{{ kind.short_name }}-{{ elective.pk }}"
