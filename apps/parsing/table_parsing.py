@@ -107,9 +107,9 @@ def parse_row(row):
         logger.error(f'Missed important fields in {row}')
         return
 
-    # if len(row['предлагаем? (если "да", то пустое место)']) == 0:
-    #     logger.warning(f'This course is not presenting {row}')
-    #     return
+    if len(row['предлагаем? (если "да", то пустое место)']) == 0:
+        logger.warning(f'This course is not presenting {row}')
+        return
 
     thematic, _ = ElectiveThematic.objects.get_or_create(
         name=thematic_name,
