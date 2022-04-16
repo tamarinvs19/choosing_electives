@@ -51,12 +51,12 @@ class ElectiveKindAdmin(admin.ModelAdmin):
 
 class ElectiveThematicAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['name', 'english_name']}),
+        (None, {'fields': ['name', 'english_name', 'short_name']}),
     ]
     inlines = [
         MandatoryThematicInline,
     ]
-    list_display = ('name', 'english_name')
+    list_display = ('name', 'english_name', 'short_name')
 
 
 class ApplicationAdmin(admin.ModelAdmin):
