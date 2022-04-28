@@ -74,3 +74,7 @@ ul.description-table li:first-child {
 .statistic {
 	cursor: help;
 }
+
+.attached-application {
+    background-color: lightgreen;
+}

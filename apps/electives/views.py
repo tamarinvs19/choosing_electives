@@ -32,6 +32,8 @@ def open_elective_list(request, **kwargs):
     context = {
         'elective_groups': groups,
         'block_fall': config.block_fall,
+        'block_fall_applications': config.block_fall_applications,
+        'block_spring_applications': config.block_spring_applications,
     }
     return render(request, 'electives/elective_list.html', context)
 
@@ -44,11 +46,12 @@ def open_elective_page(request, elective_id, **kwargs):
     for application in StudentOnElective.objects.filter(
         elective=elective,
     ).select_related('student').only('student'):
-        students[application.student].add(application.kind.short_name)
+        students[application.student].add((application.kind.short_name, application.attached))
     statistic = {
         kind: logic.get_statistics(elective, kind)
         for kind in elective.kinds.all()
     }
+    config, _ = ConfigModel.objects.get_or_create()
     context = {
         'elective': elective,
         'students': list(students.items()),
@@ -56,7 +59,8 @@ def open_elective_page(request, elective_id, **kwargs):
         'kinds': [
             (data, statistic[data.kind])
             for data in logic.get_student_elective_kinds(user, elective)
-        ]
+        ],
+        'show_student_names': config.show_student_names,
     }
     return render(request, 'electives/elective_page.html', context)
 
@@ -130,7 +134,7 @@ def change_application_exam(request, **kwargs):
             })
         else:
             return JsonResponse({
-                'message': 'There are any applications with received id.',
+                'message': 'Can not change examination',
                 'OK': False,
             })
     return HttpResponseBadRequest
@@ -148,12 +152,12 @@ def change_application_kind(request, **kwargs):
         )
         kind = ElectiveKind.objects.get(pk=kind_id)
         student_on_elective = logic.change_kind(student_on_elective, kind)
-        all_applications = StudentOnElective.objects.filter(
-            student=student_on_elective.student,
-            elective=student_on_elective.elective,
-            kind=student_on_elective.kind
-        )
         if student_on_elective is not None:
+            all_applications = StudentOnElective.objects.filter(
+                student=student_on_elective.student,
+                elective=student_on_elective.elective,
+                kind=student_on_elective.kind
+            )
             return JsonResponse({
                 'all_applications': [application.id for application in all_applications],
                 'full_kind': student_on_elective.kind.middle_name,
@@ -166,7 +170,7 @@ def change_application_kind(request, **kwargs):
             })
         else:
             return JsonResponse({
-                'message': 'There are not any applications or kind with received ids.',
+                'message': 'Can not change kind',
                 'OK': False,
             })
     return HttpResponseBadRequest
@@ -184,6 +188,7 @@ def attach_application(request, **kwargs):
         if sone is None:
             response = {
                 'OK': False,
+                'message': 'Can not move application',
             }
         else:
             response = {
@@ -200,10 +205,16 @@ def remove_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     if student_on_elective_id is not None:
         application = StudentOnElective.objects.get(pk=int(student_on_elective_id))
-        logic.remove_application(application)
-        return JsonResponse({
-            'OK': True,
-        })
+        success = logic.remove_applications(application)
+        if success:
+            return JsonResponse({
+                'OK': True,
+            })
+        else:
+            return JsonResponse({
+                'OK': False,
+                'message': 'Can not remove application',
+            })
     return HttpResponseBadRequest
 
 
@@ -236,21 +247,27 @@ def duplicate_application(request, **kwargs):
     if student_on_elective_id is not None:
         application = StudentOnElective.objects.get(pk=int(student_on_elective_id))
         new_application = logic.duplicate_application(application)
-        prev_id = '#application-{0}-{1}{2}'.format(
-            student_on_elective_id,
-            1 if new_application.elective.has_fall else '',
-            2 if new_application.elective.has_spring else ''
-        )
-        render_application = render_to_string(
-            'electives/application_card.html',
-            context={'application': new_application},
-            request=request,
-        )
-        return JsonResponse({
-            'OK': True,
-            'application': str(render_application),
-            'prev_id': prev_id,
-        })
+        if new_application is not None:
+            prev_id = '#application-{0}-{1}{2}'.format(
+                student_on_elective_id,
+                1 if new_application.elective.has_fall else '',
+                2 if new_application.elective.has_spring else ''
+            )
+            render_application = render_to_string(
+                'electives/application_card.html',
+                context={'application': new_application},
+                request=request,
+            )
+            return JsonResponse({
+                'OK': True,
+                'application': str(render_application),
+                'prev_id': prev_id,
+            })
+        else:
+            return JsonResponse({
+                'OK': False,
+                'message': 'Can not duplicate application'
+            })
     return HttpResponseBadRequest
 
 
@@ -314,8 +331,13 @@ def open_sorting_page(request, user_id, **kwargs):
             'min': person.student_data.student_group.min_credit_unit_spring,
             'sum': logic.calc_sum_credit_units(person, 2),
         },
-        'google_form_url': config.google_form_url,
+        'show_google_form': config.show_google_form,
+        'block_fall_applications': config.block_fall_applications,
+        'block_spring_applications': config.block_spring_applications,
     }
+    if config.show_google_form:
+        context['google_form_url'] = config.google_form_url
+
     return render(request, 'electives/sort_electives.html', context)
 
 

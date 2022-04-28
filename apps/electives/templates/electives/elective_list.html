@@ -21,7 +21,7 @@
   <div class="accordion accordion-flush" id="accordionPanelsElective">
   {% for thematic, electives in elective_groups %}
 		{% if electives|length > 0 %}
-    {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id %}
+    {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id block_fall_applications=block_fall_applications block_spring_applications=block_spring_applications%}
 		{% endif %}
   {% endfor %}
   </div>

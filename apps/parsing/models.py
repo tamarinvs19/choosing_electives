@@ -15,6 +15,12 @@ class ConfigModel(models.Model):
     )
     block_fall = models.BooleanField(default=False)
 
+    show_google_form = models.BooleanField(default=True)
+    show_slack_login = models.BooleanField(default=True)
+    show_student_names = models.BooleanField(default=True)
+    block_fall_applications = models.BooleanField(default=False)
+    block_spring_applications = models.BooleanField(default=False)
+
     def __new__(cls, *args, **kwargs):
         if cls.obj is None:
             cls.obj = object.__new__(cls)

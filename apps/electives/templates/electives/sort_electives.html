@@ -39,6 +39,7 @@ Selected electives
       </div>
     </div>
   </div>
+	{% if show_google_form %}
   <div class="row application-row">
     <div class="col-2 title-codes">
       <span>Google Form</span>
@@ -49,6 +50,7 @@ Selected electives
       </div>
     </div>
   </div>
+	{% endif %}
   <div class="row canvas">
     <div class="col-xl-3 col-6 fall-column column">
       <div class="title">
@@ -162,106 +164,114 @@ Selected electives
   }
 
   let currentDrag;
-  let maybeFallSortable = new Sortable(maybeFall, {
-      group: {
-          name: 'electives',
-          put: function (_) {
-              const applicationSemesters = currentDrag.id.split('-')[2];
-              return currentDrag !== undefined && applicationSemesters !== '2';
+  let maybeFallSortable;
+  let fallSortable;
+  let maybeSpringSortable;
+  let springSortable;
+  if ('{{ block_fall_applications }}' === 'False') {
+      maybeFallSortable = new Sortable(maybeFall, {
+          group: {
+              name: 'electives',
+              put: function (_) {
+                  const applicationSemesters = currentDrag.id.split('-')[2];
+                  return currentDrag !== undefined && applicationSemesters !== '2';
+              },
           },
-      },
-      animation: 150,
-      onStart: function (evt) {
-          currentDrag = evt.item;
-      },
-      onEnd: function (evt) {
-          attachApplication(currentDrag, evt.to.id, evt.newIndex);
-          currentDrag = undefined;
-      },
-      onClone: function (evt) {
-          let origEl = evt.item;
-          $(origEl).css('background', '#fdeaa8');
-      },
-      onUnchoose: function (evt) {
-          let application = evt.item;
-          $(application).css('background', 'white');
-      },
-  });
-  let fallSortable = new Sortable(fall, {
-      group: {
-          name: 'electives',
-          put: function (_) {
-              const applicationSemesters = currentDrag.id.split('-')[2];
-              return currentDrag !== undefined && applicationSemesters !== '2';
+          animation: 150,
+          onStart: function (evt) {
+              currentDrag = evt.item;
           },
-      },
-      animation: 150,
-      onStart: function (evt) {
-          currentDrag = evt.item;
-      },
-      onEnd: function (evt) {
-          attachApplication(currentDrag, evt.to.id, evt.newIndex);
-          currentDrag = undefined;
-      },
-      onClone: function (evt) {
-          let origEl = evt.item;
-          $(origEl).css('background', '#fdeaa8');
-      },
-      onUnchoose: function (evt) {
-          let application = evt.item;
-          $(application).css('background', 'white');
-      },
-  });
-  let maybeSpringSortable = new Sortable(maybeSpring, {
-      group: {
-          name: 'electives',
-          put: function (_) {
-              const applicationSemesters = currentDrag.id.split('-')[2];
-              return currentDrag !== undefined && applicationSemesters !== '1';
+          onEnd: function (evt) {
+              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              currentDrag = undefined;
           },
-      },
-      animation: 150,
-      onStart: function (evt) {
-          currentDrag = evt.item;
-      },
-      onEnd: function (evt) {
-          attachApplication(currentDrag, evt.to.id, evt.newIndex);
-          currentDrag = undefined;
-      },
-      onClone: function (evt) {
-          let origEl = evt.item;
-          $(origEl).css('background', '#fdeaa8');
-      },
-      onUnchoose: function (evt) {
-          let application = evt.item;
-          $(application).css('background', 'white');
-      },
-  });
-  let springSortable = new Sortable(spring, {
-      group: {
-          name: 'electives',
-          put: function (_) {
-              const applicationSemesters = currentDrag.id.split('-')[2];
-              return currentDrag !== undefined && applicationSemesters !== '1';
+          onClone: function (evt) {
+              let origEl = evt.item;
+              $(origEl).css('background', '#fdeaa8');
           },
-      },
-      animation: 150,
-      onStart: function (evt) {
-          currentDrag = evt.item;
-      },
-      onEnd: function (evt) {
-          attachApplication(currentDrag, evt.to.id, evt.newIndex);
-          currentDrag = undefined;
-      },
-      onClone: function (evt) {
-          let origEl = evt.item;
-          $(origEl).css('background', '#fdeaa8');
-      },
-      onUnchoose: function (evt) {
-          let application = evt.item;
-          $(application).css('background', 'white');
-      },
-  });
+          onUnchoose: function (evt) {
+              let application = evt.item;
+              $(application).css('background', 'white');
+          },
+      });
+      fallSortable = new Sortable(fall, {
+          group: {
+              name: 'electives',
+              put: function (_) {
+                  const applicationSemesters = currentDrag.id.split('-')[2];
+                  return currentDrag !== undefined && applicationSemesters !== '2';
+              },
+          },
+          animation: 150,
+          onStart: function (evt) {
+              currentDrag = evt.item;
+          },
+          onEnd: function (evt) {
+              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              currentDrag = undefined;
+          },
+          onClone: function (evt) {
+              let origEl = evt.item;
+              $(origEl).css('background', '#fdeaa8');
+          },
+          onUnchoose: function (evt) {
+              let application = evt.item;
+              $(application).css('background', 'white');
+          },
+      });
+  }
+  if ('{{ block_spring_applications }}' === 'False') {
+      maybeSpringSortable = new Sortable(maybeSpring, {
+          group: {
+              name: 'electives',
+              put: function (_) {
+                  const applicationSemesters = currentDrag.id.split('-')[2];
+                  return currentDrag !== undefined && applicationSemesters !== '1';
+              },
+          },
+          animation: 150,
+          onStart: function (evt) {
+              currentDrag = evt.item;
+          },
+          onEnd: function (evt) {
+              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              currentDrag = undefined;
+          },
+          onClone: function (evt) {
+              let origEl = evt.item;
+              $(origEl).css('background', '#fdeaa8');
+          },
+          onUnchoose: function (evt) {
+              let application = evt.item;
+              $(application).css('background', 'white');
+          },
+      });
+      springSortable = new Sortable(spring, {
+          group: {
+              name: 'electives',
+              put: function (_) {
+                  const applicationSemesters = currentDrag.id.split('-')[2];
+                  return currentDrag !== undefined && applicationSemesters !== '1';
+              },
+          },
+          animation: 150,
+          onStart: function (evt) {
+              currentDrag = evt.item;
+          },
+          onEnd: function (evt) {
+              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              currentDrag = undefined;
+          },
+          onClone: function (evt) {
+              let origEl = evt.item;
+              $(origEl).css('background', '#fdeaa8');
+          },
+          onUnchoose: function (evt) {
+              let application = evt.item;
+              $(application).css('background', 'white');
+          },
+      });
+  }
 
   function changeExam(applicationId) {
       $.post("{% url 'electives:change_application_exam' %}",
@@ -270,6 +280,9 @@ Selected electives
               if (data['OK'] === true) {
                   $(`#credits-${applicationId}`)[0].innerHTML = data['credit_units'];
                   updateCodes();
+              } else {
+                  let checkbox = $(`#exam-${applicationId}`)[0];
+                  checkbox.checked = !checkbox.checked;
               }
               if (data['message']) {
                   addToast('', data['message'])
@@ -333,7 +346,9 @@ Selected electives
               } else {
                   return false;
               }
-              //show message
+              if (data['message']) {
+                  addToast('', data['message'])
+              }
           }
       );
   }
@@ -350,6 +365,9 @@ Selected electives
                 $(`#application-${applicationId}-12`).remove()
                 $(`#application-${applicationId}-2`).remove()
                 updateCodes();
+            }
+            if (data['message']) {
+                addToast('', data['message'])
             }
           }
       );

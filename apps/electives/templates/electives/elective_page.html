@@ -77,11 +77,12 @@
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                      data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      data-bs-target="#collapseThree" aria-expanded="true" aria-controls="collapseThree">
                 Students
                  <span class="info-counter badge rounded-pill bg-light text-dark">{{ students_count }}</span>
               </button>
             </h2>
+						{% if show_student_names %}
             <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
               <div class="accordion-body">
                 <ol class="students-list list-group list-group-numbered">
@@ -89,8 +90,8 @@
                     <li class="list-group-item">
                       {{ student }}
                       <div class="kind-box kind-box-{{ student.id }}">
-                        {% for kind in kinds %}
-                          <div class="elective-kind elective-kind-{{ student.id }}">
+                        {% for kind, attached in kinds %}
+                          <div class="elective-kind elective-kind-{{ student.id }} {% if attached %} attached-application {% endif %}">
                             {{ kind }}
                           </div>
                         {% endfor %}
@@ -100,6 +101,7 @@
                 </ol>
               </div>
             </div>
+						{% endif %}
           </div>
         </div>
       </div>
@@ -153,7 +155,9 @@
                     $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
                     $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
                     $(`#${data['other_short_name']}`)[0].checked = false;
+                    $(`.info-counter`).innerText = data['students_count'][true];
                 }
+							{% if show_student_names %}
                 let kindBox = $(`.kind-box-${data['user_id']}`);
                 if (kindBox.length === 0) {
                     let studentList = $(`.students-list`);
@@ -168,6 +172,7 @@
                         `<div class='elective-kind elective-kind-${data["user_id"]}'>${kind}</div>`
                     );
                 }
+							{% endif %}
             });
     }
   </script>

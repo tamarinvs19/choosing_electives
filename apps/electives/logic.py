@@ -3,11 +3,13 @@ from typing import List, Dict, Optional
 
 import xlsxwriter
 
-from django.db.models import F, Max, Count
+from django.db.models import F, Max, Count, QuerySet
 from loguru import logger
+from model_utils import FieldTracker
 
 from apps.electives.elective_statistic import Statistic
 from apps.electives.models import KindOfElective, Elective, StudentOnElective, ElectiveKind
+from apps.parsing.models import ConfigModel
 from apps.users.models import Person
 
 
@@ -93,6 +95,25 @@ def get_student_elective_kinds(
     ]
 
 
+def update_similar_application(
+    kind: ElectiveKind,
+    similar_applications: list[StudentOnElective],
+    kind_of_elective: KindOfElective,
+) -> None:
+    """
+    Update applications from similar_applications
+    """
+
+    for similar_application in similar_applications:
+        if similar_application.kind.language != kind.language:
+            if similar_application.with_examination and kind_of_elective.only_without_exam:
+                similar_application.with_examination = False
+            if not similar_application.with_examination and kind_of_elective.only_with_exam:
+                similar_application.with_examination = True
+            similar_application.kind = kind
+            similar_application.save()
+
+
 def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Optional[StudentOnElective]:
     """
     If this student has applications for this elective and this kind
@@ -116,9 +137,13 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
     ).all()
 
     if len(kind_similar_application) >= 1:
-        kind_similar_application.delete()
+        success = remove_applications(kind_similar_application)
+        if not success:
+            return None
     else:
         if kind not in elective.kinds.all():
+            return None
+        if not check_application_operation(kind):
             return None
 
         max_priority = StudentOnElective.objects.filter(
@@ -139,14 +164,7 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
             elective=elective,
             kind=kind,
         )
-        for similar_application in similar_applications:
-            if similar_application.kind.language != kind.language:
-                if similar_application.with_examination and kind_of_elective.only_without_exam:
-                    similar_application.with_examination = False
-                if not similar_application.with_examination and kind_of_elective.only_with_exam:
-                    similar_application.with_examination = True
-                similar_application.kind = kind
-                similar_application.save()
+        update_similar_application(kind, similar_applications, kind_of_elective)
 
         new_application = StudentOnElective.objects.create(
             student=student,
@@ -158,14 +176,16 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
         return new_application
 
 
-def change_exam(application: StudentOnElective) -> StudentOnElective:
+def change_exam(application: StudentOnElective) -> Optional[StudentOnElective]:
     """
     Invert value with_examination if it is possible.
 
     @param application: the application
-    @return: updated application
+    @return: updated application or None if updating is impossible
     """
     kind_of_elective = application.kind_of_elective
+    if not check_application_operation(application.kind, application.tracker):
+        return None
     if kind_of_elective.changing_exam_is_possible:
         application.with_examination = not application.with_examination
         application.save()
@@ -187,6 +207,10 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
 
     if kind not in application.elective.kinds.all():
         return None
+    if not check_application_operation(kind):
+        return None
+    if not check_application_operation(application.kind, application.tracker):
+        return None
 
     similar_applications = StudentOnElective.objects.filter(
         student=application.student,
@@ -202,14 +226,7 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
         kind=kind,
     )
 
-    for similar_application in similar_applications:
-        if similar_application.kind.language != kind.language:
-            if similar_application.with_examination and kind_of_elective.only_without_exam:
-                similar_application.with_examination = False
-            if not similar_application.with_examination and kind_of_elective.only_with_exam:
-                similar_application.with_examination = True
-            similar_application.kind = kind
-            similar_application.save()
+    update_similar_application(kind, similar_applications, kind_of_elective)
 
     if application.kind.semester != kind.semester:
         StudentOnElective.objects.filter(
@@ -248,6 +265,9 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     @param new_index: new index in the target column
     @return: modified application or None if the new kind is not correct
     """
+
+    if not check_application_operation(application.kind, application.tracker):
+        return None
 
     kind = application.kind
     elective = application.elective
@@ -303,13 +323,50 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     return application
 
 
-def remove_application(application: StudentOnElective) -> None:
+def check_application_operation(
+    application_kind: ElectiveKind,
+    tracker: Optional[FieldTracker] = None,
+) -> bool:
     """
-    Remove application to target column with new_index.
+    Checks whether it is possible to delete, create or update application with application_kind and tracker.
 
-    @param application: removing application
+    @param application_kind: current or new kind
+    @param tracker: [Optional] tracker if exists
+
+    @return True if kind was not blocked and False else
     """
-    application.delete()
+    config, _ = ConfigModel.objects.get_or_create()
+    if config.block_fall_applications:
+        if application_kind.semester == 1:
+            return False
+        if tracker is not None and 'kind' in tracker.changed():
+            if tracker.changed()['kind'].semester == 1:
+                return False
+    elif config.block_spring_applications:
+        if application_kind.semester == 2:
+            return False
+        if tracker is not None and 'kind' in tracker.changed():
+            if tracker.changed()['kind'].semester == 2:
+                return False
+    return True
+
+
+def remove_applications(applications: QuerySet[StudentOnElective] | StudentOnElective) -> bool:
+    """
+    Remove applications to target column with new_index.
+
+    @param applications: removing applications
+
+    @return status, True if application was removed and False else
+    """
+    if isinstance(applications, StudentOnElective):
+        applications = [applications]
+    config, _ = ConfigModel.objects.get_or_create()
+    for application in applications:
+        if not check_application_operation(application.kind, application.tracker):
+            return False
+    count, _ = applications.delete()
+    return count > 0
 
 
 def generate_application_row(student: Person, semester: int) -> str:
@@ -353,14 +410,17 @@ def calc_sum_credit_units(student: Person, semester: int, attached: bool = True)
     )
 
 
-def duplicate_application(application: StudentOnElective) -> StudentOnElective:
+def duplicate_application(application: StudentOnElective) -> Optional[StudentOnElective]:
     """
     Create a copy of this application
 
     @param application: application for creating copy
 
-    @return new application
+    @return new application or None if creating is impossible
     """
+
+    if not check_application_operation(application.kind):
+        return None
 
     StudentOnElective.objects.filter(
         student=application.student,

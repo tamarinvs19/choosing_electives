@@ -6,10 +6,13 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import F
 
+from loguru import logger
+
 from model_utils import FieldTracker
 
 from apps.groups.models import StudentGroup
 from apps.users.models import Person
+from apps.parsing.models import ConfigModel
 
 
 LANG_NAMES: dict[str, str] = {
@@ -280,7 +283,9 @@ class StudentOnElective(models.Model):
     attached = models.BooleanField(default=False)
     priority = models.PositiveIntegerField(default=0)
 
-    tracker = FieldTracker(fields=['kind', 'attached'])
+    tracker = FieldTracker(
+        fields=['kind', 'attached', 'priority', 'with_examination'],
+    )
 
     def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         StudentOnElective.objects.filter(

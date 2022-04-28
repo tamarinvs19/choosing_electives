@@ -68,7 +68,9 @@
                 <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.pk }}"
                        value="{{ elective.pk }}" class="checkbox-kind"
                        onclick="change_kind({{ elective.pk }}, {{ kind.pk }})"
-                        {% if info.1.1 or info.0.1 %} checked {% endif %}>
+                       {% if block_fall_applications and kind.semester == 1 %} disabled {% endif %}
+                       {% if block_spring_applications and kind.semester == 2 %} disabled {% endif %}
+                       {% if info.1.1 or info.0.1 %} checked {% endif %}>
                 <label for="button-{{ kind.short_name }}-{{ elective.pk }}"
                        class="semester-{{ kind.semester }} kind-button"
                        title="{{ kind.long_name }}">
