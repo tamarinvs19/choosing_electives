@@ -7,40 +7,17 @@
   <link rel="stylesheet" type="text/css" href="{% static 'electives/css/main_page.css' %}">
 {% endblock %}
 {% block body %}
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-    <div class="offcanvas-header">
-      <h5 id="offcanvasRightLabel">Additional options</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div class="row">
-        <span>
-          Open all thematics
-        <label class="switch">
-          <input type="checkbox" onchange="clickSwitch(this)">
-          <span class="slider round"></span>
-        </label>
-        </span>
+      <div class="row col-md-8 offset-md-2 options-header">
+					<div class="col-md-6">
+						<button type="button" class="btn btn-outline-secondary thematic-switch" onclick="clickSwitch(this)">
+							Unroll
+						</button>
+					</div>
+					<div class="col-md-6">
+						<input id="filterInput" class="form-control me-0" type="search" placeholder="Keywords" aria-label="Filter">
+						<button class="btn btn-outline-success filter-electives" type="submit" onclick="filterElectives()">Filter</button>
+					</div>
       </div>
-			<hr>
-      <div class="row">
-				<div class="col-9">
-					<input id="filterInput" class="form-control me-2" type="search" placeholder="Filter" aria-label="Filter">
-				</div>
-				<div class="col-3">
-					<button class="btn btn-outline-success" type="submit" onclick="filterElectives()">Filter</button>
-				</div>
-      </div>
-    </div>
-  </div>
-  <div class="switch-container">
-    <button class="switch-button btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="offcanvas"
-            data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
-				  <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-			</svg>
-    </button>
-  </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
   {% for thematic, electives in elective_groups %}
 		{% if electives|length > 0 %}
@@ -67,16 +44,19 @@
       }
 
       function clickSwitch(input) {
-          if (input.checked) {
-              $('.accordion-collapse').addClass('show');
-          } else {
-              $('.accordion-collapse').removeClass('show');
-          }
+				if (input.hasAttribute('opened')) {
+					input.removeAttribute('opened');
+					$('.accordion-collapse').removeClass('show');
+					input.innerText = 'Unroll';
+				} else {
+					input.setAttribute('opened', true);
+					$('.accordion-collapse').addClass('show');
+					input.innerText = 'Roll';
+				}
       }
 
 			function sortColumn(columnName, thematicId, direction = 1) {
 				let self = $(`#sort-${columnName}-${thematicId}`)[0];
-				console.log(self, self.checked)
 				if (self.hasAttribute('sorted')) {
 					self.removeAttribute('sorted');
 					$(self).prop('checked', false);

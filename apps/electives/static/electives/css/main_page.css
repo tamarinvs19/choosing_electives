@@ -76,12 +76,10 @@
 
 /* The switch - the box around the slider */
 .switch {
-  position: relative;
-  display: inline-block;
   width: 60px;
   height: 34px;
   top: -6px;
-  margin-left: calc(100% - 200px);
+  /* margin-left: calc(100% - 200px); */
 }
 
 /* Hide default HTML checkbox */
@@ -181,3 +179,32 @@ input:checked + .slider:before {
 .statistic {
   cursor: help;
 }
+
+.thematic-switch {
+	width: 100%;
+}
+
+.form-control {
+  display: inline-block;
+  width: calc(100% - 75px);
+  font-size: 1rem; 
+}
+
+.options-header {
+  padding: 10px;
+}
+
+.options-header > .col-md-6 {
+	margin-bottom: 5px;
+}
+
+.filter-electives {
+  margin-top: -3px;
+}
+
+@media (max-width: 767px) {
+  .options-header {
+	margin: 0;
+  }
+}
+
