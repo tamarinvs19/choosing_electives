@@ -18,6 +18,10 @@ body {
 
 footer {
     flex-shrink: 0;
+		z-index: 999;
+		position: relative;
+		background-color: white;
+		margin-top: 30%;
 }
 
 .footer-container {
