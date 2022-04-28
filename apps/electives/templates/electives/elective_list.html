@@ -10,7 +10,7 @@
   <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
     <div class="offcanvas-header">
       <h5 id="offcanvasRightLabel">Additional options</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Закрыть"></button>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
       <div class="row">
@@ -24,10 +24,10 @@
       </div>
 			<hr>
       <div class="row">
-				<div class="col-md-9">
+				<div class="col-9">
 					<input id="filterInput" class="form-control me-2" type="search" placeholder="Filter" aria-label="Filter">
 				</div>
-				<div class="col-md-3">
+				<div class="col-3">
 					<button class="btn btn-outline-success" type="submit" onclick="filterElectives()">Filter</button>
 				</div>
       </div>
@@ -75,6 +75,15 @@
       }
 
 			function sortColumn(columnName, thematicId, direction = 1) {
+				let self = $(`#sort-${columnName}-${thematicId}`)[0];
+				console.log(self, self.checked)
+				if (self.hasAttribute('sorted')) {
+					self.removeAttribute('sorted');
+					$(self).prop('checked', false);
+					columnName = 'title';
+				} else {
+					self.setAttribute('sorted', true);
+				}
 				if (columnName === 'title') {
 					direction = -1;
 				}
