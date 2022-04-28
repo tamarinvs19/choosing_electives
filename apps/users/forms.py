@@ -1,6 +1,4 @@
 from django import forms
-from django.http import Http404
-from django.utils import timezone
 
 from apps.groups.models import StudentGroup
 from django.contrib.auth.forms import UserCreationForm

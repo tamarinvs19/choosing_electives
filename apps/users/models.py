@@ -31,11 +31,22 @@ def generate_invitation_key(length: int = 40) -> str:
 
 
 class Invitation(models.Model):
-    invitation_key = models.CharField(max_length=100, default=generate_invitation_key())
+    invitation_key = models.CharField(max_length=100, null=True, blank=True)
     deadline = models.DateTimeField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(
+        self,
+        force_insert=False,
+        force_update=False,
+        using=None,
+        update_fields=None,
+    ):
+        if self.invitation_key is None:
+            self.invitation_key = generate_invitation_key()
+        super().save(force_insert, force_update, using, update_fields)
 
     @property
     def link(self):
