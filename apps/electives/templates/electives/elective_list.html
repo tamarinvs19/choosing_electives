@@ -7,17 +7,17 @@
   <link rel="stylesheet" type="text/css" href="{% static 'electives/css/main_page.css' %}">
 {% endblock %}
 {% block body %}
-      <div class="row col-md-8 offset-md-2 options-header">
-					<div class="col-md-6">
-						<button type="button" class="btn btn-outline-secondary thematic-switch" onclick="clickSwitch(this)">
-							Unroll
-						</button>
-					</div>
-					<div class="col-md-6">
-						<input id="filterInput" class="form-control me-0" type="search" placeholder="Keywords" aria-label="Filter">
-						<button class="btn btn-outline-success filter-electives" type="submit" onclick="filterElectives()">Filter</button>
-					</div>
-      </div>
+<div class="row col-md-8 offset-md-2 options-header">
+		<div class="col-md-6">
+			<button type="button" class="btn btn-outline-secondary thematic-switch" onclick="clickSwitch(this)">
+				Unroll
+			</button>
+		</div>
+		<div class="col-md-6">
+			<input id="filterInput" class="form-control me-0" type="search" placeholder="Keywords" aria-label="Filter">
+			<button class="btn btn-outline-success filter-electives" type="submit" onclick="filterElectives()">Filter</button>
+		</div>
+</div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
   {% for thematic, electives in elective_groups %}
 		{% if electives|length > 0 %}
@@ -92,6 +92,5 @@
               });
           }
 			}
-
   </script>
 {% endblock %}

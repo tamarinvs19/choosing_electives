@@ -192,6 +192,10 @@ input:checked + .slider:before {
 
 .options-header {
   padding: 10px;
+	background-color: white;
+	position: fixed;
+	bottom: 0px;
+	z-index: 99;
 }
 
 .options-header > .col-md-6 {
@@ -207,4 +211,3 @@ input:checked + .slider:before {
 	margin: 0;
   }
 }
-
