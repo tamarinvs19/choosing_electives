@@ -44,15 +44,21 @@
       }
 
       function clickSwitch(input) {
-				if (input.hasAttribute('opened')) {
-					input.removeAttribute('opened');
-					$('.accordion-collapse').removeClass('show');
-					input.innerText = 'Unroll';
-				} else {
-					input.setAttribute('opened', true);
-					$('.accordion-collapse').addClass('show');
-					input.innerText = 'Roll';
-				}
+          if (input.hasAttribute('opened')) {
+              input.removeAttribute('opened');
+              $('.accordion-collapse').removeClass('show');
+              let accordionButton = $('.accordion-button')
+              accordionButton.attr('aria-expanded', 'false');
+              accordionButton.addClass('collapsed');
+              input.innerText = 'Unroll';
+          } else {
+              input.setAttribute('opened', true);
+              $('.accordion-collapse').addClass('show');
+              let accordionButton = $('.accordion-button')
+              accordionButton.attr('aria-expanded', 'true');
+              accordionButton.removeClass('collapsed');
+              input.innerText = 'Roll';
+          }
       }
 
 			function sortColumn(columnName, thematicId, direction = 1) {
