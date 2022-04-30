@@ -13,6 +13,7 @@ Selected electives
   <div class="row title-row">
     <h2>Your applications</h2>
   </div>
+  {% if show_google_form %}
   <div class="row application-row">
     <div class="col-2 title-codes">
       <span>Fall request</span>
@@ -39,7 +40,6 @@ Selected electives
       </div>
     </div>
   </div>
-	{% if show_google_form %}
   <div class="row application-row">
     <div class="col-2 title-codes">
       <span>Google Form</span>
@@ -374,6 +374,7 @@ Selected electives
   }
 
   function updateCodes() {
+      {% if show_google_form %}
       $.get("{% url 'electives:get_application_rows' %}",
           {},
           function (data) {
@@ -385,6 +386,7 @@ Selected electives
               $('.maybe-spring-credits').html(data['credit_units_maybe_spring']['sum']);
           }
       );
+      {% endif %}
   }
 
   function duplicateApplication(applicationId) {
