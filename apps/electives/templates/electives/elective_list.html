@@ -83,13 +83,17 @@
 			}
 
 			function filterElectives() {
-          const filter = document.getElementById('filterInput').value.toLowerCase();
+          const filter = document.getElementById('filterInput').value.toLowerCase().trim();
           const parents = $('.accordion-body');
           for (let parent of parents) {
               const items = $(parent).children('.elective-row');
               items.map(function(number, elective) {
                   const dataset = elective.dataset;
-                  let include = dataset['title'].toLowerCase().includes(filter) || dataset['russianName'].toLowerCase().includes(filter) || dataset['englishName'].toLowerCase().includes(filter) || dataset['teachers'].toLowerCase().includes(filter);
+                  let include =
+                      dataset['title'].toLowerCase().includes(filter) ||
+                      dataset['russianName'].toLowerCase().includes(filter) ||
+                      dataset['englishName'].toLowerCase().includes(filter) ||
+                      dataset['teachers'].toLowerCase().includes(filter);
                   if (include) {
                       $(elective).show();
                   } else {
