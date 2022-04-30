@@ -145,6 +145,10 @@
   background-color: snow;
 }
 
+.maybe-column {
+  font-size: larger;
+}
+
 .application .card-body {
   padding: 0.3rem 0.4rem 0.3rem 0.4rem;
 }
