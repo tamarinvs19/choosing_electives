@@ -51,6 +51,7 @@ def open_elective_page(request, elective_id, **kwargs):
         kind: logic.get_statistics(elective, kind)
         for kind in elective.kinds.all()
     }
+    logger.debug(students)
     config, _ = ConfigModel.objects.get_or_create()
     context = {
         'elective': elective,
@@ -83,11 +84,11 @@ def change_elective_kind(request, **kwargs):
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
-        current_short_names = list(set(
-            data.kind.short_name
-            for data in logic.get_student_elective_kinds(user, elective)
-            if data.selected
-        ))
+        # current_short_names = list(set(
+        #     data.kind.short_name
+        #     for data in logic.get_student_elective_kinds(user, elective)
+        #     if data.selected
+        # ))
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
@@ -100,6 +101,21 @@ def change_elective_kind(request, **kwargs):
                 other_language_kind = other_kind[0].id
                 other_short_name = other_kind[0].short_name
         statistic = Statistic()
+
+        current_short_names = [
+            (application.kind.short_name, application.attached)
+            for application in StudentOnElective.objects.filter(
+                elective=elective,
+                student=user,
+            ).only('kind', 'attached')
+        ]
+        only_names = [name for name, _ in current_short_names]
+        current_unused_names = [
+            kind.short_name
+            for kind in elective.kinds.all()
+            if kind.short_name not in only_names
+        ]
+
         return JsonResponse({
             'move': application is not None,
             'students_count': students_count,
@@ -107,6 +123,7 @@ def change_elective_kind(request, **kwargs):
             'other_kind_counts': other_kind_counts,
             'other_short_name': other_short_name,
             'current_short_names': current_short_names,
+            'current_unused_names': current_unused_names,
             'user_id': user.id,
             'student_name': Person.__str__(user),
             'thematic_id': elective.thematic.id,

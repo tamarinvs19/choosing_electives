@@ -74,6 +74,7 @@
             </div>
           </div>
         </div>
+        {% if show_student_names %}
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -82,7 +83,6 @@
                  <span class="info-counter badge rounded-pill bg-light text-dark">{{ students_count }}</span>
               </button>
             </h2>
-						{% if show_student_names %}
             <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree">
               <div class="accordion-body">
                 <ol class="students-list list-group list-group-numbered">
@@ -101,8 +101,8 @@
                 </ol>
               </div>
             </div>
-						{% endif %}
           </div>
+        {% endif %}
         </div>
       </div>
       <div class="col-lg-4">
@@ -155,24 +155,38 @@
                     $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
                     $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
                     $(`#${data['other_short_name']}`)[0].checked = false;
-                    $(`.info-counter`).innerText = data['students_count'][true];
                 }
-							{% if show_student_names %}
-                let kindBox = $(`.kind-box-${data['user_id']}`);
-                if (kindBox.length === 0) {
-                    let studentList = $(`.students-list`);
-                    studentList.append(
-                        `<li class="list-group-item"> ${data['student_name']} <div class='kind-box kind-box-${data['user_id']}'</div></li>`
-                    );
-                    kindBox = $(`.kind-box-${data['user_id']}`);
+                if (data['move'] === false) {
+                    for (let kind of data['current_short_names']) {
+                        let checkbox = $(`#${kind[0]}`);
+                        checkbox.prop('checked', true);
+                    }
+                    for (let kind of data['current_unused_names']) {
+                        let checkbox = $(`#${kind}`);
+                        checkbox.prop('checked', false);
+                    }
                 }
-                kindBox.empty();
-                for (let kind of data['current_short_names']) {
-                    kindBox.append(
-                        `<div class='elective-kind elective-kind-${data["user_id"]}'>${kind}</div>`
-                    );
-                }
-							{% endif %}
+                $(`.info-counter`).innerText = data['students_count'][true];
+                {% if show_student_names %}
+                    let kindBox = $(`.kind-box-${data['user_id']}`);
+                    if (kindBox.length === 0) {
+                        let studentList = $(`.students-list`);
+                        studentList.append(
+                            `<li class="list-group-item"> ${data['student_name']} <div class='kind-box kind-box-${data['user_id']}'</div></li>`
+                        );
+                        kindBox = $(`.kind-box-${data['user_id']}`);
+                    }
+                    kindBox.empty();
+                    for (let kind of data['current_short_names']) {
+                        let newKind;
+                        if (kind[1] === true) {
+                            newKind = `<div class='elective-kind elective-kind-${data["user_id"]} attached-application'>${kind[0]}</div>`;
+                        } else {
+                            newKind = `<div class='elective-kind elective-kind-${data["user_id"]}'>${kind[0]}</div>`;
+                        }
+                        kindBox.append(newKind);
+                    }
+                {% endif %}
             });
     }
   </script>
