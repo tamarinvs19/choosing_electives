@@ -55,7 +55,7 @@ Selected electives
     <div class="col-xl-3 col-6 fall-column column">
       <div class="title">
         <h5 class="column-title">Fall</h5>
-        <div class="credit-units-window" title="Please collect more credits!">
+        <div id="fall-window" class="credit-units-window" data-too-few-credits="{{ credit_units_fall.is_too_few }}">
           <div class="sum-credit-units credit-units-value">
             <span class="credit-units-title">
               &#931;
@@ -123,7 +123,7 @@ Selected electives
     <div class="col-xl-3 col-6 spring-column column">
       <div class="title">
         <h5 class="column-title">Spring</h5>
-        <div class="credit-units-window">
+        <div id="spring-window" class="credit-units-window" data-too-few-credits="{{ credit_units_spring.is_too_few }}">
           <div class="sum-credit-units credit-units-value">
             <span class="credit-units-title">
               &#931;
@@ -373,20 +373,28 @@ Selected electives
       );
   }
 
+  function updateCreditCounters(data) {
+      let fallWindow = $('#fall-window')[0];
+      let springWindow = $('#spring-window')[0];
+      fallWindow.dataset.tooFewCredits = data['credit_units_fall']['is_too_few'];
+      springWindow.dataset.tooFewCredits = data['credit_units_spring']['is_too_few'];
+  }
+
   function updateCodes() {
-      {% if show_google_form %}
       $.get("{% url 'electives:get_application_rows' %}",
           {},
           function (data) {
-              $('.codes-fall').html(data['codes_fall']);
-              $('.codes-spring').html(data['codes_spring']);
+              {% if show_google_form %}
+                $('.codes-fall').html(data['codes_fall']);
+                $('.codes-spring').html(data['codes_spring']);
+              {% endif %}
               $('.fall-credits').html(data['credit_units_fall']['sum']);
               $('.spring-credits').html(data['credit_units_spring']['sum']);
               $('.maybe-fall-credits').html(data['credit_units_maybe_fall']['sum']);
               $('.maybe-spring-credits').html(data['credit_units_maybe_spring']['sum']);
+              updateCreditCounters(data);
           }
       );
-      {% endif %}
   }
 
   function duplicateApplication(applicationId) {

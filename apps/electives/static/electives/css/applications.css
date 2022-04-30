@@ -338,3 +338,7 @@
 .navigation-row {
   margin-top: 10px;
 }
+
+.credit-units-window[data-too-few-credits="1"] {
+  background-color: #ffcdcd;
+}

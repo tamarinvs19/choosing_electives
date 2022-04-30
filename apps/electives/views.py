@@ -239,14 +239,22 @@ def remove_application(request, **kwargs):
 @require_GET
 def get_application_rows(request, **kwargs):
     student = cast(Person, request.user)
+    fall_sum = logic.calc_sum_credit_units(student, 1)
+    fall_min = student.student_data.student_group.min_credit_unit_fall
+    spring_sum = logic.calc_sum_credit_units(student, 2)
+    spring_min = student.student_data.student_group.min_credit_unit_spring
     return JsonResponse({
         'codes_fall': logic.generate_application_row(student, 1),
         'codes_spring': logic.generate_application_row(student, 2),
         'credit_units_fall': {
-            'sum': logic.calc_sum_credit_units(student, 1),
+            'sum': fall_sum,
+            'min': fall_min,
+            'is_too_few': int(fall_min > fall_sum),
         },
         'credit_units_spring': {
-            'sum': logic.calc_sum_credit_units(student, 2),
+            'sum': spring_sum,
+            'min': spring_min,
+            'is_too_few': int(spring_min > spring_sum),
         },
         'credit_units_maybe_fall': {
             'sum': logic.calc_sum_credit_units(student, 1, False),
@@ -325,6 +333,10 @@ def open_sorting_page(request, user_id, **kwargs):
         kind__semester=2,
         attached=True,
     ).order_by('priority').all()
+    fall_sum = logic.calc_sum_credit_units(person, 1)
+    fall_min = person.student_data.student_group.min_credit_unit_fall
+    spring_sum = logic.calc_sum_credit_units(person, 2)
+    spring_min = person.student_data.student_group.min_credit_unit_spring
     context = {
         'applications_fall': applications_fall,
         'applications_spring': applications_spring,
@@ -334,8 +346,9 @@ def open_sorting_page(request, user_id, **kwargs):
         'spring_code_row': logic.generate_application_row(student=user_id, semester=2),
         'credit_units_fall': {
             'max': person.student_data.student_group.max_credit_unit_fall,
-            'min': person.student_data.student_group.min_credit_unit_fall,
-            'sum': logic.calc_sum_credit_units(person, 1),
+            'min': fall_min,
+            'sum': fall_sum,
+            'is_too_few': int(fall_min > fall_sum),
         },
         'credit_units_maybe_fall': {
             'sum': logic.calc_sum_credit_units(person, 1, False),
@@ -345,8 +358,9 @@ def open_sorting_page(request, user_id, **kwargs):
         },
         'credit_units_spring': {
             'max': person.student_data.student_group.max_credit_unit_spring,
-            'min': person.student_data.student_group.min_credit_unit_spring,
-            'sum': logic.calc_sum_credit_units(person, 2),
+            'min': spring_min,
+            'sum': spring_sum,
+            'is_too_few': int(spring_min > spring_sum),
         },
         'show_google_form': config.show_google_form,
         'block_fall_applications': config.block_fall_applications,
