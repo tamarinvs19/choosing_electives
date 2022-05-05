@@ -84,11 +84,11 @@
                     </span>
                     <span class="statistic-container">
                     <span id="statistic-{{ elective.pk }}-{{ kind.pk }}" class="statistic" title="Number of applications">
-                      {{ info.1.0 }}
-                    </span>
-                      <span id="statistic-maybe-{{ elective.pk }}-{{ kind.pk }}" class="statistic statistic-maybe"
-                            title='Number of potential applications'>
                       {{ info.0.0 }}
+                    </span>
+                      <span id="statistic-potential-{{ elective.pk }}-{{ kind.pk }}" class="statistic statistic-potential"
+                            title='Number of potential applications'>
+                      {{ info.1.0 }}
                     </span>
                     </span>
                   </div>

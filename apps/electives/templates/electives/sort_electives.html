@@ -75,47 +75,47 @@ Selected electives
         </div>
       </div>
       <div class="inner-column" id="fall">
-        {% for application in applications_fall_attached %}
-          {% include "electives/application_card.html" with application=application %}
-        {% endfor %}
-      </div>
-    </div>
-    <div class="col-xl-3 col-6 maybe-fall-column column">
-      <div class="title">
-        <h5 class="column-title maybe-column">Fall (potential)</h5>
-        <div class="credit-units-window" title="Please collect more credits!">
-          <div class="sum-credit-units credit-units-value">
-            <span class="credit-units-title">
-              &#931;
-            </span>
-            <span class="credit-units-content maybe-fall-credits">
-              {{ credit_units_maybe_fall.sum }}
-            </span>
-          </div>
-        </div>
-      </div>
-      <div class="inner-column" id="maybeFall">
         {% for application in applications_fall %}
           {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
     </div>
-    <div class="col-xl-3 col-6 maybe-spring-column column">
+    <div class="col-xl-3 col-6 potential-fall-column column">
       <div class="title">
-        <h5 class="column-title maybe-column">Spring (potential)</h5>
+        <h5 class="column-title potential-column">Fall (potential)</h5>
         <div class="credit-units-window">
           <div class="sum-credit-units credit-units-value">
             <span class="credit-units-title">
               &#931;
             </span>
-            <span class="credit-units-content maybe-spring-credits">
-              {{ credit_units_maybe_spring.sum }}
+            <span class="credit-units-content potential-fall-credits">
+              {{ credit_units_potential_fall.sum }}
             </span>
           </div>
         </div>
       </div>
-      <div class="inner-column" id="maybeSpring">
-        {% for application in applications_spring %}
+      <div class="inner-column" id="potentialFall">
+        {% for application in applications_fall_potential %}
+          {% include "electives/application_card.html" with application=application %}
+        {% endfor %}
+      </div>
+    </div>
+    <div class="col-xl-3 col-6 potential-spring-column column">
+      <div class="title">
+        <h5 class="column-title potential-column">Spring (potential)</h5>
+        <div class="credit-units-window">
+          <div class="sum-credit-units credit-units-value">
+            <span class="credit-units-title">
+              &#931;
+            </span>
+            <span class="credit-units-content potential-spring-credits">
+              {{ credit_units_potential_spring.sum }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="inner-column" id="potentialSpring">
+        {% for application in applications_spring_potential %}
           {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
@@ -143,7 +143,7 @@ Selected electives
         </div>
       </div>
       <div class="inner-column" id="spring">
-        {% for application in applications_spring_attached %}
+        {% for application in applications_spring %}
           {% include "electives/application_card.html" with application=application %}
         {% endfor %}
       </div>
@@ -164,12 +164,12 @@ Selected electives
   }
 
   let currentDrag;
-  let maybeFallSortable;
+  let potentialFallSortable;
   let fallSortable;
-  let maybeSpringSortable;
+  let potentialSpringSortable;
   let springSortable;
   {% if not block_fall_applications %}
-      maybeFallSortable = new Sortable(maybeFall, {
+      potentialFallSortable = new Sortable(potentialFall, {
           group: {
               name: 'electives',
               put: function (_) {
@@ -182,7 +182,7 @@ Selected electives
               currentDrag = evt.item;
           },
           onEnd: function (evt) {
-              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              applyApplication(currentDrag, evt.to.id, evt.newIndex);
               currentDrag = undefined;
           },
           onClone: function (evt) {
@@ -207,7 +207,7 @@ Selected electives
               currentDrag = evt.item;
           },
           onEnd: function (evt) {
-              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              applyApplication(currentDrag, evt.to.id, evt.newIndex);
               currentDrag = undefined;
           },
           onClone: function (evt) {
@@ -221,7 +221,7 @@ Selected electives
       });
   {% endif %}
   {% if not block_spring_applications %}
-      maybeSpringSortable = new Sortable(maybeSpring, {
+      potentialSpringSortable = new Sortable(potentialSpring, {
           group: {
               name: 'electives',
               put: function (_) {
@@ -234,7 +234,7 @@ Selected electives
               currentDrag = evt.item;
           },
           onEnd: function (evt) {
-              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              applyApplication(currentDrag, evt.to.id, evt.newIndex);
               currentDrag = undefined;
           },
           onClone: function (evt) {
@@ -259,7 +259,7 @@ Selected electives
               currentDrag = evt.item;
           },
           onEnd: function (evt) {
-              attachApplication(currentDrag, evt.to.id, evt.newIndex);
+              applyApplication(currentDrag, evt.to.id, evt.newIndex);
               currentDrag = undefined;
           },
           onClone: function (evt) {
@@ -323,10 +323,10 @@ Selected electives
       );
   }
 
-  function attachApplication(application, target, newIndex) {
+  function applyApplication(application, target, newIndex) {
       const applicationId = application.id.split('-')[1];
       console.log(applicationId, target, newIndex);
-      $.post("{% url 'electives:attach_application' %}",
+      $.post("{% url 'electives:apply_application' %}",
           {
               'student_on_elective_id': applicationId,
               'target': target,
@@ -390,8 +390,8 @@ Selected electives
               {% endif %}
               $('.fall-credits').html(data['credit_units_fall']['sum']);
               $('.spring-credits').html(data['credit_units_spring']['sum']);
-              $('.maybe-fall-credits').html(data['credit_units_maybe_fall']['sum']);
-              $('.maybe-spring-credits').html(data['credit_units_maybe_spring']['sum']);
+              $('.potential-fall-credits').html(data['credit_units_potential_fall']['sum']);
+              $('.potential-spring-credits').html(data['credit_units_potential_spring']['sum']);
               updateCreditCounters(data);
           }
       );

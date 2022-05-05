@@ -11,13 +11,13 @@ Parsing report
 {% endblock %}
 
 {% block content %}
-  <div class="container">
+  <code class="container">
 		<code class="report">
 			{% for report_line in report %}
 				<pre> {{report_line}} </pre>
 			{% endfor %}
-		</div>
-  </div>
+		</code>
+  </code>
 
   <script>
       const csrftoken = Cookies.get('csrftoken');

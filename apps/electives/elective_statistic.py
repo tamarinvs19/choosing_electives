@@ -38,12 +38,12 @@ class BaseNode:
 
 @dataclass
 class _MaybeCounter(BaseNode):
-    def __init__(self, elective: Elective, kind: ElectiveKind, attached: bool):
+    def __init__(self, elective: Elective, kind: ElectiveKind, potential: bool):
         items = Counter(
             sone.student.id
             for sone in elective.studentonelective_set.filter(
                 kind=kind,
-                attached=attached,
+                potential=potential,
             )
         )
         super().__init__(items)
@@ -86,8 +86,8 @@ class _ApplicationCounter(BaseNode):
         return len(self.items[True].items.keys())
 
     def remove_student_all(self, student_id: int) -> None:
-        for maybe_counter in self.items.values():
-            maybe_counter.remove_student_all(student_id)
+        for potential_counter in self.items.values():
+            potential_counter.remove_student_all(student_id)
 
     def generate_view(self, student_id: int):
         view = (
@@ -259,21 +259,21 @@ class Statistic(object):
         elective: Elective,
         kind: ElectiveKind,
         student_id: int,
-        attached: bool,
+        potential: bool,
     ):
         self.last_modified = dt.datetime.now()
-        self.data[elective.thematic.pk][elective.pk][kind.language][kind.semester][kind][attached].add_student(student_id)
+        self.data[elective.thematic.pk][elective.pk][kind.language][kind.semester][kind][potential].add_student(student_id)
 
     def remove_student(
         self,
         elective: Elective,
         kind: ElectiveKind,
         student_id: int,
-        attached: bool,
+        potential: bool,
     ):
         self.last_modified = dt.datetime.now()
         try:
-            self.data[elective.thematic.pk][elective.pk][kind.language][kind.semester][kind][attached].remove_student(student_id)
+            self.data[elective.thematic.pk][elective.pk][kind.language][kind.semester][kind][potential].remove_student(student_id)
         except KeyError:
             self.restart()
 

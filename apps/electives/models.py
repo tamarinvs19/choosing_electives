@@ -280,17 +280,17 @@ class StudentOnElective(models.Model):
     elective = models.ForeignKey(Elective, on_delete=models.CASCADE)
     kind = models.ForeignKey(ElectiveKind, on_delete=models.CASCADE, null=True, default=None)
     with_examination = models.BooleanField(default=True)
-    attached = models.BooleanField(default=False)
+    potential = models.BooleanField(default=True)
     priority = models.PositiveIntegerField(default=0)
 
     tracker = FieldTracker(
-        fields=['kind', 'attached', 'priority', 'with_examination'],
+        fields=['kind', 'potential', 'priority', 'with_examination'],
     )
 
     def delete(self, using: Any = None, keep_parents: bool = False) -> Tuple[int, Dict[str, int]]:
         StudentOnElective.objects.filter(
             student=self.student,
-            attached=self.attached,
+            potential=self.potential,
             kind__semester=self.kind.semester,
             priority__gt=self.priority,
         ).update(priority=F('priority') - 1)
@@ -302,7 +302,7 @@ class StudentOnElective(models.Model):
             self.student.username,
             self.elective.codename,
             self.kind.short_name,
-            self.attached,
+            self.potential,
             self.priority,
         )
 

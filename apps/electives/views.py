@@ -46,7 +46,7 @@ def open_elective_page(request, elective_id, **kwargs):
     for application in StudentOnElective.objects.filter(
         elective=elective,
     ).select_related('student').only('student'):
-        students[application.student].add((application.kind.short_name, application.attached))
+        students[application.student].add((application.kind.short_name, not application.potential))
     statistic = {
         kind: logic.get_statistics(elective, kind)
         for kind in elective.kinds.all()
@@ -84,11 +84,6 @@ def change_elective_kind(request, **kwargs):
         other_language_kind = None
         other_kind_counts = None
         other_short_name = None
-        # current_short_names = list(set(
-        #     data.kind.short_name
-        #     for data in logic.get_student_elective_kinds(user, elective)
-        #     if data.selected
-        # ))
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
@@ -103,11 +98,11 @@ def change_elective_kind(request, **kwargs):
         statistic = Statistic()
 
         current_short_names = [
-            (application.kind.short_name, application.attached)
+            (application.kind.short_name, not application.potential)
             for application in StudentOnElective.objects.filter(
                 elective=elective,
                 student=user,
-            ).only('kind', 'attached')
+            ).only('kind', 'potential')
         ]
         only_names = [name for name, _ in current_short_names]
         current_unused_names = [
@@ -195,13 +190,13 @@ def change_application_kind(request, **kwargs):
 
 @login_required
 @require_POST
-def attach_application(request, **kwargs):
+def apply_application(request, **kwargs):
     student_on_elective_id = request.POST.get('student_on_elective_id', None)
     target = request.POST.get('target', None)
     new_index = request.POST.get('new_index', None)
     if student_on_elective_id is not None and target is not None and new_index is not None:
         student_on_elective = StudentOnElective.objects.get(pk=int(student_on_elective_id))
-        sone = logic.attach_application(student_on_elective, target, int(new_index))
+        sone = logic.apply_application(student_on_elective, target, int(new_index))
         if sone is None:
             response = {
                 'OK': False,
@@ -256,10 +251,10 @@ def get_application_rows(request, **kwargs):
             'min': spring_min,
             'is_too_few': int(spring_min > spring_sum),
         },
-        'credit_units_maybe_fall': {
+        'credit_units_potential_fall': {
             'sum': logic.calc_sum_credit_units(student, 1, False),
         },
-        'credit_units_maybe_spring': {
+        'credit_units_potential_spring': {
             'sum': logic.calc_sum_credit_units(student, 2, False),
         },
     })
@@ -313,25 +308,25 @@ def open_sorting_page(request, user_id, **kwargs):
 
     config, _ = ConfigModel.objects.get_or_create()
 
+    applications_fall_potential = StudentOnElective.objects.filter(
+        student=user_id,
+        kind__semester=1,
+        potential=True,
+    ).order_by('priority').all()
+    applications_spring_potential = StudentOnElective.objects.filter(
+        student=user_id,
+        kind__semester=2,
+        potential=True,
+    ).order_by('priority').all()
     applications_fall = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=1,
-        attached=False,
+        potential=False,
     ).order_by('priority').all()
     applications_spring = StudentOnElective.objects.filter(
         student=user_id,
         kind__semester=2,
-        attached=False,
-    ).order_by('priority').all()
-    applications_fall_attached = StudentOnElective.objects.filter(
-        student=user_id,
-        kind__semester=1,
-        attached=True,
-    ).order_by('priority').all()
-    applications_spring_attached = StudentOnElective.objects.filter(
-        student=user_id,
-        kind__semester=2,
-        attached=True,
+        potential=False,
     ).order_by('priority').all()
     fall_sum = logic.calc_sum_credit_units(person, 1)
     fall_min = person.student_data.student_group.min_credit_unit_fall
@@ -340,8 +335,8 @@ def open_sorting_page(request, user_id, **kwargs):
     context = {
         'applications_fall': applications_fall,
         'applications_spring': applications_spring,
-        'applications_fall_attached': applications_fall_attached,
-        'applications_spring_attached': applications_spring_attached,
+        'applications_fall_potential': applications_fall_potential,
+        'applications_spring_potential': applications_spring_potential,
         'fall_code_row': logic.generate_application_row(student=user_id, semester=1),
         'spring_code_row': logic.generate_application_row(student=user_id, semester=2),
         'credit_units_fall': {
@@ -350,10 +345,10 @@ def open_sorting_page(request, user_id, **kwargs):
             'sum': fall_sum,
             'is_too_few': int(fall_min > fall_sum),
         },
-        'credit_units_maybe_fall': {
+        'credit_units_potential_fall': {
             'sum': logic.calc_sum_credit_units(person, 1, False),
         },
-        'credit_units_maybe_spring': {
+        'credit_units_potential_spring': {
             'sum': logic.calc_sum_credit_units(person, 2, False),
         },
         'credit_units_spring': {

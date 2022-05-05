@@ -125,13 +125,13 @@
 .fall-column {
   background-color: #f8a800;
 }
-.maybe-fall-column {
+.potential-fall-column {
   background-color: rgba(248, 168, 0, 0.6);
 }
 .spring-column {
   background-color: #67861f;
 }
-.maybe-spring-column {
+.potential-spring-column {
   background-color: rgba(103, 134, 31, 0.6);
 }
 .inner-column {
@@ -145,7 +145,7 @@
   background-color: snow;
 }
 
-.maybe-column {
+.potential-column {
   font-size: larger;
 }
 

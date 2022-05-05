@@ -90,8 +90,8 @@
                     <li class="list-group-item">
                       {{ student }}
                       <div class="kind-box kind-box-{{ student.id }}">
-                        {% for kind, attached in kinds %}
-                          <div class="elective-kind elective-kind-{{ student.id }} {% if attached %} attached-application {% endif %}">
+                        {% for kind, potential in kinds %}
+                          <div class="elective-kind elective-kind-{{ student.id }} {% if not potential %} applied-application {% endif %}">
                             {{ kind }}
                           </div>
                         {% endfor %}
@@ -128,11 +128,11 @@
                     </span>
                   <span class="statistic-container">
                     <span id="statistic-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic" title="Number of applications">
-                      {{ statistic.1 }}
+                      {{ statistic.0 }}
                     </span>
-                    <span id="statistic-maybe-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic statistic-maybe"
+                    <span id="statistic-potential-{{ elective.id }}-{{ kind_with_status.kind.id }}" class="statistic statistic-potential"
                           title='Number of potential applications'>
-                    {{ statistic.0 }}
+                    {{ statistic.1 }}
                     </span>
                   </span>
                 </li>
@@ -149,11 +149,11 @@
         $.post("{% url 'electives:change_kind' %}",
             {'kind_id': kindId, 'elective_id': electiveId, 'csrfmiddlewaretoken': csrftoken},
             function(data) {
-                $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
-                $(`#statistic-maybe-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
+                $(`#statistic-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][false];
+                $(`#statistic-potential-${electiveId}-${kindId}`)[0].innerHTML = data['students_count'][true];
                 if (data['move'] !== null && data['other_language_kind'] !== null) {
-                    $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
-                    $(`#statistic-maybe-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
+                    $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
+                    $(`#statistic-potential-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
                     $(`#${data['other_short_name']}`)[0].checked = false;
                 }
                 if (data['move'] === false) {
@@ -180,7 +180,7 @@
                     for (let kind of data['current_short_names']) {
                         let newKind;
                         if (kind[1] === true) {
-                            newKind = `<div class='elective-kind elective-kind-${data["user_id"]} attached-application'>${kind[0]}</div>`;
+                            newKind = `<div class='elective-kind elective-kind-${data["user_id"]} potential-application'>${kind[0]}</div>`;
                         } else {
                             newKind = `<div class='elective-kind elective-kind-${data["user_id"]}'>${kind[0]}</div>`;
                         }

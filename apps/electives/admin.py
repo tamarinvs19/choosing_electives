@@ -61,9 +61,9 @@ class ElectiveThematicAdmin(admin.ModelAdmin):
 
 class ApplicationAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['student', 'elective', 'kind', 'with_examination', 'attached', 'priority']}),
+        (None, {'fields': ['student', 'elective', 'kind', 'with_examination', 'potential', 'priority']}),
     ]
-    list_display = ('student', 'elective', 'kind', 'attached', 'priority')
+    list_display = ('student', 'elective', 'kind', 'potential', 'priority')
 
 
 admin.site.register(Elective, ElectiveAdmin)

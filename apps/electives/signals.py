@@ -22,7 +22,7 @@ def pre_delete_application(sender, instance, **kwargs):
     remove_application_from_counter(instance, {})
 
 
-def remove_application_from_counter(application, changed_fields):
+def remove_application_from_counter(application: StudentOnElective, changed_fields):
     changed_fields = {
         key: value
         for key, value in changed_fields.items()
@@ -31,23 +31,23 @@ def remove_application_from_counter(application, changed_fields):
 
     kind_id = changed_fields.get('kind', application.kind.id)
     kind = ElectiveKind.objects.get(pk=kind_id)
-    attached = changed_fields.get('attached', application.attached)
+    potential = changed_fields.get('potential', application.potential)
 
     statistic = Statistic()
     statistic.remove_student(
         application.elective,
         kind,
         application.student.id,
-        attached,
+        potential,
     )
 
 
-def add_application_to_counter(application):
+def add_application_to_counter(application: StudentOnElective):
     statistic = Statistic()
     statistic.add_student(
         application.elective,
         application.kind,
         application.student.id,
-        application.attached,
+        application.potential,
     )
 

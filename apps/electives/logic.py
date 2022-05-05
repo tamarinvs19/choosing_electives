@@ -35,8 +35,8 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
     @param elective: elective whose statistic we should return
     @param kind: kind whose statistic we should return
     @return: Dict[bool, int]
-        Key True: the number of attached applications
-        Key False: the number of no-attached applications
+        Key True: the number of potential applications
+        Key False: the number of non-potential applications
     """
 
     students_on_elective = StudentOnElective.objects.filter(
@@ -46,10 +46,10 @@ def get_statistics(elective: Elective, kind: ElectiveKind) -> Dict[bool, int]:
     counts = {True: 0, False: 0}
     students: dict[bool, set[Person]] = {True: set(), False: set()}
     for application in students_on_elective:
-        attached = application.attached
-        if application.student not in students[attached]:
-            students[attached].add(application.student)
-            counts[attached] += 1
+        potential = application.potential
+        if application.student not in students[potential]:
+            students[potential].add(application.student)
+            counts[potential] += 1
     return counts
 
 
@@ -120,7 +120,7 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
     we delete all of them.
 
     Else we create a new application for this elective and this kind
-    with attached = False AND
+    with potential = True AND
     if this student has applications
     which differ only in language we change it to kind.language.
 
@@ -149,7 +149,7 @@ def change_kinds(student: Person, elective: Elective, kind: ElectiveKind) -> Opt
         max_priority = StudentOnElective.objects.filter(
             student=student,
             kind__semester=kind.semester,
-            attached=False,
+            potential=True,
         ).aggregate(Max('priority'))['priority__max']
 
         new_priority = 0 if max_priority is None else max_priority + 1
@@ -231,14 +231,14 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
     if application.kind.semester != kind.semester:
         StudentOnElective.objects.filter(
             student=application.student,
-            attached=application.attached,
+            potential=application.potential,
             kind__semester=application.kind.semester,
             priority__gt=application.priority,
         ).update(priority=F('priority') - 1)
 
         StudentOnElective.objects.filter(
             student=application.student,
-            attached=application.attached,
+            potential=application.potential,
             kind__semester=kind.semester,
             priority__gt=application.priority,
         ).update(priority=F('priority') + 1)
@@ -255,13 +255,13 @@ def change_kind(application: StudentOnElective, kind: ElectiveKind) -> Optional[
     return application
 
 
-def attach_application(application: StudentOnElective, target: str, new_index: int) -> Optional[StudentOnElective]:
+def apply_application(application: StudentOnElective, target: str, new_index: int) -> Optional[StudentOnElective]:
     """
     Move application to target column with new_index.
 
     @param application: moving application
     @param target: name of the target column
-        maybeFall / maybeSpring / fall / spring
+        potentialFall / potentialSpring / fall / spring
     @param new_index: new index in the target column
     @return: modified application or None if the new kind is not correct
     """
@@ -274,18 +274,18 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     possible_kinds = elective.kinds
 
     semester = kind.semester
-    attached = application.attached
-    if target == 'maybeFall':
-        attached = False
+    potential = application.potential
+    if target == 'potentialFall':
+        potential = True
         semester = 1
-    elif target == 'maybeSpring':
-        attached = False
+    elif target == 'potentialSpring':
+        potential = True
         semester = 2
     elif target == 'fall':
-        attached = True
+        potential = False
         semester = 1
     elif target == 'spring':
-        attached = True
+        potential = False
         semester = 2
     try:
         new_kind = possible_kinds.get(
@@ -298,14 +298,14 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
 
     StudentOnElective.objects.filter(
         student=application.student,
-        attached=application.attached,
+        potential=application.potential,
         kind__semester=application.kind.semester,
         priority__gt=application.priority,
     ).update(priority=F('priority') - 1)
 
     StudentOnElective.objects.filter(
         student=application.student,
-        attached=attached,
+        potential=potential,
         kind__semester=new_kind.semester,
         priority__gte=new_index,
     ).update(priority=F('priority') + 1)
@@ -316,7 +316,7 @@ def attach_application(application: StudentOnElective, target: str, new_index: i
     )
     application.priority = new_index
     application.kind = new_kind
-    application.attached = attached
+    application.potential = potential
     application.with_examination = kind_of_elective.exam_is_possible and application.with_examination
     application.save()
 
@@ -384,19 +384,19 @@ def generate_application_row(student: Person, semester: int) -> str:
             for application in StudentOnElective.objects.filter(
                 student=student,
                 kind__semester=semester,
-                attached=True,
+                potential=False,
             ).order_by('priority')
         ]
     )
 
 
-def calc_sum_credit_units(student: Person, semester: int, attached: bool = True) -> int:
+def calc_sum_credit_units(student: Person, semester: int, potential: bool = False) -> int:
     """
     Calculate the count of credit units.
 
     @param student: Person object
     @param semester: the number of semester, 1 is fall, 2 if spring
-    @param attached: which applications we need to calc
+    @param potential: which applications we need to calc
 
     @return count of credit units
     """
@@ -404,7 +404,7 @@ def calc_sum_credit_units(student: Person, semester: int, attached: bool = True)
         application.credit_units
         for application in StudentOnElective.objects.filter(
             student=student,
-            attached=attached,
+            potential=potential,
             kind__semester=semester,
         )
     )
@@ -424,7 +424,7 @@ def duplicate_application(application: StudentOnElective) -> Optional[StudentOnE
 
     StudentOnElective.objects.filter(
         student=application.student,
-        attached=application.attached,
+        potential=application.potential,
         kind__semester=application.kind.semester,
         priority__gt=application.priority,
     ).update(priority=F('priority') + 1)
@@ -434,7 +434,7 @@ def duplicate_application(application: StudentOnElective) -> Optional[StudentOnE
         elective=application.elective,
         kind=application.kind,
         with_examination=application.with_examination,
-        attached=application.attached,
+        potential=application.potential,
         priority=application.priority + 1
     )
     return new_student_on_elective
@@ -475,17 +475,17 @@ def generate_summary_table() -> str:
                 kind=kind,
             )
             elective_data[kind.long_name] = filtered_data.filter(
-                attached=True,
+                potential=False,
             ).aggregate(
                 count=Count('student__id', distinct=True)
             )['count']
-            elective_data[f'MAYBE {kind.long_name}'] = filtered_data.filter(
-                attached=False,
+            elective_data[f'Potential {kind.long_name}'] = filtered_data.filter(
+                potential=True,
             ).aggregate(
                 count=Count('student__id', distinct=True)
             )['count']
         number_of_students = elective.studentonelective_set.filter(
-            attached=True,
+            potential=False,
         ).aggregate(
             count=Count('student__id', distinct=True)
         )['count']
