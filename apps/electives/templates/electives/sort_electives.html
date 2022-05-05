@@ -168,7 +168,7 @@ Selected electives
   let fallSortable;
   let maybeSpringSortable;
   let springSortable;
-  if ('{{ block_fall_applications }}' === 'False') {
+  {% if not block_fall_applications %}
       maybeFallSortable = new Sortable(maybeFall, {
           group: {
               name: 'electives',
@@ -219,8 +219,8 @@ Selected electives
               $(application).css('background', 'white');
           },
       });
-  }
-  if ('{{ block_spring_applications }}' === 'False') {
+  {% endif %}
+  {% if not block_spring_applications %}
       maybeSpringSortable = new Sortable(maybeSpring, {
           group: {
               name: 'electives',
@@ -271,7 +271,7 @@ Selected electives
               $(application).css('background', 'white');
           },
       });
-  }
+  {% endif %}
 
   function changeExam(applicationId) {
       $.post("{% url 'electives:change_application_exam' %}",
