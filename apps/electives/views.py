@@ -256,10 +256,10 @@ def get_application_rows(request, **kwargs):
             'is_too_few': int(spring_min > spring_sum),
         },
         'credit_units_potential_fall': {
-            'sum': logic.calc_sum_credit_units(student, 1, False),
+            'sum': logic.calc_sum_credit_units(student, 1, True),
         },
         'credit_units_potential_spring': {
-            'sum': logic.calc_sum_credit_units(student, 2, False),
+            'sum': logic.calc_sum_credit_units(student, 2, True),
         },
     })
 
@@ -350,10 +350,10 @@ def open_sorting_page(request, user_id, **kwargs):
             'is_too_few': int(fall_min > fall_sum),
         },
         'credit_units_potential_fall': {
-            'sum': logic.calc_sum_credit_units(person, 1, False),
+            'sum': logic.calc_sum_credit_units(person, 1, True),
         },
         'credit_units_potential_spring': {
-            'sum': logic.calc_sum_credit_units(person, 2, False),
+            'sum': logic.calc_sum_credit_units(person, 2, True),
         },
         'credit_units_spring': {
             'max': person.student_data.student_group.max_credit_unit_spring,
