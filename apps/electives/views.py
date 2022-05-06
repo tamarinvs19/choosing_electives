@@ -111,7 +111,7 @@ def change_elective_kind(request, **kwargs):
             if kind.short_name not in only_names
         ]
 
-        return JsonResponse({
+        response = {
             'move': application is not None,
             'students_count': students_count,
             'other_language_kind': other_language_kind,
@@ -120,11 +120,15 @@ def change_elective_kind(request, **kwargs):
             'current_short_names': current_short_names,
             'current_unused_names': current_unused_names,
             'user_id': user.id,
-            'student_name': Person.__str__(user),
             'thematic_id': elective.thematic.id,
             'fall_count': statistic.data[elective.thematic.pk][elective.pk].student_count(1),
             'spring_count': statistic.data[elective.thematic.pk][elective.pk].student_count(2),
-        })
+        }
+        config = ConfigModel()
+        if config.show_student_names:
+            response['student_name'] = Person.__str__(user)
+
+        return JsonResponse(response)
     return HttpResponseBadRequest
 
 

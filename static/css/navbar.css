@@ -16,3 +16,21 @@
   cursor: pointer;
   fill: white;
 }
+
+#submitLanguage {
+  display: none;
+}
+
+#languages {
+  margin: 4px 10px 4px 4px;
+  padding: 8px;
+  border-radius: 3px;
+  background-color: #eee;
+}
+
+.language-option {
+  display: block;
+  margin: 8px;
+  padding: 8px;
+  background-color: #eee;
+}

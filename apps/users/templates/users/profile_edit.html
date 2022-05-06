@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 {% block extra_styles %}
   <link rel="stylesheet" type="text/css" href="{% static 'users/css/profile_edit.css' %}">
 {% endblock %}
 
 {% block head_title %}
-  Edit profile
+  {% translate 'Edit profile' %}
 {% endblock %}
 
 {% block body %}
@@ -23,9 +24,12 @@
             </a>
           </li>
           <li class="breadcrumb-item">
-            <a href="{% url 'account:personal_page' user.id %}">Profile</a>
+            <a href="{% url 'account:personal_page' user.id %}">
+              {% translate 'Profile' %}</a>
           </li>
-          <li class="breadcrumb-item active" aria-current="page">Edit</li>
+          <li class="breadcrumb-item active" aria-current="page">
+            {% translate 'Edit' %}
+          </li>
         </ol>
       </nav>
       <form action method="post">
@@ -33,7 +37,7 @@
         <div class="edit-form">
           <div class="form-element">
             <label for="{{ form.first_name.id_for_label }}" class="control-label">
-                First name
+                {% translate 'First name' %}
             </label>
             <div class="controls">
               <input value="{{ form.first_name.value }}"
@@ -43,7 +47,7 @@
           </div>
           <div class="form-element">
             <label for="{{ form.last_name.id_for_label }}" class="control-label">
-              Last name
+              {% translate 'Last name' %}
             </label>
             <div class="controls">
               <input value="{{ form.last_name.value }}"
@@ -53,7 +57,7 @@
           </div>
           <div class="form-element">
             <label for="{{ form.email.id_for_label }}" class="control-label">
-              Email
+              {% translate 'Email' %}
             </label>
             <div class="controls">
               <input value="{{ form.email.value }}"
@@ -63,7 +67,7 @@
           </div>
           <div class="form-element">
             <label for="{{ form.student_group.id_for_label }}" class="control-label">
-              Student group
+              {% translate 'Student group' %}
             </label>
             <div class="controls">
               {{ form.student_group }}
@@ -71,8 +75,12 @@
           </div>
         </div>
         <div class="buttons">
-          <input type="submit" name="save" value="Save" class="btn btn-sm btn-primary" id="saveProfile">
-          <input type="reset" name="reset" value="Reset" class="btn btn-sm btn-outline-secondary" id="resetProfile">
+          <input type="submit" name="save"
+                 value="{% translate 'Save' %}"
+                 class="btn btn-sm btn-primary" id="saveProfile">
+          <input type="reset" name="reset"
+                 value="{% translate 'Reset' %}"
+                 class="btn btn-sm btn-outline-secondary" id="resetProfile">
         </div>
       </form>
     </div>

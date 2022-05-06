@@ -1,24 +1,25 @@
 from django import forms
 
-from apps.groups.models import StudentGroup
 from django.contrib.auth.forms import UserCreationForm
+from django.utils.translation import ugettext_lazy as _
 
-from apps.users.models import Person, Invitation
+from apps.groups.models import StudentGroup
+from apps.users.models import Person
 
 
 class ProfileForm(forms.Form):
     first_name = forms.CharField(
-        label='First name',
+        label=_('First name'),
         max_length=100,
         initial='',
     )
     last_name = forms.CharField(
-        label='Last name',
+        label=_('Last name'),
         max_length=100,
         initial='',
     )
     email = forms.EmailField(
-        label='Email',
+        label=_('Email'),
         initial='',
     )
     student_group = forms.ChoiceField(
@@ -30,12 +31,12 @@ class ProfileForm(forms.Form):
 class SignUpForm(UserCreationForm):
 
     first_name = forms.CharField(
-        label='First name',
+        label=_('First name'),
         max_length=100,
         initial='',
     )
     last_name = forms.CharField(
-        label='Last name',
+        label=_('Last name'),
         max_length=100,
         initial='',
     )

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
     {% if messages %}
     <div>
-      <strong>Messages:</strong>
+      <strong>{% translate 'Messages' %}:</strong>
       <ul>
         {% for message in messages %}
         <li>{{message}}</li>

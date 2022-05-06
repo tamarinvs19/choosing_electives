@@ -3,7 +3,7 @@
 {% load i18n %}
 {% load static %}
 
-{% block head_title %}{% trans "Signup" %}{% endblock %}
+{% block head_title %}{% translate "Sign Up" %}{% endblock %}
 
 {% block extra_styles %}
   <link rel="stylesheet" type="text/css" href="{% static 'css/account.css' %}">
@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-<h1>{% trans "Sign Up" %}</h1>
+<h1>{% translate "Sign Up" %}</h1>
 
 <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
 

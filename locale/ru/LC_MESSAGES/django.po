@@ -1,0 +1,728 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Vyacheslav Tamarin, tamarin.vs@yandex.ru, 2022.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-05-06 12:14+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Vyacheslav Tamarin tamarin.vs@yandex.ru>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n"
+"%100>=11 && n%100<=14)? 2 : 3);\n"
+
+#: apps/electives/templates/electives/application_card.html:9
+msgid "Remove application"
+msgstr "Удалить заявлениe"
+
+#: apps/electives/templates/electives/application_card.html:17
+msgid "Duplicate application"
+msgstr "Создать копию"
+
+#: apps/electives/templates/electives/application_card.html:46
+msgid "Number of credit units"
+msgstr "Количество зачетных единиц"
+
+#: apps/electives/templates/electives/application_card.html:50
+msgid "credit units"
+msgstr "з.e."
+
+#: apps/electives/templates/electives/application_card.html:57
+msgid "Examination"
+msgstr "Экамен"
+
+#: apps/electives/templates/electives/application_card.html:74
+msgid "Fall semester is possible"
+msgstr "Осенний семестр предлагается"
+
+#: apps/electives/templates/electives/application_card.html:75
+#: apps/electives/templates/electives/sort_electives.html:27
+#: apps/electives/templates/electives/themetic_list.html:25
+#: apps/users/templates/users/personal_page.html:80
+msgid "Fall"
+msgstr "Осень"
+
+#: apps/electives/templates/electives/application_card.html:80
+msgid "Spring semester is possible"
+msgstr "Весенний семестр пердлагается"
+
+#: apps/electives/templates/electives/application_card.html:81
+#: apps/electives/templates/electives/sort_electives.html:101
+#: apps/electives/templates/electives/themetic_list.html:31
+#: apps/users/templates/users/personal_page.html:89
+msgid "Spring"
+msgstr "Весна"
+
+#: apps/electives/templates/electives/code_requests.html:4
+msgid "Fall request"
+msgstr "Строка-заявление на осень"
+
+#: apps/electives/templates/electives/code_requests.html:17
+msgid "Spring request"
+msgstr "Строка-заявление на весну"
+
+#: apps/electives/templates/electives/code_requests.html:30
+msgid "Google Form"
+msgstr "Google форма"
+
+#: apps/electives/templates/electives/elective_list.html:5
+msgid "Elective list"
+msgstr "Список элективов"
+
+#: apps/electives/templates/electives/elective_list.html:14
+msgid "Unroll"
+msgstr "Развернуть"
+
+#: apps/electives/templates/electives/elective_list.html:19
+msgid "Keyword"
+msgstr "Ключевое слово"
+
+#: apps/electives/templates/electives/elective_list.html:21
+msgid "Filter"
+msgstr "Искать"
+
+#: apps/electives/templates/electives/elective_page.html:28
+#: templates/navbar.html:14
+msgid "Electives"
+msgstr "Элективы"
+
+#: apps/electives/templates/electives/elective_page.html:39
+msgid "Codename"
+msgstr "Код"
+
+#: apps/electives/templates/electives/elective_page.html:55
+msgid "Description"
+msgstr "Описание"
+
+#: apps/electives/templates/electives/elective_page.html:62
+msgid "Russian description"
+msgstr "Описание на русском"
+
+#: apps/electives/templates/electives/elective_page.html:71
+msgid "English description"
+msgstr "Описание на английском"
+
+#: apps/electives/templates/electives/elective_page.html:81
+#: apps/electives/templates/electives/themetic_list.html:22
+msgid "Teachers"
+msgstr "Преподаватели"
+
+#: apps/electives/templates/electives/elective_page.html:95
+msgid "Students"
+msgstr "Студенты"
+
+#: apps/electives/templates/electives/elective_page.html:123
+msgid "Select formats for your application"
+msgstr "Выберите форматы в ваше заявление"
+
+#: apps/electives/templates/electives/elective_page.html:145
+#: apps/electives/templates/electives/themetic_list.html:88
+msgid "Number of applications"
+msgstr "Количество заявлений"
+
+#: apps/electives/templates/electives/elective_page.html:149
+#: apps/electives/templates/electives/themetic_list.html:92
+msgid "Number of potential applications"
+msgstr "Количество потенциальных заявлений"
+
+#: apps/electives/templates/electives/sort_button.html:7
+msgid " Sort by number of applications for "
+msgstr " Сортировать по количеству заявлений на "
+
+#: apps/electives/templates/electives/sort_electives.html:5
+#: apps/electives/templates/electives/sort_electives.html:16
+#: templates/navbar.html:18
+msgid "Your applications"
+msgstr "Ваши заявления"
+
+#: apps/electives/templates/electives/sort_electives.html:57
+msgid "Fall (potentially)"
+msgstr "Осень (потенциально)"
+
+#: apps/electives/templates/electives/sort_electives.html:79
+msgid "Spring (potentially)"
+msgstr "Весна (потенциально)"
+
+#: apps/electives/templates/electives/themetic_list.html:19
+msgid "Title"
+msgstr "Название"
+
+#: apps/users/forms.py:12 apps/users/forms.py:34
+#: apps/users/templates/users/profile_edit.html:40
+msgid "First name"
+msgstr "Имя"
+
+#: apps/users/forms.py:17 apps/users/forms.py:39
+#: apps/users/templates/users/profile_edit.html:50
+msgid "Last name"
+msgstr "Фамилия"
+
+#: apps/users/forms.py:22 apps/users/templates/users/profile_edit.html:60
+msgid "Email"
+msgstr "Email"
+
+#: apps/users/templates/users/personal_page.html:9
+#: apps/users/templates/users/personal_page.html:27
+#: apps/users/templates/users/profile_edit.html:28
+msgid "Profile"
+msgstr "Профиль"
+
+#: apps/users/templates/users/personal_page.html:34
+msgid "Change profile"
+msgstr "Настроить профиль"
+
+#: apps/users/templates/users/personal_page.html:42
+#: apps/users/templates/users/profile_edit.html:9
+msgid "Edit profile"
+msgstr "Редактировать профиль"
+
+#: apps/users/templates/users/personal_page.html:43
+msgid "Change password"
+msgstr "Изменить пароль"
+
+#: apps/users/templates/users/personal_page.html:56
+msgid "Login"
+msgstr "Логин"
+
+#: apps/users/templates/users/personal_page.html:62
+msgid "Please, select your student group before managing applications!"
+msgstr "Пожалуйста, выберите курс и направление перед работой с заявлениями!"
+
+#: apps/users/templates/users/personal_page.html:69
+msgid "Semester"
+msgstr "Семестр"
+
+#: apps/users/templates/users/personal_page.html:70
+msgid "Min c.u."
+msgstr "Минимум з.е."
+
+#: apps/users/templates/users/personal_page.html:71
+msgid "Max c.u."
+msgstr "Максимум з.е."
+
+#: apps/users/templates/users/personal_page.html:72
+msgid "Min exams"
+msgstr "Минимум экзаменов"
+
+#: apps/users/templates/users/personal_page.html:73
+msgid "Max exams"
+msgstr "Максимум экзаменов"
+
+#: apps/users/templates/users/personal_page.html:74
+msgid "Max c.u. in reduced form"
+msgstr "Максимум з.е. в облегченной форме"
+
+#: apps/users/templates/users/profile_edit.html:31
+msgid "Edit"
+msgstr ""
+
+#: apps/users/templates/users/profile_edit.html:70
+msgid "Student group"
+msgstr "Направление и курс"
+
+#: apps/users/templates/users/profile_edit.html:79
+msgid "Save"
+msgstr "Сохранить"
+
+#: apps/users/templates/users/profile_edit.html:82
+msgid "Reset"
+msgstr "Сбросить"
+
+#: apps/users/templates/users/signup.html:6
+#: apps/users/templates/users/signup.html:14
+#: apps/users/templates/users/signup.html:24 templates/account/signup.html:8
+#: templates/account/signup.html:18 templates/socialaccount/signup.html:8
+#: templates/socialaccount/signup.html:19
+msgid "Sign Up"
+msgstr "Зарегистрироваться"
+
+#: apps/users/templates/users/signup.html:16 templates/account/signup.html:10
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+"Уже есть аккаунт? Тогда, пожалуйста, <a href=\"%(login_url)s\">войдите</a>."
+
+#: templates/account/account_inactive.html:5
+#: templates/account/account_inactive.html:8
+msgid "Account Inactive"
+msgstr "Учетная запись неактивна"
+
+#: templates/account/account_inactive.html:10
+msgid "This account is inactive."
+msgstr "Эта учетная запись неактивнa."
+
+#: templates/account/base.html:6
+msgid "Messages"
+msgstr ""
+
+#: templates/account/email.html:5 templates/account/email.html:8
+msgid "E-mail Addresses"
+msgstr "E-mail адрес"
+
+#: templates/account/email.html:10
+msgid "The following e-mail addresses are associated with your account:"
+msgstr "Следующие e-mail адреса привязаны к вашему аккаунту:"
+
+#: templates/account/email.html:24
+msgid "Verified"
+msgstr "Подвтверждено"
+
+#: templates/account/email.html:26
+msgid "Unverified"
+msgstr "Не подтверждено"
+
+#: templates/account/email.html:28
+msgid "Primary"
+msgstr "Главный"
+
+#: templates/account/email.html:34
+msgid "Make Primary"
+msgstr "Сделать главным"
+
+#: templates/account/email.html:35
+msgid "Re-send Verification"
+msgstr "Выслать подтвеждение еще раз"
+
+#: templates/account/email.html:36 templates/socialaccount/connections.html:35
+msgid "Remove"
+msgstr "Удалить"
+
+#: templates/account/email.html:43
+msgid "Warning:"
+msgstr "Внимание:"
+
+#: templates/account/email.html:43
+msgid ""
+"You currently do not have any e-mail address set up. You should really add "
+"an e-mail address so you can receive notifications, reset your password, etc."
+msgstr ""
+"Вы не задали ни одного e-mail адреса. Вам следует добавить e-mail адрес, "
+"чтобы вы смогли получать уведомления, восстанавливать пароль, и т.д."
+
+#: templates/account/email.html:48
+msgid "Add E-mail Address"
+msgstr "Добавить e-mail адрес"
+
+#: templates/account/email.html:53
+msgid "Add E-mail"
+msgstr "Добавить e-mail"
+
+#: templates/account/email.html:63
+msgid "Do you really want to remove the selected e-mail address?"
+msgstr "Вы действительно хотите удалить выбранные e-mail адреса?"
+
+#: templates/account/email/base_message.txt:1
+#, python-format
+msgid "Hello from %(site_name)s!"
+msgstr ""
+
+#: templates/account/email/base_message.txt:5
+#, python-format
+msgid ""
+"Thank you for using %(site_name)s!\n"
+"%(site_domain)s"
+msgstr ""
+"Благодарим за использование сайта %(site_name)s!\n"
+"%(site_domain)s"
+
+#: templates/account/email/email_confirmation_message.txt:5
+#, python-format
+msgid ""
+"You're receiving this e-mail because user %(user_display)s has given your e-"
+"mail address to register an account on %(site_domain)s.\n"
+"\n"
+"To confirm this is correct, go to %(activate_url)s"
+msgstr ""
+"Пользователь %(user_display)s указал данный e-mail адрес при регистрации на "
+"сайте %(site_domain)s.Чтобы подтвердить его, перейдите по следующей ссылке "
+"%(activate_url)s"
+
+#: templates/account/email/email_confirmation_subject.txt:3
+msgid "Please Confirm Your E-mail Address"
+msgstr "Пожалуйста, подтвердите ваш e-mail адрес"
+
+#: templates/account/email/password_reset_key_message.txt:4
+msgid ""
+"You're receiving this e-mail because you or someone else has requested a "
+"password for your user account.\n"
+"It can be safely ignored if you did not request a password reset. Click the "
+"link below to reset your password."
+msgstr ""
+"Вы получили это письмо так как вы или кто-то другой запросил сброс пароля от "
+"вашей учетной записи.\n"
+"Проигнорируйте это письмо, если вы не пытались сбросить пароль. Чтобы "
+"сбростить пароль, перейдите по ссылке ниже."
+
+#: templates/account/email/password_reset_key_message.txt:9
+#, python-format
+msgid "In case you forgot, your username is %(username)s."
+msgstr "Если вы забыли, ваш логин - %(username)s."
+
+#: templates/account/email/password_reset_key_subject.txt:3
+#: templates/account/email/unknown_account_subject.txt:3
+msgid "Password Reset E-mail"
+msgstr "Пароль сброшен через e-mail"
+
+#: templates/account/email/unknown_account_message.txt:4
+#, python-format
+msgid ""
+"You are receiving this e-mail because you or someone else has requested a\n"
+"password for your user account. However, we do not have any record of a "
+"user\n"
+"with email %(email)s in our database.\n"
+"\n"
+"This mail can be safely ignored if you did not request a password reset.\n"
+"\n"
+"If it was you, you can sign up for an account using the link below."
+msgstr ""
+
+#: templates/account/email_confirm.html:6
+#: templates/account/email_confirm.html:10
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: templates/account/email_confirm.html:16
+#, python-format
+msgid ""
+"Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
+"address for user %(user_display)s."
+msgstr ""
+
+#: templates/account/email_confirm.html:20
+msgid "Confirm"
+msgstr ""
+
+#: templates/account/email_confirm.html:27
+#, python-format
+msgid ""
+"This e-mail confirmation link expired or is invalid. Please <a href="
+"\"%(email_url)s\">issue a new e-mail confirmation request</a>."
+msgstr ""
+
+#: templates/account/login.html:6 templates/account/login.html:10
+#: templates/account/login.html:36 templates/navbar.html:46
+msgid "Log In"
+msgstr "Войти"
+
+#: templates/account/login.html:34 templates/account/password_change.html:14
+msgid "Forgot Password?"
+msgstr "Забыли пароль?"
+
+#: templates/account/logout.html:5 templates/account/logout.html:8
+#: templates/account/logout.html:17
+msgid "Sign Out"
+msgstr "Выйти"
+
+#: templates/account/logout.html:10
+msgid "Are you sure you want to sign out?"
+msgstr "Вы уверены, что хотите выйти?"
+
+#: templates/account/messages/cannot_delete_primary_email.txt:2
+#, python-format
+msgid "You cannot remove your primary e-mail address (%(email)s)."
+msgstr ""
+
+#: templates/account/messages/email_confirmation_sent.txt:2
+#, python-format
+msgid "Confirmation e-mail sent to %(email)s."
+msgstr ""
+
+#: templates/account/messages/email_confirmed.txt:2
+#, python-format
+msgid "You have confirmed %(email)s."
+msgstr ""
+
+#: templates/account/messages/email_deleted.txt:2
+#, python-format
+msgid "Removed e-mail address %(email)s."
+msgstr ""
+
+#: templates/account/messages/logged_in.txt:4
+#, python-format
+msgid "Successfully signed in as %(name)s."
+msgstr ""
+
+#: templates/account/messages/logged_out.txt:2
+msgid "You have signed out."
+msgstr ""
+
+#: templates/account/messages/password_changed.txt:2
+msgid "Password successfully changed."
+msgstr ""
+
+#: templates/account/messages/password_set.txt:2
+msgid "Password successfully set."
+msgstr ""
+
+#: templates/account/messages/primary_email_set.txt:2
+msgid "Primary e-mail address set."
+msgstr ""
+
+#: templates/account/messages/unverified_primary_email.txt:2
+msgid "Your primary e-mail address must be verified."
+msgstr ""
+
+#: templates/account/password_change.html:5
+#: templates/account/password_change.html:8
+#: templates/account/password_change.html:16
+#: templates/account/password_reset_from_key.html:4
+#: templates/account/password_reset_from_key.html:7
+#: templates/account/password_reset_from_key_done.html:4
+#: templates/account/password_reset_from_key_done.html:7
+msgid "Change Password"
+msgstr "Изменить пароль"
+
+#: templates/account/password_reset.html:6
+#: templates/account/password_reset.html:10
+#: templates/account/password_reset_done.html:6
+#: templates/account/password_reset_done.html:9
+msgid "Password Reset"
+msgstr "Сбросить пароль"
+
+#: templates/account/password_reset.html:15
+msgid ""
+"Forgotten your password? Enter your e-mail address below, and we'll send you "
+"an e-mail allowing you to reset it."
+msgstr ""
+
+#: templates/account/password_reset.html:20
+msgid "Reset My Password"
+msgstr ""
+
+#: templates/account/password_reset.html:23
+msgid "Please contact us if you have any trouble resetting your password."
+msgstr ""
+
+#: templates/account/password_reset_done.html:15
+msgid ""
+"We have sent you an e-mail. If you have not received it please check your "
+"spam folder. Otherwise contact us if you do not receive it in a few minutes."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:7
+msgid "Bad Token"
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:11
+#, python-format
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a <a href=\"%(passwd_reset_url)s\">new password reset</"
+"a>."
+msgstr ""
+
+#: templates/account/password_reset_from_key.html:16
+msgid "change password"
+msgstr ""
+
+#: templates/account/password_reset_from_key_done.html:8
+msgid "Your password is now changed."
+msgstr ""
+
+#: templates/account/password_set.html:5 templates/account/password_set.html:8
+#: templates/account/password_set.html:13
+msgid "Set Password"
+msgstr ""
+
+#: templates/account/signup.html:5 templates/socialaccount/signup.html:5
+msgid "Signup"
+msgstr "Войти"
+
+#: templates/account/signup_closed.html:5
+#: templates/account/signup_closed.html:8
+msgid "Sign Up Closed"
+msgstr ""
+
+#: templates/account/signup_closed.html:10
+msgid "We are sorry, but the sign up is currently closed."
+msgstr ""
+
+#: templates/account/snippets/already_logged_in.html:5
+msgid "Note"
+msgstr ""
+
+#: templates/account/snippets/already_logged_in.html:5
+#, python-format
+msgid "you are already logged in as %(user_display)s."
+msgstr ""
+
+#: templates/account/verification_sent.html:5
+#: templates/account/verification_sent.html:8
+#: templates/account/verified_email_required.html:5
+#: templates/account/verified_email_required.html:8
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: templates/account/verification_sent.html:10
+msgid ""
+"We have sent an e-mail to you for verification. Follow the link provided to "
+"finalize the signup process. If you do not see the verification e-mail in "
+"your main inbox, check your spam folder. Please contact us if you do not "
+"receive the verification e-mail within a few minutes."
+msgstr ""
+
+#: templates/account/verified_email_required.html:12
+msgid ""
+"This part of the site requires us to verify that\n"
+"you are who you claim to be. For this purpose, we require that you\n"
+"verify ownership of your e-mail address. "
+msgstr ""
+
+#: templates/account/verified_email_required.html:16
+msgid ""
+"We have sent an e-mail to you for\n"
+"verification. Please click on the link inside that e-mail. If you do not see "
+"the verification e-mail in your main inbox, check your spam folder. "
+"Otherwise\n"
+"contact us if you do not receive it within a few minutes."
+msgstr ""
+
+#: templates/account/verified_email_required.html:20
+#, python-format
+msgid ""
+"<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
+"mail address</a>."
+msgstr ""
+
+#: templates/admin/index.html:29
+msgid "Go to parsing page"
+msgstr ""
+
+#: templates/admin/index.html:33
+msgid "Go to table parsing"
+msgstr ""
+
+#: templates/admin/index.html:37
+msgid "Download summary table"
+msgstr ""
+
+#: templates/admin/index.html:40
+msgid "Restart elective counter"
+msgstr ""
+
+#: templates/admin/index.html:63
+msgid "Recent actions"
+msgstr ""
+
+#: templates/admin/index.html:64
+msgid "My actions"
+msgstr ""
+
+#: templates/admin/index.html:68
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:82
+msgid "Unknown content"
+msgstr ""
+
+#: templates/navbar.html:39
+msgid "Log Out"
+msgstr "Выйти"
+
+#: templates/socialaccount/authentication_error.html:5
+#: templates/socialaccount/authentication_error.html:8
+msgid "Social Network Login Failure"
+msgstr ""
+
+#: templates/socialaccount/authentication_error.html:10
+msgid ""
+"An error occurred while attempting to login via your social network account."
+msgstr ""
+
+#: templates/socialaccount/connections.html:5
+#: templates/socialaccount/connections.html:8
+msgid "Account Connections"
+msgstr ""
+
+#: templates/socialaccount/connections.html:11
+msgid ""
+"You can sign in to your account using any of the following third party "
+"accounts:"
+msgstr ""
+
+#: templates/socialaccount/connections.html:43
+msgid ""
+"You currently have no social network accounts connected to this account."
+msgstr ""
+
+#: templates/socialaccount/connections.html:46
+msgid "Add a 3rd Party Account"
+msgstr ""
+
+#: templates/socialaccount/login.html:6
+#, python-format
+msgid "Connect %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:8
+#, python-format
+msgid "You are about to connect a new third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:10
+#, python-format
+msgid "Sign In Via %(provider)s"
+msgstr ""
+
+#: templates/socialaccount/login.html:12
+#, python-format
+msgid "You are about to sign in using a third party account from %(provider)s."
+msgstr ""
+
+#: templates/socialaccount/login.html:17
+msgid "Continue"
+msgstr ""
+
+#: templates/socialaccount/login_cancelled.html:5
+#: templates/socialaccount/login_cancelled.html:9
+msgid "Login Cancelled"
+msgstr ""
+
+#: templates/socialaccount/login_cancelled.html:13
+#, python-format
+msgid ""
+"You decided to cancel logging in to our site using one of your existing "
+"accounts. If this was a mistake, please proceed to <a href=\"%(login_url)s"
+"\">sign in</a>."
+msgstr ""
+
+#: templates/socialaccount/messages/account_connected.txt:2
+msgid "The social account has been connected."
+msgstr ""
+
+#: templates/socialaccount/messages/account_connected_other.txt:2
+msgid "The social account is already connected to a different account."
+msgstr ""
+
+#: templates/socialaccount/messages/account_disconnected.txt:2
+msgid "The social account has been disconnected."
+msgstr ""
+
+#: templates/socialaccount/signup.html:10
+#, python-format
+msgid ""
+"You are about to use your %(provider_name)s account to login to\n"
+"%(site_name)s. As a final step, please complete the following form:"
+msgstr ""
+
+msgctxt "sorting button"
+msgid "fall"
+msgstr "осень"
+
+msgctxt "sorting button"
+msgid "spring"
+msgstr "весну"
+
+msgid "Username"
+msgstr "Логин"

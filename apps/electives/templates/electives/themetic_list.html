@@ -1,5 +1,6 @@
-  <div id="accordionPanelsStayOpen{{ forloop.counter }}"
-       class="div-electives col-md-8 offset-md-2 accordion-item">
+{% load i18n %}
+<div id="accordionPanelsStayOpen{{ forloop.counter }}"
+     class="div-electives col-md-8 offset-md-2 accordion-item">
     <h3 class="thematic-name accordion-header"
         id="panelsStayOpen-heading{{ forloop.counter }}">
       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
@@ -15,19 +16,19 @@
 			<div class="accordion-body thematic-{{ thematic.pk }}">
         <div class="row title-row">
           <div class="col-5">
-            Title
+            {% translate 'Title' %}
           </div>
           <div class="col-3">
-            Teachers
+            {% translate 'Teachers' %}
           </div>
           <div class="col-2">
-            Fall
+            {% translate 'Fall' %}
             {% if not block_fall %}
             {% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='fall' %}
             {% endif %}
           </div>
           <div class="col-2">
-            Spring
+            {% translate 'Spring' %}
 						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='spring' %}
           </div>
         </div>
@@ -83,11 +84,12 @@
                       {% endif %}
                     </span>
                     <span class="statistic-container">
-                    <span id="statistic-{{ elective.pk }}-{{ kind.pk }}" class="statistic" title="Number of applications">
+                    <span id="statistic-{{ elective.pk }}-{{ kind.pk }}" class="statistic"
+                          title="{% translate 'Number of applications' %}">
                       {{ info.0.0 }}
                     </span>
                       <span id="statistic-potential-{{ elective.pk }}-{{ kind.pk }}" class="statistic statistic-potential"
-                            title='Number of potential applications'>
+                            title="{% translate 'Number of potential applications' %}">
                       {{ info.1.0 }}
                     </span>
                     </span>

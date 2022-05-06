@@ -1,17 +1,21 @@
+{% load i18n %}
 <div class="application card small-font" id="application-{{ application.id }}-{% if application.elective.has_fall %}1{% endif %}{% if application.elective.has_spring %}2{% endif %}">
   <div class="elective-name card-header">
     <a class="course-link" href="{% url 'electives:elective_page' application.elective_id %}" target="_blank">
       {{ application.elective.translated_name }}
     </a>
-     <button type="button" class="first-button" aria-label="Remove application"
-             title="Remove application" onclick="removeApplication({{ application.id }})">
+     <button type="button" class="first-button"
+             aria-label="Remove application"
+             title="{% translate 'Remove application' %}"
+             onclick="removeApplication({{ application.id }})">
        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
   <path fill-rule="evenodd" d="M13.854 2.146a.5.5 0 0 1 0 .708l-11 11a.5.5 0 0 1-.708-.708l11-11a.5.5 0 0 1 .708 0Z"/>
   <path fill-rule="evenodd" d="M2.146 2.146a.5.5 0 0 0 0 .708l11 11a.5.5 0 0 0 .708-.708l-11-11a.5.5 0 0 0-.708 0Z"/>
 </svg>
      </button>
-    <button type="button" class="first-button second-button" aria-label="Double application"
-            title="Duplicate application" onclick="duplicateApplication({{ application.id }})">
+    <button type="button" class="first-button second-button" aria-label="Duplicate application"
+            title="{% translate 'Duplicate application' %}"
+            onclick="duplicateApplication({{ application.id }})">
      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-back" viewBox="0 0 16 16">
   <path d="M0 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2H2a2 2 0 0 1-2-2V2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H2z"/>
 </svg>
@@ -38,17 +42,19 @@
           {% endfor %}
         </ul>
       </div>
-      <div class="card-element credit-units" title="Number of credit units">
+      <div class="card-element credit-units"
+           title="{% translate 'Number of credit units' %}">
         <span id="credits-{{ application.id }}">
           {{ application.credit_units }}
-        </span> credit units
+        </span>
+        {% translate 'credit units' %}
       </div>
     </div>
     <div class="card-last-row">
       <div class="exam card-element" role="group">
         <label for="exam-{{ application.id }}"
                class="exam-container small-font">
-          Examination
+          {% translate 'Examination' %}
           <input type="checkbox"
                  onclick="changeExam({{ application.id }})"
                  {% if not application.kind_of_elective.changing_exam_is_possible %}
@@ -64,13 +70,15 @@
       </div>
       <div class="card-element semesters">
         {% if application.elective.has_fall %}
-        <span class="semester-tag fall-tag" id="fallSemesterTag" title="Fall semester is possible">
-          Fall
+        <span class="semester-tag fall-tag" id="fallSemesterTag"
+              title="{% translate 'Fall semester is possible' %}">
+          {% translate 'Fall' %}
         </span>
         {% endif %}
         {% if application.elective.has_spring %}
-        <span class="semester-tag spring-tag" id="springSemesterTag" title="Spring semester is possible">
-          Spring
+        <span class="semester-tag spring-tag" id="springSemesterTag"
+              title="{% translate 'Spring semester is possible' %}">
+          {% translate 'Spring' %}
         </span>
         {% endif %}
       </div>

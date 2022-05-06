@@ -186,7 +186,7 @@ input:checked + .slider:before {
 
 .form-control {
   display: inline-block;
-  width: calc(100% - 75px);
+  width: calc(100% - 100px);
   font-size: 1rem; 
 }
 
@@ -194,7 +194,7 @@ input:checked + .slider:before {
   padding: 10px;
 	background-color: white;
 	position: fixed;
-	bottom: 0px;
+	bottom: 0;
 	z-index: 99;
 }
 
@@ -204,10 +204,16 @@ input:checked + .slider:before {
 
 .filter-electives {
   margin-top: -3px;
+  width: 95px;
 }
 
 @media (max-width: 767px) {
   .options-header {
 	margin: 0;
+    width: 100%;
   }
+}
+
+.accordion-body .row {
+  padding-right: 0;
 }

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 {% block extra_styles %}
   <link rel="stylesheet" type="text/css" href="{% static 'users/css/profile.css' %}">
 {% endblock %}
 
 {% block head_title %}
-Profile
+{% translate 'Profile' %}
 {% endblock %}
 
 {% block body %}
@@ -22,14 +23,15 @@ Profile
             </svg>
           </a>
         </li>
-        <li class="breadcrumb-item active">Profile</li>
+        <li class="breadcrumb-item active">
+          {% translate 'Profile' %}</li>
       </ol>
     </nav>
     <div class="profile">
       <div class="nav-item dropdown">
         <a data-bs-toggle="dropdown" role="button"
            aria-label="Edit"
-           title="Change profile"
+           title="{% translate 'Change profile' %}"
            class="nav-link dropdown-toggle edit-profile-button btn btn-outline-secondary btn-sm">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
@@ -37,8 +39,8 @@ Profile
           </svg>
         </a>
         <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="{% url 'account:profile_edit' user.id %}">Edit profile</a></li>
-          <li><a class="dropdown-item" href="{% url 'account_change_password' %}">Change password</a></li>
+          <li><a class="dropdown-item" href="{% url 'account:profile_edit' user.id %}">{% translate 'Edit profile' %}</a></li>
+          <li><a class="dropdown-item" href="{% url 'account_change_password' %}">{% translate 'Change password' %}</a></li>
         </ul>
       </div>
       <div class="icon">
@@ -50,29 +52,33 @@ Profile
         </div>
       </div>
       <h2 class="name">{{ user.first_name }} {{ user.last_name }}</h2>
-      <h6 class="username">Login: {{ user.username }}</h6>
+      <h6 class="username">
+        {% translate 'Login' %}: {{ user.username }}</h6>
       {% if has_group %}
         <h6 class="course-info">{{ current_group.curriculum }}</h6>
         <h6 class="course-info">{{ current_group.course_value }}</h6>
       {% else %}
-        <h6 class="warning">Please, select your student group before managing applications!</h6>
+        <h6 class="warning">
+          {% translate 'Please, select your student group before managing applications!' %}</h6>
       {% endif %}
     </div>
     <div class="conditions">
       <table class="table course-info">
         <thead>
           <tr>
-            <th scope="col">Semester</th>
-            <th scope="col">Min c.u.</th>
-            <th scope="col">Max c.u.</th>
-            <th class="exams"  scope="col">Min exams</th>
-            <th class="exams"  scope="col">Max exams</th>
-            <th class="max-cu" scope="col">Max c.u. in reduced form</th>
+            <th scope="col">{% translate 'Semester' %}</th>
+            <th scope="col">{% translate 'Min c.u.' %}</th>
+            <th scope="col">{% translate 'Max c.u.' %}</th>
+            <th class="exams"  scope="col">{% translate 'Min exams' %}</th>
+            <th class="exams"  scope="col">{% translate 'Max exams' %}</th>
+            <th class="max-cu" scope="col">{% translate 'Max c.u. in reduced form' %}</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th scope="row">Fall</th>
+            <th scope="row">
+              {% translate 'Fall' %}
+            </th>
             <td>{{ current_group.min_credit_unit_fall }}</td>
             <td>{{ current_group.max_credit_unit_fall }}</td>
             <td class="exams" >{{ current_group.min_number_of_exams_fall }}</td>
@@ -80,7 +86,7 @@ Profile
             <td class="max-cu">{{ current_group.max_light_credit_unit_fall }}</td>
           </tr>
           <tr>
-            <th scope="row">Spring</th>
+            <th scope="row">{% translate 'Spring' %}</th>
             <td>{{ current_group.min_credit_unit_spring }}</td>
             <td>{{ current_group.max_credit_unit_spring }}</td>
             <td class="exams" >{{ current_group.min_number_of_exams_spring }}</td>

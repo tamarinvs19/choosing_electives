@@ -1,0 +1,20 @@
+{% load i18n %}
+<form action="{% url 'set_language' %}" method="post">{% csrf_token %}
+  <input name="next" type="hidden" value="{{ redirect_to }}">
+  <select id="languages" name="language">
+    {% get_current_language as LANGUAGE_CODE %}
+    {% get_available_languages as LANGUAGES %}
+    {% get_language_info_list for LANGUAGES as languages %}
+    {% for language in languages %}
+      <option class="language-option" value="{{ language.code }}"{% if language.code == LANGUAGE_CODE %} selected{% endif %}>
+        {{ language.code }}
+      </option>
+    {% endfor %}
+  </select>
+  <input id="submitLanguage" type="submit" value="Go">
+</form>
+<script>
+  $('#languages').change(function() {
+      $('#submitLanguage').click()
+  });
+</script>
