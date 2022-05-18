@@ -15,7 +15,7 @@ from apps.parsing.models import ConfigModel
 from apps.users.models import Person
 from apps.electives import logic
 from apps.electives.elective_statistic import Statistic
-from apps.electives.models import Elective, StudentOnElective, ElectiveKind
+from apps.electives.models import Elective, StudentOnElective, ElectiveKind, ElectiveThematic
 
 
 def last_modified_func(request, **kwargs):
@@ -28,9 +28,13 @@ def open_elective_list(request, **kwargs):
     user = cast(Person, request.user)
     groups = logic.get_electives_by_thematics(user)
     config, _ = ConfigModel.objects.get_or_create()
+    groups_with_opened_thematics = [
+        (thematic, electives, request.session.get(thematic['short_name'], False))
+        for thematic, electives in groups
+    ]
 
     context = {
-        'elective_groups': groups,
+        'elective_groups': groups_with_opened_thematics,
         'block_fall': config.block_fall,
         'block_fall_applications': config.block_fall_applications,
         'block_spring_applications': config.block_spring_applications,
@@ -39,6 +43,23 @@ def open_elective_list(request, **kwargs):
 
 
 @login_required
+@require_POST
+def save_opened_thematic(request, **kwargs):
+    switch_all = request.POST.get('all', None)
+    if switch_all is not None:
+        thematics = ElectiveThematic.objects.all().only(['short_name'])
+        is_opened = request.POST.get('is_opened', False)
+        for thematic in thematics:
+            request.session[thematic.short_name] = is_opened
+    else:
+        thematic_name = request.POST.get('thematic_name', None)
+        if thematic_name is not None:
+            request.session[thematic_name] = not request.session.get(thematic_name, False)
+    return JsonResponse({'OK': True})
+
+
+@login_required
+@require_GET
 def open_elective_page(request, elective_id, **kwargs):
     user = cast(Person, request.user)
     elective = Elective.objects.get(id=elective_id)

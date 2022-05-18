@@ -16,5 +16,6 @@ urlpatterns = [
     path('download_table/', views.download_table, name='download_table'),
     path('applications/<int:user_id>/', views.open_sorting_page, name='sorting_page'),
     path('restart_counter/', views.restart_counter, name='restart_counter'),
+    path('save_opened_thematic/', views.save_opened_thematic, name='save_opened_thematic'),
 ]
 

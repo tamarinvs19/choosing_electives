@@ -184,6 +184,7 @@ class _Thematic(BaseNode):
             'pk': thematic.pk,
             'name': thematic.name,
             'english_name': thematic.english_name,
+            'short_name': thematic.short_name,
         }
 
     def generate_view(self, student_id: int):

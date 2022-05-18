@@ -15,8 +15,25 @@ function change_kind(electiveId, kindId) {
         });
 }
 
+function switchThematic(thematic_name) {
+    console.log(thematic_name)
+    $.post(saveOpenedThematicURL,
+        {'thematic_name': thematic_name, 'csrfmiddlewaretoken': csrftoken},
+        function(data) {}
+    )
+}
+
+function saveOpenedAllThematics(is_opened) {
+    $.post(saveOpenedThematicURL,
+        {'is_opened': is_opened, 'all': true, 'csrfmiddlewaretoken': csrftoken},
+        function(data) {}
+    )
+}
+
 function clickSwitch(input) {
-    if (input.hasAttribute('opened')) {
+    const is_opened = input.hasAttribute('opened');
+    saveOpenedAllThematics(is_opened);
+    if (is_opened) {
         input.removeAttribute('opened');
         $('.accordion-collapse').removeClass('show');
         let accordionButton = $('.accordion-button')

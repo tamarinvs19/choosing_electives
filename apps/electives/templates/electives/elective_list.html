@@ -23,14 +23,15 @@
 		</div>
 </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
-  {% for thematic, electives in elective_groups %}
+  {% for thematic, electives, is_opened in elective_groups %}
 		{% if electives|length > 0 %}
-    {% include "electives/themetic_list.html" with thematic=thematic electives=electives student_id=student_id block_fall_applications=block_fall_applications block_spring_applications=block_spring_applications%}
+    {% include "electives/themetic_list.html" with is_opened=is_opened thematic=thematic electives=electives student_id=student_id block_fall_applications=block_fall_applications block_spring_applications=block_spring_applications%}
 		{% endif %}
   {% endfor %}
   </div>
   <script>
   const electivesChangeKindURL = "{% url 'electives:change_kind' %}";
+  const saveOpenedThematicURL = "{% url 'electives:save_opened_thematic' %}";
   </script>
   <script src="{% static 'electives/js/elective_list.js' %}"></script>
 {% endblock %}
