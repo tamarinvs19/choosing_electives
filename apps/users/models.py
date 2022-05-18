@@ -27,7 +27,7 @@ def generate_invitation_key(length: int = 40) -> str:
         + string.digits
         + '-._~'
     )
-    return ''.join(random.sample(characters, length))
+    return ''.join(random.choices(characters, k=length))
 
 
 class Invitation(models.Model):
