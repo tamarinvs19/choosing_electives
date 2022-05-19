@@ -360,7 +360,7 @@ def remove_applications(applications: QuerySet[StudentOnElective] | StudentOnEle
     @return status, True if application was removed and False else
     """
     if isinstance(applications, StudentOnElective):
-        applications = [applications]
+        applications = StudentOnElective.objects.filter(pk=applications.pk)
     config, _ = ConfigModel.objects.get_or_create()
     for application in applications:
         if not check_application_operation(application.kind, application.tracker):
