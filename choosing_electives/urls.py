@@ -37,6 +37,7 @@ urlpatterns = [
     ),
     path('electives/accounts/', include('allauth.urls')),
     path('electives/parsing/', include('apps.parsing.urls')),
+    path('electives/help', views.help_page, name='help'),
 
     path('i18n/', include('django.conf.urls.i18n')),
     path('jsi18n/', JavaScriptCatalog.as_view(), name='javascript-catalog'),

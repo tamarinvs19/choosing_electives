@@ -1,0 +1,10 @@
+ .illustration {
+     width: 95%;
+ }
+
+@media (min-width: 767px) {
+     .illustration {
+         padding-left: 10%;
+         width: 80%;
+     }
+ }

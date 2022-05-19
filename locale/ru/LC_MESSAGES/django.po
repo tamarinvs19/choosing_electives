@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-05-06 12:14+0300\n"
+"POT-Creation-Date: 2022-05-19 12:56+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Vyacheslav Tamarin tamarin.vs@yandex.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: apps/electives/templates/electives/application_card.html:9
 msgid "Remove application"
-msgstr "Удалить заявлениe"
+msgstr "Удалить заявление"
 
 #: apps/electives/templates/electives/application_card.html:17
 msgid "Duplicate application"
@@ -38,26 +38,26 @@ msgstr "з.e."
 
 #: apps/electives/templates/electives/application_card.html:57
 msgid "Examination"
-msgstr "Экамен"
+msgstr "Экзамен"
 
 #: apps/electives/templates/electives/application_card.html:74
 msgid "Fall semester is possible"
 msgstr "Осенний семестр предлагается"
 
 #: apps/electives/templates/electives/application_card.html:75
-#: apps/electives/templates/electives/sort_electives.html:27
-#: apps/electives/templates/electives/themetic_list.html:25
+#: apps/electives/templates/electives/sort_electives.html:28
+#: apps/electives/templates/electives/themetic_list.html:28
 #: apps/users/templates/users/personal_page.html:80
 msgid "Fall"
 msgstr "Осень"
 
 #: apps/electives/templates/electives/application_card.html:80
 msgid "Spring semester is possible"
-msgstr "Весенний семестр пердлагается"
+msgstr "Весенний семестр предлагается"
 
 #: apps/electives/templates/electives/application_card.html:81
-#: apps/electives/templates/electives/sort_electives.html:101
-#: apps/electives/templates/electives/themetic_list.html:31
+#: apps/electives/templates/electives/sort_electives.html:102
+#: apps/electives/templates/electives/themetic_list.html:34
 #: apps/users/templates/users/personal_page.html:89
 msgid "Spring"
 msgstr "Весна"
@@ -78,17 +78,25 @@ msgstr "Google форма"
 msgid "Elective list"
 msgstr "Список элективов"
 
-#: apps/electives/templates/electives/elective_list.html:14
+#: apps/electives/templates/electives/elective_list.html:20
 msgid "Unroll"
 msgstr "Развернуть"
 
-#: apps/electives/templates/electives/elective_list.html:19
+#: apps/electives/templates/electives/elective_list.html:30
 msgid "Keyword"
 msgstr "Ключевое слово"
 
-#: apps/electives/templates/electives/elective_list.html:21
+#: apps/electives/templates/electives/elective_list.html:32
 msgid "Filter"
 msgstr "Искать"
+
+#: apps/electives/templates/electives/elective_list.html:38
+msgid "Show menu"
+msgstr "Показать меню"
+
+#: apps/electives/templates/electives/elective_list.html:41
+msgid "Hide menu"
+msgstr "Скрыть меню"
 
 #: apps/electives/templates/electives/elective_page.html:28
 #: templates/navbar.html:14
@@ -112,7 +120,7 @@ msgid "English description"
 msgstr "Описание на английском"
 
 #: apps/electives/templates/electives/elective_page.html:81
-#: apps/electives/templates/electives/themetic_list.html:22
+#: apps/electives/templates/electives/themetic_list.html:25
 msgid "Teachers"
 msgstr "Преподаватели"
 
@@ -125,12 +133,12 @@ msgid "Select formats for your application"
 msgstr "Выберите форматы в ваше заявление"
 
 #: apps/electives/templates/electives/elective_page.html:145
-#: apps/electives/templates/electives/themetic_list.html:88
+#: apps/electives/templates/electives/themetic_list.html:91
 msgid "Number of applications"
 msgstr "Количество заявлений"
 
 #: apps/electives/templates/electives/elective_page.html:149
-#: apps/electives/templates/electives/themetic_list.html:92
+#: apps/electives/templates/electives/themetic_list.html:95
 msgid "Number of potential applications"
 msgstr "Количество потенциальных заявлений"
 
@@ -144,15 +152,15 @@ msgstr " Сортировать по количеству заявлений н�
 msgid "Your applications"
 msgstr "Ваши заявления"
 
-#: apps/electives/templates/electives/sort_electives.html:57
+#: apps/electives/templates/electives/sort_electives.html:58
 msgid "Fall (potentially)"
 msgstr "Осень (потенциально)"
 
-#: apps/electives/templates/electives/sort_electives.html:79
+#: apps/electives/templates/electives/sort_electives.html:80
 msgid "Spring (potentially)"
 msgstr "Весна (потенциально)"
 
-#: apps/electives/templates/electives/themetic_list.html:19
+#: apps/electives/templates/electives/themetic_list.html:22
 msgid "Title"
 msgstr "Название"
 
@@ -223,7 +231,7 @@ msgstr "Максимум з.е. в облегченной форме"
 
 #: apps/users/templates/users/profile_edit.html:31
 msgid "Edit"
-msgstr ""
+msgstr "Редактировать"
 
 #: apps/users/templates/users/profile_edit.html:70
 msgid "Student group"
@@ -263,7 +271,7 @@ msgstr "Эта учетная запись неактивнa."
 
 #: templates/account/base.html:6
 msgid "Messages"
-msgstr ""
+msgstr "Сообщения"
 
 #: templates/account/email.html:5 templates/account/email.html:8
 msgid "E-mail Addresses"
@@ -275,7 +283,7 @@ msgstr "Следующие e-mail адреса привязаны к вашем�
 
 #: templates/account/email.html:24
 msgid "Verified"
-msgstr "Подвтверждено"
+msgstr "Подтверждено"
 
 #: templates/account/email.html:26
 msgid "Unverified"
@@ -291,7 +299,7 @@ msgstr "Сделать главным"
 
 #: templates/account/email.html:35
 msgid "Re-send Verification"
-msgstr "Выслать подтвеждение еще раз"
+msgstr "Выслать подтверждение еще раз"
 
 #: templates/account/email.html:36 templates/socialaccount/connections.html:35
 msgid "Remove"
@@ -400,7 +408,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:20
 msgid "Confirm"
-msgstr ""
+msgstr "Подтвердить"
 
 #: templates/account/email_confirm.html:27
 #, python-format
@@ -410,7 +418,7 @@ msgid ""
 msgstr ""
 
 #: templates/account/login.html:6 templates/account/login.html:10
-#: templates/account/login.html:36 templates/navbar.html:46
+#: templates/account/login.html:36 templates/navbar.html:36
 msgid "Log In"
 msgstr "Войти"
 
@@ -626,7 +634,11 @@ msgstr ""
 msgid "Unknown content"
 msgstr ""
 
-#: templates/navbar.html:39
+#: templates/help.html:5 templates/navbar.html:22
+msgid "Help"
+msgstr "Справка"
+
+#: templates/navbar.html:29
 msgid "Log Out"
 msgstr "Выйти"
 

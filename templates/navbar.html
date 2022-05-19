@@ -18,6 +18,9 @@
           <a class="nav-link" aria-current="page" href="{% url 'electives:sorting_page' user.id %}">{% translate 'Your applications' %}</a>
         </li>
         {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" aria-current="page" href="{% url 'help' %}">{% translate 'Help' %}</a>
+        </li>
       </ul>
 
 {% include 'language_switcher.html' %}

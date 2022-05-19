@@ -18,6 +18,7 @@
          aria-labelledby="panelsStayOpen-{{ forloop.counter }}">
 			<div class="accordion-body thematic-{{ thematic.pk }}">
         <div class="row title-row">
+        <div class="row inner-row">
           <div class="col-5">
             {% translate 'Title' %}
           </div>
@@ -27,13 +28,14 @@
           <div class="col-2">
             {% translate 'Fall' %}
             {% if not block_fall %}
-            {% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='fall' %}
+              {% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='fall' %}
             {% endif %}
           </div>
           <div class="col-2">
             {% translate 'Spring' %}
-						{% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='spring' %}
+            {% include "electives/sort_button.html" with thematic_id=thematic.pk column_name='spring' %}
           </div>
+        </div>
         </div>
         {% for elective, languages, info_fall, info_spring in electives %}
 					<div class="elective-row row table-row row-{{ thematic.pk }}"
@@ -45,7 +47,7 @@
 						data-fall={{ info_fall }}
 						data-spring={{ info_spring }}>
           {% for language, semesters in languages %}
-          <div class="row">
+          <div class="row inner-row">
             <div class="col-5">
               <a href={% url 'electives:elective_page' elective.pk %}>
                 {% if language == 'ru' %}

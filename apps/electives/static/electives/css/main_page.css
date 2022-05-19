@@ -224,7 +224,7 @@ input:checked + .slider:before {
   }
 }
 
-.accordion-body .row {
+.inner-row {
   padding-right: 0;
 }
 
