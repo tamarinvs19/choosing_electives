@@ -38,6 +38,7 @@ def open_elective_list(request, **kwargs):
         'block_fall': config.block_fall,
         'block_fall_applications': config.block_fall_applications,
         'block_spring_applications': config.block_spring_applications,
+        'show_menu': request.session.get('show_menu', True),
     }
     return render(request, 'electives/elective_list.html', context)
 
@@ -47,7 +48,7 @@ def open_elective_list(request, **kwargs):
 def save_opened_thematic(request, **kwargs):
     switch_all = request.POST.get('all', None)
     if switch_all is not None:
-        thematics = ElectiveThematic.objects.all().only(['short_name'])
+        thematics = ElectiveThematic.objects.all().only('short_name')
         is_opened = request.POST.get('is_opened', False)
         for thematic in thematics:
             request.session[thematic.short_name] = is_opened
@@ -56,6 +57,20 @@ def save_opened_thematic(request, **kwargs):
         if thematic_name is not None:
             request.session[thematic_name] = not request.session.get(thematic_name, False)
     return JsonResponse({'OK': True})
+
+
+@login_required
+@require_POST
+def save_cookie(request, **kwargs):
+    cookie_field = request.POST.get('cookie_field', None)
+    cookie_value = request.POST.get('cookie_value', None)
+    if cookie_field is not None:
+        logger.debug([cookie_field, cookie_value])
+        request.session[cookie_field] = cookie_value
+        response = {'OK': True}
+    else:
+        response = {'OK': False}
+    return JsonResponse(response)
 
 
 @login_required

@@ -138,8 +138,10 @@ input:checked + .slider:before {
 }
 
 .switch-container {
-  margin: 5px 0 5px calc(100% - 72px);
-  text-align: center;
+  /*margin: 5px 0 5px calc(100% - 72px);*/
+  /*text-align: center;*/
+  margin-left: 100%;
+  margin-top: -43px;
 }
 
 .sort {
@@ -212,8 +214,20 @@ input:checked + .slider:before {
 	margin: 0;
     width: 100%;
   }
+
+  .roll-button-col {
+    display: none;
+  }
+
+  .switch-container {
+    display: none;
+  }
 }
 
 .accordion-body .row {
   padding-right: 0;
+}
+
+.hidden-menu {
+  display: none;
 }

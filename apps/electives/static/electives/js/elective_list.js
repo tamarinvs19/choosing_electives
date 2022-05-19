@@ -16,7 +16,6 @@ function change_kind(electiveId, kindId) {
 }
 
 function switchThematic(thematic_name) {
-    console.log(thematic_name)
     $.post(saveOpenedThematicURL,
         {'thematic_name': thematic_name, 'csrfmiddlewaretoken': csrftoken},
         function(data) {}
@@ -26,6 +25,13 @@ function switchThematic(thematic_name) {
 function saveOpenedAllThematics(is_opened) {
     $.post(saveOpenedThematicURL,
         {'is_opened': is_opened, 'all': true, 'csrfmiddlewaretoken': csrftoken},
+        function(data) {}
+    )
+}
+
+function saveCookie(cookie_field, cookie_value) {
+    $.post(saveCookieURL,
+        {'cookie_field': cookie_field, 'cookie_value': cookie_value, 'csrfmiddlewaretoken': csrftoken},
         function(data) {}
     )
 }
@@ -89,5 +95,24 @@ function filterElectives() {
                 $(elective).removeAttr("style").hide();
             }
         });
+    }
+}
+
+function switchOptions() {
+    let switchButton = $('#switch-button')[0];
+    let searchColumn = $('.search-button-col');
+    let rollColumn = $('.roll-button-col');
+    if (switchButton.dataset['open'] === 'true') {
+        switchButton.dataset['open'] = 'false';
+        searchColumn.hide();
+        rollColumn.hide();
+        switchButton.setAttribute('title', gettext('Show menu'));
+        saveCookie('show_menu', false);
+    } else {
+        switchButton.dataset['open'] = 'true';
+        searchColumn.show();
+        rollColumn.show();
+        switchButton.setAttribute('title', gettext('Hide menu'));
+        saveCookie('show_menu', true);
     }
 }

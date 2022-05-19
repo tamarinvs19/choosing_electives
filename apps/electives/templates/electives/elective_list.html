@@ -8,19 +8,47 @@
   <link rel="stylesheet" type="text/css" href="{% static 'electives/css/main_page.css' %}">
 {% endblock %}
 {% block body %}
+
 <div class="row col-md-8 offset-md-2 options-header">
-		<div class="col-md-6">
-			<button type="button" class="btn btn-outline-secondary thematic-switch" onclick="clickSwitch(this)">
-				{% translate 'Unroll' %}
-			</button>
-		</div>
-		<div class="col-md-6">
-			<input id="filterInput" class="form-control me-0" type="search"
+    <div class="col-md-6 roll-button-col
+         {% if show_menu == 'false' %}
+            hidden-menu
+         {% endif %}
+         "
+        >
+      <button type="button" class="btn btn-outline-secondary thematic-switch" onclick="clickSwitch(this)">
+        {% translate 'Unroll' %}
+      </button>
+    </div>
+    <div class="col-md-6 search-button-col
+         {% if show_menu == 'false' %}
+           hidden-menu
+         {% endif %}
+         "
+      >
+      <input id="filterInput" class="form-control me-0" type="search"
              placeholder="{% translate 'Keyword' %}" aria-label="Filter">
-			<button class="btn btn-outline-success filter-electives" type="submit" onclick="filterElectives()">
+      <button class="btn btn-outline-success filter-electives" type="submit" onclick="filterElectives()">
         {% translate 'Filter' %}
       </button>
-		</div>
+    </div>
+  <div class="switch-container">
+    <button class="switch-button btn btn-sm btn-outline-secondary"
+            {% if show_menu == 'false' %}
+            title="{% trans 'Show menu' %}"
+            data-open="false"
+            {% else %}
+            title="{% trans 'Hide menu' %}"
+            data-open="true"
+            {% endif %}
+            id="switch-button"
+            type="button"
+            onclick="switchOptions()">
+			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-left" viewBox="0 0 16 16">
+				  <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+			</svg>
+    </button>
+  </div>
 </div>
   <div class="accordion accordion-flush" id="accordionPanelsElective">
   {% for thematic, electives, is_opened in elective_groups %}
@@ -32,6 +60,7 @@
   <script>
   const electivesChangeKindURL = "{% url 'electives:change_kind' %}";
   const saveOpenedThematicURL = "{% url 'electives:save_opened_thematic' %}";
+  const saveCookieURL = "{% url 'electives:save_cookie' %}";
   </script>
   <script src="{% static 'electives/js/elective_list.js' %}"></script>
 {% endblock %}
