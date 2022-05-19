@@ -65,7 +65,6 @@ def save_cookie(request, **kwargs):
     cookie_field = request.POST.get('cookie_field', None)
     cookie_value = request.POST.get('cookie_value', None)
     if cookie_field is not None:
-        logger.debug([cookie_field, cookie_value])
         request.session[cookie_field] = cookie_value
         response = {'OK': True}
     else:
@@ -87,7 +86,6 @@ def open_elective_page(request, elective_id, **kwargs):
         kind: logic.get_statistics(elective, kind)
         for kind in elective.kinds.all()
     }
-    logger.debug(students)
     config, _ = ConfigModel.objects.get_or_create()
     context = {
         'elective': elective,
