@@ -25,17 +25,21 @@
 {% block sidebar %}
 <div id="content-related">
     <div class="module" id="recent-actions-module">
-          <a href="{% url 'parsing:parsing' %}">
-            <div class="my-button button" style="margin: 5px">{% translate 'Go to parsing page' %}</div>
-          </a>
+      <a href="{% url 'parsing:parsing' %}">
+        <div class="my-button button" style="margin: 5px">{% translate 'Go to parsing page' %}</div>
+      </a>
 
-          <a href="{% url 'parsing:table_parsing' %}">
-            <div class="my-button button" style="margin: 5px">{% translate 'Go to table parsing' %}</div>
-          </a>
+      <a href="{% url 'parsing:table_parsing' %}">
+        <div class="my-button button" style="margin: 5px">{% translate 'Go to table parsing' %}</div>
+      </a>
 
-        <a href="{% url 'electives:download_table' %}" download>
-            <div class="my-button button" style="margin: 5px">{% translate 'Download summary table' %}</div>
-        </a>
+      <a href="{% url 'electives:download_table' %}" download>
+          <div class="my-button button" style="margin: 5px">{% translate 'Download summary table' %}</div>
+      </a>
+
+      <a href="{% url 'electives:download_applications_table' %}" download>
+        <div class="my-button button" style="margin: 5px">{% translate 'Download applications table' %}</div>
+      </a>
 
         <div style="margin: 5px" class="my-button button" onclick="restart_counter()">{% translate 'Restart elective counter' %}</div>
       </div>

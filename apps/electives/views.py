@@ -338,6 +338,13 @@ def download_table(request, **kwargs):
 
 @login_required
 @require_GET
+def download_applications_table(request, **kwargs):
+    workbook_name = logic.generate_applications_table()
+    return FileResponse(open(workbook_name, 'rb'))
+
+
+@login_required
+@require_GET
 def open_sorting_page(request, user_id, **kwargs):
     person = Person.objects.get(id=user_id)
 

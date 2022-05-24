@@ -39,7 +39,7 @@ class ElectiveAdmin(admin.ModelAdmin):
         StudentOnElectiveInline,
     ]
     list_display = ('translated_name',)
-    search_fields = ['translated_name']
+    search_fields = ['name', 'english_name', 'codename']
 
 
 class ElectiveKindAdmin(admin.ModelAdmin):

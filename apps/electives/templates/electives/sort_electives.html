@@ -19,7 +19,10 @@
   {% if show_google_form %}
     {% include 'electives/code_requests.html' with google_form_url=google_form_url fall_code_row=fall_code_row spring_code_row=spring_code_row %}
 	{% endif %}
-  {% include 'electives/sort_page_help.html' %}
+
+  <p>Посмотреть ограничения на количество экзаменов и зачетных единиц вы можете на <a href="{% url 'account:personal_page' user.id  %}">странице профиля</a>.</p>
+  <p>В заголовке каждой колонки указано текущаее количество зачетных единиц, в крайних второе число - минимальное количество для соответствующего семестра.</p>
+  <p><i>Но это не значит, что вы должны набрать ровно столько!</i> <b>Лучше существенно превысить эту границу, так как нет гарантии, что все курсы состоятся!</b></p>
 
   <div class="row canvas">
     <div class="col-xl-3 col-6 fall-column column">
@@ -127,6 +130,7 @@
       </div>
     </div>
   </div>
+  {% include 'electives/sort_page_help.html' %}
 </div>
 <script>
   const electivesChangeExamURL = "{% url 'electives:change_application_exam' %}";

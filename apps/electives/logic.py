@@ -505,3 +505,47 @@ def generate_summary_table() -> str:
         worksheet.write_row(row_num + 1, 0, data[row_num])
     workbook.close()
     return workbook_name
+
+
+def generate_applications_table() -> str:
+    """
+    Create table with application-rows for downloading.
+
+    @return file name
+    """
+
+    workbook_name = 'application_table.xlsx'
+    workbook = xlsxwriter.Workbook(workbook_name)
+    worksheet = workbook.add_worksheet()
+
+    headers = [
+        'Student',
+        'First name',
+        'Last name',
+        'Email',
+        'Student group',
+        'Fall application',
+        'Spring application',
+    ]
+
+    students = Person.objects.all()
+
+    data = []
+
+    for student in students:
+        new_row = [
+            student.username,
+            student.email,
+            student.first_name,
+            student.last_name,
+            str(student.student_data.student_group),
+            generate_application_row(student, 1),
+            generate_application_row(student, 2),
+        ]
+        data.append(new_row)
+
+    worksheet.write_row(0, 0, headers)
+    for row_num, row in enumerate(data):
+        worksheet.write_row(row_num + 1, 0, data[row_num])
+    workbook.close()
+    return workbook_name
