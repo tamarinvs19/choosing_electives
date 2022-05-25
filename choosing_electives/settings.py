@@ -131,6 +131,10 @@ DATABASES = {
             'options': '-c statement_timeout=15000ms',
         },
     }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 

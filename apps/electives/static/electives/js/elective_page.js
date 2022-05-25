@@ -7,7 +7,7 @@ function changeKind(kindId, electiveId) {
             if (data['move'] !== null && data['other_language_kind'] !== null) {
                 $(`#statistic-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][false];
                 $(`#statistic-potential-${electiveId}-${data['other_language_kind']}`)[0].innerHTML = data['other_kind_counts'][true];
-                $(`#${data['other_short_name']}`)[0].checked = false;
+                $(`#${data['other_pk']}`)[0].checked = false;
             }
             if (data['move'] === false) {
                 for (let kind of data['current_short_names']) {

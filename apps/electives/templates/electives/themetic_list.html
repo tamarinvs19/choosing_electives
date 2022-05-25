@@ -71,13 +71,13 @@
               <div class="col-2">
               {% if not block_fall or semester == 2 %}
                 {% for kind, info in kinds %}
-                <input type="checkbox" id="button-{{ kind.short_name }}-{{ elective.pk }}"
+                <input type="checkbox" id="button-{{ kind.pk }}-{{ elective.pk }}"
                        value="{{ elective.pk }}" class="checkbox-kind"
                        onclick="change_kind({{ elective.pk }}, {{ kind.pk }})"
                        {% if block_fall_applications and kind.semester == 1 %} disabled {% endif %}
                        {% if block_spring_applications and kind.semester == 2 %} disabled {% endif %}
                        {% if info.1.1 or info.0.1 %} checked {% endif %}>
-                <label for="button-{{ kind.short_name }}-{{ elective.pk }}"
+                <label for="button-{{ kind.pk }}-{{ elective.pk }}"
                        class="semester-{{ kind.semester }} kind-button"
                        title="{{ kind.long_name }}">
                   <div class="kind-inner-container">

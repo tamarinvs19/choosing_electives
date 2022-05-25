@@ -128,7 +128,7 @@ def change_elective_kind(request, **kwargs):
             if len(other_kind) == 1:
                 other_kind_counts = logic.get_statistics(elective, other_kind[0])
                 other_language_kind = other_kind[0].id
-                other_short_name = other_kind[0].short_name
+                other_short_name = other_kind[0].pk
         statistic = Statistic()
 
         current_short_names = [

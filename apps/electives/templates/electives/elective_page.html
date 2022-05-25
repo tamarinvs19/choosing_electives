@@ -126,9 +126,9 @@
           <div class="elective-kinds">
             <ul class="list-group">
               {% for kind_with_status, statistic in kinds %}
-                <label for="{{ kind_with_status.kind.short_name }}" class="kind-label">
+                <label for="{{ kind_with_status.kind.pk }}" class="kind-label">
                 <li class="kind-group-item list-group-item">
-                  <input id="{{ kind_with_status.kind.short_name }}"
+                  <input id="{{ kind_with_status.kind.pk }}"
                          class="form-check-input me-1"
                          onclick="changeKind({{ kind_with_status.kind.id }}, {{ elective.id }})"
                          type="checkbox"
