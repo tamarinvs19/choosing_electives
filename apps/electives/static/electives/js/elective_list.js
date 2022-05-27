@@ -12,6 +12,8 @@ function change_kind(electiveId, kindId) {
             const counter = $(`#row-${electiveId}`)[0];
             counter.dataset.fall = data['fall_count'];
             counter.dataset.spring = data['spring_count'];
+            counter.dataset.fallPotential = data['potential_fall_count'];
+            counter.dataset.springPotential = data['potential_spring_count'];
         });
 }
 
@@ -68,11 +70,20 @@ function sortColumn(columnName, thematicId, direction = 1) {
     if (columnName === 'title') {
         direction = -1;
     }
+    const potentialColumnName = `${columnName}Potential`;
     const parent = $(`.thematic-${thematicId}`);
     const items = parent.children(`.row-${thematicId}`).sort(function(a, b) {
         let vA = a.dataset[columnName];
         let vB = b.dataset[columnName];
-        return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : 0);
+        let equalResult = 0;
+        if (columnName === 'title') {
+            equalResult = 0;
+        } else {
+            let potentialA = a.dataset[potentialColumnName];
+            let potentialB = b.dataset[potentialColumnName];
+            equalResult = direction * ((potentialA > potentialB) ? -1 : (potentialA < potentialB) ? 1 : 0);
+        }
+        return direction * ((vA > vB) ? -1 : (vA < vB) ? 1 : equalResult);
     });
     parent.append(items);
 }

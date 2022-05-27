@@ -37,7 +37,7 @@
           </div>
         </div>
         </div>
-        {% for elective, languages, info_fall, info_spring in electives %}
+        {% for elective, languages, info_fall, info_spring, info_potential_fall, info_potential_spring in electives %}
 					<div class="elective-row row table-row row-{{ thematic.pk }}"
 						id="row-{{ elective.pk }}"
             data-russian-name="{{ elective.name }}"
@@ -45,7 +45,9 @@
             data-teachers="{{ elective.text_teachers }}"
 						data-title={{ elective.codename }}
 						data-fall={{ info_fall }}
-						data-spring={{ info_spring }}>
+						data-spring={{ info_spring }}
+            data-fall-potential={{ info_potential_fall }}
+            data-spring-potential={{ info_potential_spring }}>
           {% for language, semesters in languages %}
           <div class="row inner-row">
             <div class="col-5">

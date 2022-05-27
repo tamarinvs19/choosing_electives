@@ -117,7 +117,7 @@ def change_elective_kind(request, **kwargs):
 
         other_language_kind = None
         other_kind_counts = None
-        other_short_name = None
+        other_pk = None
         if application is not None:
             other_kind = application.elective.kinds.filter(
                 semester=application.kind.semester,
@@ -128,7 +128,7 @@ def change_elective_kind(request, **kwargs):
             if len(other_kind) == 1:
                 other_kind_counts = logic.get_statistics(elective, other_kind[0])
                 other_language_kind = other_kind[0].id
-                other_short_name = other_kind[0].pk
+                other_pk = other_kind[0].pk
         statistic = Statistic()
 
         current_short_names = [
@@ -150,13 +150,15 @@ def change_elective_kind(request, **kwargs):
             'students_count': students_count,
             'other_language_kind': other_language_kind,
             'other_kind_counts': other_kind_counts,
-            'other_short_name': other_short_name,
+            'other_pk': other_pk,
             'current_short_names': current_short_names,
             'current_unused_names': current_unused_names,
             'user_id': user.id,
             'thematic_id': elective.thematic.id,
             'fall_count': statistic.data[elective.thematic.pk][elective.pk].student_count(1),
             'spring_count': statistic.data[elective.thematic.pk][elective.pk].student_count(2),
+            'potential_fall_count': statistic.data[elective.thematic.pk][elective.pk].student_count(1, True),
+            'potential_spring_count': statistic.data[elective.thematic.pk][elective.pk].student_count(2, True),
         }
         config = ConfigModel()
         if config.show_student_names:

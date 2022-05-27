@@ -29,9 +29,9 @@ class BaseNode:
         )
         return view
 
-    def student_count(self, semester: int) -> int:
+    def student_count(self, semester: int, potential: bool = False) -> int:
         return sum(
-            inner_item.student_count(semester)
+            inner_item.student_count(semester, potential)
             for inner_item in self.items.values()
         )
 
@@ -82,8 +82,8 @@ class _ApplicationCounter(BaseNode):
             'credit_units_english_name': kind.credit_units_english_name,
         }
 
-    def student_count(self, _: int) -> int:
-        return len(self.items[True].items.keys())
+    def student_count(self, _: int, potential: bool = False) -> int:
+        return len(self.items[potential].items.keys())
 
     def remove_student_all(self, student_id: int) -> None:
         for potential_counter in self.items.values():
@@ -125,9 +125,9 @@ class _Language(BaseNode):
         super().__init__(semesters)
         self.properties = language
 
-    def student_count(self, semester: int) -> int:
+    def student_count(self, semester: int, potential: bool = False) -> int:
         if semester in self.items:
-            return self.items[semester].student_count(semester)
+            return self.items[semester].student_count(semester, potential)
         return 0
 
 
@@ -166,6 +166,8 @@ class _Elective(BaseNode):
             ],
             self.student_count(1),
             self.student_count(2),
+            self.student_count(1, True),
+            self.student_count(2, True),
         )
         return view
 
