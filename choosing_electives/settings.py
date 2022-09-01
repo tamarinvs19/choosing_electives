@@ -118,7 +118,7 @@ WSGI_APPLICATION = 'choosing_electives.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('POSTGRES_NAME') or env['POSTGRES_NAME'],
         'USER': os.environ.get('POSTGRES_USER') or env['POSTGRES_USER'],
